@@ -211,15 +211,8 @@ const verifyAndActivate = async ({ reference, type, resourceId, userId, bookingI
       .update({ status: 'confirmed' })
       .eq('paystack_reference', reference);
 
-    // Credit 70% to tutor
-    const tutorShare = amount * 0.70;
-    const { data: profRows } = await supabase.from('profiles').select('balance, total_earned').eq('id', tutorUserId);
-    const prof = profRows?.[0];
-    if (prof) {
-      await supabase.from('profiles').update({
-        balance: (prof.balance || 0) + tutorShare,
-        total_earned: (prof.total_earned || 0) + tutorShare
-      }).eq('id', tutorUserId);
-    }
+    // Note: The 70% tutor share is NO LONGER credited immediately.
+    // Funds are held in escrow until the student marks the session
+    // as successfully completed via the dashboard.
   }
 };

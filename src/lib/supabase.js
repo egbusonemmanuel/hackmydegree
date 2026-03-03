@@ -467,10 +467,42 @@ export const getTutorBookings = async (tutorProfileId) => {
 };
 
 export const confirmBooking = async (bookingId, meetLink) => {
-  return supabase
-    .from('bookings')
-    .update({ status: 'confirmed', meet_link: meetLink })
+  return supabase.from('bookings')
+    .update({
+      status: 'confirmed',
+      meet_link: meetLink
+    })
     .eq('id', bookingId);
+};
+
+export const completeBooking = async (bookingId, tutorUserId, amountPaid) => {
+  // 1. Mark booking as completed
+  const { error: bookingErr } = await supabase.from('bookings')
+    .update({ status: 'completed' })
+    .eq('id', bookingId)
+    .eq('status', 'confirmed'); // Safety: only complete confirmed bookings
+
+  if (bookingErr) return { error: bookingErr };
+
+  // 2. Release 70% funds from escrow to the tutor
+  const tutorShare = amountPaid * 0.70;
+  const { data: profRows, error: fetchErr } = await supabase.from('profiles')
+    .select('balance, total_earned')
+    .eq('id', tutorUserId);
+
+  if (fetchErr) return { error: fetchErr };
+
+  const prof = profRows?.[0];
+  if (prof) {
+    const { error: profErr } = await supabase.from('profiles').update({
+      balance: (prof.balance || 0) + tutorShare,
+      total_earned: (prof.total_earned || 0) + tutorShare
+    }).eq('id', tutorUserId);
+
+    return { error: profErr };
+  }
+
+  return { error: new Error('Tutor profile not found') };
 };
 
 // ─── PURCHASES ───────────────────────────────────────

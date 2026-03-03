@@ -1,7 +1,7 @@
 // src/pages/DashboardPage.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../App';
-import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource } from '../lib/supabase';
+import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking } from '../lib/supabase';
 import { payForProSubscription } from '../lib/paystack';
 import { useNavigate } from 'react-router-dom';
 import PageLoader from '../components/PageLoader';
@@ -102,6 +102,29 @@ export default function DashboardPage() {
     }
   };
 
+  const handleCompleteBooking = async (id, tutorProfileId, amount) => {
+    if (!window.confirm('Mark this session as completed? This will release the payment to the tutor.')) return;
+
+    // We need the tutor's user_id, not their profile id, for the completeBooking function
+    // Find the booking to get the user_id
+    const booking = bookings.find(b => b.id === id);
+    const tutorUserId = booking?.tutor?.user_id;
+
+    if (!tutorUserId) {
+      alert('Error finding tutor user ID');
+      return;
+    }
+
+    const { error } = await completeBooking(id, tutorUserId, amount);
+    if (!error) {
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'completed' } : b));
+      alert('Session marked as completed! Payment released to tutor.');
+    } else {
+      console.error(error);
+      alert('Error completing booking.');
+    }
+  };
+
   const handleApproveResource = async (id) => {
     const { error } = await approveResource(id, session?.access_token);
     if (!error) {
@@ -135,6 +158,11 @@ export default function DashboardPage() {
   const availableBalance = profile?.balance || 0;
   const totalDownloads = uploads.reduce((acc, r) => acc + (r.download_count || 0), 0);
 
+  // Calculate pending escrow (Tutor share of confirmed/pending sessions)
+  const pendingEscrow = profile?.is_tutor ? tutorSessions
+    .filter(s => s.status === 'confirmed' || s.status === 'pending')
+    .reduce((acc, s) => acc + (s.amount_paid * 0.70), 0) : 0;
+
   const s = {
     page: { maxWidth: 1080, margin: '0 auto', padding: 'clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2.5rem)', fontFamily: 'var(--font-body)' },
     card: { background: 'var(--surface)', border: '1px solid var(--outline-variant)', borderRadius: 20, padding: 'clamp(1rem, 4vw, 2rem)', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' },
@@ -149,8 +177,8 @@ export default function DashboardPage() {
     }),
     badge: (type) => ({
       fontSize: '0.75rem', fontWeight: 800, padding: '0.4rem 1rem', borderRadius: '100px',
-      background: type === 'approved' ? 'var(--primary-container)' : type === 'pending' ? 'rgba(212, 160, 32, 0.1)' : 'rgba(255,82,82,0.1)',
-      color: type === 'approved' ? 'var(--primary)' : type === 'pending' ? 'var(--primary)' : '#FF5252',
+      background: type === 'approved' ? 'var(--primary-container)' : type === 'pending' ? 'rgba(212, 160, 32, 0.1)' : type === 'completed' ? 'var(--surface-variant)' : 'rgba(255,82,82,0.1)',
+      color: type === 'approved' ? 'var(--primary)' : type === 'pending' ? 'var(--primary)' : type === 'completed' ? 'var(--on-surface-variant)' : '#FF5252',
       border: `1px solid var(--outline-variant)`,
       textTransform: 'uppercase', letterSpacing: '1px'
     })
@@ -349,12 +377,17 @@ export default function DashboardPage() {
                         <button onClick={() => navigate(`/chat/${b.id}`)} style={{ background: 'var(--surface-variant)', color: 'var(--on-surface)', border: '1px solid var(--outline-variant)', borderRadius: '100px', padding: '0.5rem 1.1rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'var(--primary-container)'; e.currentTarget.style.color = 'var(--primary)'; }} onMouseOut={e => { e.currentTarget.style.background = 'var(--surface-variant)'; e.currentTarget.style.color = 'var(--on-surface)'; }}>
                           💬 Chat
                         </button>
-                        {b.meet_link && (
+                        {b.meet_link && b.status !== 'completed' && (
                           <a href={b.meet_link} target="_blank" rel="noreferrer"
                             style={{ background: '#00C853', color: '#000', textDecoration: 'none', borderRadius: '100px', padding: '0.5rem 1.1rem', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15.6 11.6L22 7v10l-6.4-4.5v-1zM4 5h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7c0-1.1.9-2 2-2z" /></svg>
                             Join Session
                           </a>
+                        )}
+                        {b.status === 'confirmed' && (
+                          <button onClick={() => handleCompleteBooking(b.id, b.tutor_id, b.amount_paid)} style={{ background: 'var(--primary-container)', color: 'var(--primary)', border: '1px solid var(--primary)', borderRadius: '100px', padding: '0.5rem 1.1rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                            ✅ Mark Completed
+                          </button>
                         )}
                       </div>
                     </div>
@@ -369,7 +402,7 @@ export default function DashboardPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div style={s.card}>
                 <h3 style={{ fontFamily: 'Syne, sans-serif', color: '#fff', fontSize: '1.5rem', margin: '0 0 2rem' }}>Earnings Overview</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) minmax(200px, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
                   <div style={{ background: 'linear-gradient(135deg, var(--primary-container) 0%, var(--surface) 100%)', borderRadius: 24, padding: '2rem', border: '1px solid rgba(188, 149, 92, 0.2)', position: 'relative', overflow: 'hidden', boxShadow: '0 8px 32px rgba(188, 149, 92, 0.05)' }}>
                     <div style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '2px', marginBottom: '0.5rem' }}>TOTAL EARNED</div>
                     <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '3rem', color: 'var(--on-surface)', letterSpacing: '-0.04em' }}>₦{totalEarnings.toLocaleString()}</div>
@@ -380,6 +413,14 @@ export default function DashboardPage() {
                     <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '2.5rem', color: '#fff' }}>₦{availableBalance.toLocaleString()}</div>
                     <svg style={{ position: 'absolute', right: '-10%', bottom: '-20%', opacity: 0.1, color: '#FFD600' }} width="120" height="120" viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1h-9a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9zm-9-2h10V8H12v8zm4-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" /></svg>
                   </div>
+                  {profile?.is_tutor && (
+                    <div style={{ background: 'var(--surface-variant)', borderRadius: 20, padding: '2rem', border: '1px solid var(--outline-variant)', position: 'relative', overflow: 'hidden' }}>
+                      <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem', fontWeight: 700, letterSpacing: '1px', marginBottom: '0.5rem' }}>PENDING ESCROW</div>
+                      <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '2.5rem', color: 'var(--on-surface-variant)' }}>₦{pendingEscrow.toLocaleString()}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.5rem' }}>Held securely until session complete</div>
+                      <svg style={{ position: 'absolute', right: '-10%', bottom: '-20%', opacity: 0.1, color: 'var(--on-surface-variant)' }} width="120" height="120" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                    </div>
+                  )}
                 </div>
 
                 {availableBalance >= 1000 ? (
@@ -439,12 +480,14 @@ export default function DashboardPage() {
                         <button onClick={() => navigate(`/chat/${sess.id}`)} style={{ background: 'var(--surface-variant)', color: 'var(--on-surface)', border: '1px solid var(--outline-variant)', borderRadius: '100px', padding: '0.5rem 1.1rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'var(--primary-container)'; e.currentTarget.style.color = 'var(--primary)'; }} onMouseOut={e => { e.currentTarget.style.background = 'var(--surface-variant)'; e.currentTarget.style.color = 'var(--on-surface)'; }}>
                           💬 Chat
                         </button>
-                        {sess.status === 'pending' || !sess.meet_link ? (
+                        {sess.status === 'pending' || (!sess.meet_link && sess.status !== 'completed') ? (
                           <Button onClick={() => handleConfirmBooking(sess.id)} style={{ width: 'auto', padding: '0.5rem 1.25rem' }}>
                             Share Meet Link
                           </Button>
                         ) : (
-                          <div style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 700 }}>Link Shared ✓</div>
+                          <div style={{ fontSize: '0.85rem', color: sess.status === 'completed' ? 'var(--on-surface-variant)' : 'var(--primary)', fontWeight: 700 }}>
+                            {sess.status === 'completed' ? 'Paid out ✓' : 'Link Shared ✓'}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -513,7 +556,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem', flexShrink: 0 }}>
-                          <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.3rem 0.8rem', borderRadius: '100px', background: thread.status === 'confirmed' ? 'var(--primary-container)' : 'rgba(212,160,32,0.1)', color: 'var(--primary)', border: '1px solid var(--outline-variant)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>{thread.status}</span>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.3rem 0.8rem', borderRadius: '100px', background: thread.status === 'confirmed' ? 'var(--primary-container)' : thread.status === 'completed' ? 'var(--surface-variant)' : 'rgba(212,160,32,0.1)', color: thread.status === 'completed' ? 'var(--on-surface-variant)' : 'var(--primary)', border: '1px solid var(--outline-variant)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>{thread.status}</span>
                           <span style={{ fontSize: '0.7rem', color: 'var(--on-surface-variant)', fontWeight: 600 }}>{thread.role === 'tutor' ? '🎓 Tutor' : '📚 Student'}</span>
                         </div>
                         <div style={{ color: 'var(--on-surface-variant)', fontSize: '1.2rem', marginLeft: '0.25rem' }}>›</div>
