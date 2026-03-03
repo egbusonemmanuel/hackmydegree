@@ -1,70 +1,86 @@
-# Getting Started with Create React App
+# 🎓 HackMyDegree
+### *The Ultimate Nigerian University Resource Network*
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/vibesemmy/hackmydegree/blob/main/LICENSE)
+[![React](https://img.shields.io/badge/frontend-React-61dafb.svg)](https://reactjs.org/)
+[![Supabase](https://img.shields.io/badge/backend-Supabase-3ecf8e.svg)](https://supabase.com/)
+[![Design](https://img.shields.io/badge/design-Material--Design--3-FFD600.svg)]()
 
-## Available Scripts
+**HackMyDegree** is a premium, community-driven educational platform built for Nigerian engineering and academic excellence. It serves as a central intelligence hub where students can access verified faculty resources, book elite tutors, and collaborate within a high-performance ecosystem.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## ✨ Signature Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 📡 The Resource Matrix
+*   **Verified Vault**: Access faculty-specific past questions, lecture notes, and research guides.
+*   **Monetization Engine**: Upload high-quality materials and earn premium royalties directly to your wallet.
+*   **Smart Categorization**: Academic resources organized by university, department, and level.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🧠 Private Tutoring Network
+*   **Elite Mentors**: Connect with top scholars from across all Nigerian universities.
+*   **Seamless Booking**: integrated scheduling and Paystack-secured transactions.
+*   **Virtual Classrooms**: Direct integration for meeting links and session management.
 
-### `npm test`
+### 🎭 World-Class User Experience
+*   **The "Lamp Man" Auth**: A delightful, 3D anime-inspired authentication experience with real-time theme toggling.
+*   **Commanding Aesthetics**: A "Google Standard" (MD3) design language featuring Glassmorphism and micro-animations.
+*   **Dual-Theme Engine**: Seamless switching between high-contrast Dark and Light modes.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🛠️ Technology Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | React + Modern Context API |
+| **Styling** | Vanilla CSS (Global Design Tokens) |
+| **Database** | Supabase (PostgreSQL) |
+| **Auth** | Supabase GoTrue (JWT + RLS) |
+| **Storage** | Supabase Storage (S3-Compatible) |
+| **Payments** | Paystack Standard Integration |
+| **Animations** | SVG + CSS Keyframe Engines |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🚀 Getting Started
 
-### `npm run eject`
+### 1. Prerequisites
+*   Node.js (v16+)
+*   NPM or Yarn
+*   A Supabase Project
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 2. Installation
+```bash
+git clone https://github.com/your-username/hackmydegree.git
+cd hackmydegree
+npm install
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 3. Environment Setup
+Create a `.env` file in the root directory and add your Supabase and Paystack keys:
+```env
+REACT_APP_SUPABASE_URL=your_project_url
+REACT_APP_SUPABASE_ANON_KEY=your_anon_key
+REACT_APP_PAYSTACK_PUBLIC_KEY=your_public_key
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 4. Running the App
+```bash
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## 📁 System Architecture
+- `src/components`: Atomic UI components and layout wrappers.
+- `src/lib`: Service singletons for Supabase, Paystack, and analytics.
+- `src/pages`: Feature-driven page modules.
+- `src/index.css`: The "Source of Truth" for the global design system.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📄 License
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+*Empowering the next generation of West African scholars.*
