@@ -1,3 +1,4 @@
+// src/pages/ResourceDetailPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getResource, getResourceReviews, getDownloadUrl, hasPurchased } from '../lib/supabase';
