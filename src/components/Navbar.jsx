@@ -1,6 +1,6 @@
 // src/components/Navbar.jsx
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../App';
 import { useTheme } from '../App';
 import { WhatsAppButton, Button } from './SharedUI';

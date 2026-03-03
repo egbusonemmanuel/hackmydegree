@@ -4,7 +4,7 @@
 // npm install @supabase/supabase-js react-router-dom
 // ─────────────────────────────────────────────────────
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { getProfile, onAuthChange, signOut } from './lib/supabase';
 
 // Page imports
