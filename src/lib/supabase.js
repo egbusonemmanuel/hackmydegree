@@ -58,17 +58,25 @@ export const signOut = async () => {
   return { error: null };
 };
 
-export const deleteAccount = async () => {
-  // 1. Call the secure RPC function to delete the auth.users record
-  const { error: rpcError } = await supabase.rpc('delete_user_account');
-  if (rpcError) {
-    console.error('Failed to delete account from database', rpcError);
-    return { error: rpcError };
+export const deleteTutorProfile = async (userId) => {
+  // 1. Delete from tutor_profiles
+  const { error: deleteErr } = await supabase
+    .from('tutor_profiles')
+    .delete()
+    .eq('user_id', userId);
+
+  if (deleteErr) {
+    console.error('Error deleting tutor profile:', deleteErr);
+    return { error: deleteErr };
   }
 
-  // 2. Sign out the user locally
-  await signOut();
-  return { error: null };
+  // 2. Set is_tutor to false back on the main profile
+  const { error: updateErr } = await supabase
+    .from('profiles')
+    .update({ is_tutor: false })
+    .eq('id', userId);
+
+  return { error: updateErr };
 };
 
 export const getSession = () => supabase.auth.getSession();

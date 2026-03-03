@@ -1,7 +1,7 @@
 // src/pages/DashboardPage.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../App';
-import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteAccount, deleteBooking } from '../lib/supabase';
+import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteTutorProfile, deleteBooking } from '../lib/supabase';
 import { payForProSubscription } from '../lib/paystack';
 import { useNavigate } from 'react-router-dom';
 import PageLoader from '../components/PageLoader';
@@ -143,21 +143,21 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    const confirm1 = window.confirm('⚠️ DANGER ZONE: Are you absolutely sure you want to delete your account?');
+  const handleDeleteTutorProfile = async () => {
+    const confirm1 = window.confirm('Are you sure you want to deactivate your Tutor Profile?');
     if (!confirm1) return;
-    const confirm2 = window.prompt('Type "DELETE" to confirm you want to permanently erase your profile, resources, and bookings:');
-    if (confirm2 !== 'DELETE') return;
+    const confirm2 = window.prompt('Type "DEACTIVATE" to confirm you want to remove yourself from the tutor network:');
+    if (confirm2 !== 'DEACTIVATE') return;
 
     setLoading(true);
-    const { error } = await deleteAccount();
+    const { error } = await deleteTutorProfile(user.id);
     if (error) {
       setLoading(false);
-      alert('Failed to delete account. Note: You must run the SQL migration for this feature to work.');
+      alert('Failed to deactivate tutor profile.');
       console.error(error);
     } else {
-      // Assuming deleteAccount signs us out, AuthProvider will push to /login
-      window.location.href = '/';
+      // Refresh the page to load standard user view
+      window.location.reload();
     }
   };
 
@@ -694,6 +694,9 @@ export default function DashboardPage() {
                     </div>
                     <div style={{ color: '#7A9E7E', fontSize: '1rem', lineHeight: 1.5 }}>You are now visible in the tutor directory. Keep your profile updated and monitor your bookings tab for new sessions.</div>
                   </div>
+                  <button onClick={handleDeleteTutorProfile} style={{ background: 'transparent', color: '#ff5252', border: '1px solid rgba(255,82,82,0.3)', borderRadius: '100px', padding: '0.75rem 1.5rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,82,82,0.1)'; e.currentTarget.style.borderColor = '#ff5252'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,82,82,0.3)'; }}>
+                    Deactivate Profile
+                  </button>
                 </div>
               ) : (
                 <div style={{ background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.1), rgba(0,200,83,0.05))', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
@@ -750,24 +753,6 @@ export default function DashboardPage() {
                   ))}
                   {bookings.filter(b => b.status === 'confirmed').length === 0 && <div style={{ color: '#4A6A4E', fontSize: '0.9rem', padding: '1rem 0' }}>No confirmed upcoming sessions.</div>}
                 </div>
-              </div>
-
-              {/* DANGER ZONE - ACCOUNT DELETION */}
-              <div style={{ marginTop: '4rem', padding: '2rem', border: '1px dashed rgba(255,82,82,0.3)', borderRadius: 24, background: 'rgba(255,82,82,0.02)' }}>
-                <h4 style={{ fontFamily: 'Syne, sans-serif', color: '#ff5252', fontSize: '1.2rem', margin: '0 0 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  ⚠️ Danger Zone
-                </h4>
-                <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.95rem', marginBottom: '1.5rem', maxWidth: 600, lineHeight: 1.5 }}>
-                  Deleting your account is permanent. All your uploaded resources, purchases, tutor status, and active bookings will be wiped immediately. This action cannot be undone.
-                </p>
-                <button
-                  onClick={handleDeleteAccount}
-                  style={{ background: 'transparent', color: '#ff5252', border: '1px solid #ff5252', borderRadius: '100px', padding: '0.75rem 2rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.9rem', transition: 'all 0.2s', ...hoverStyles('#ff5252', '#000') }}
-                  onMouseOver={e => { e.currentTarget.style.background = '#ff5252'; e.currentTarget.style.color = '#000'; }}
-                  onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ff5252'; }}
-                >
-                  Delete Account...
-                </button>
               </div>
             </div>
           )}
