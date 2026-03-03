@@ -1,7 +1,7 @@
 // src/pages/DashboardPage.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../App';
-import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking } from '../lib/supabase';
+import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteAccount, deleteBooking } from '../lib/supabase';
 import { payForProSubscription } from '../lib/paystack';
 import { useNavigate } from 'react-router-dom';
 import PageLoader from '../components/PageLoader';
@@ -122,6 +122,42 @@ export default function DashboardPage() {
     } else {
       console.error(error);
       alert('Error completing booking.');
+    }
+  };
+
+  const handleDeleteBooking = async (id, isTutorView = false) => {
+    if (!window.confirm(!isTutorView
+      ? 'Are you sure you want to delete this session from your dashboard? (Note: If this is a paid session, you will lose access and no refund is automatically issued).'
+      : 'Are you sure you want to remove this session from your dashboard?')) return;
+
+    const { error } = await deleteBooking(id);
+    if (!error) {
+      if (isTutorView) {
+        setTutorSessions(prev => prev.filter(s => s.id !== id));
+      } else {
+        setBookings(prev => prev.filter(b => b.id !== id));
+      }
+    } else {
+      alert('Failed to delete session.');
+      console.error(error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirm1 = window.confirm('⚠️ DANGER ZONE: Are you absolutely sure you want to delete your account?');
+    if (!confirm1) return;
+    const confirm2 = window.prompt('Type "DELETE" to confirm you want to permanently erase your profile, resources, and bookings:');
+    if (confirm2 !== 'DELETE') return;
+
+    setLoading(true);
+    const { error } = await deleteAccount();
+    if (error) {
+      setLoading(false);
+      alert('Failed to delete account. Note: You must run the SQL migration for this feature to work.');
+      console.error(error);
+    } else {
+      // Assuming deleteAccount signs us out, AuthProvider will push to /login
+      window.location.href = '/';
     }
   };
 
@@ -389,6 +425,9 @@ export default function DashboardPage() {
                             ✅ Mark Completed
                           </button>
                         )}
+                        <button onClick={() => handleDeleteBooking(b.id, false)} title="Delete Session" style={{ background: 'transparent', color: '#ff5252', border: '1px solid rgba(255,82,82,0.3)', borderRadius: '100px', padding: '0.5rem 0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,82,82,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                          🗑️
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -489,6 +528,9 @@ export default function DashboardPage() {
                             {sess.status === 'completed' ? 'Paid out ✓' : 'Link Shared ✓'}
                           </div>
                         )}
+                        <button onClick={() => handleDeleteBooking(sess.id, true)} title="Delete Session" style={{ background: 'transparent', color: '#ff5252', border: '1px solid rgba(255,82,82,0.3)', borderRadius: '100px', padding: '0.5rem 0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'all 0.2s', marginLeft: 'auto' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,82,82,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                          🗑️
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -709,6 +751,24 @@ export default function DashboardPage() {
                   {bookings.filter(b => b.status === 'confirmed').length === 0 && <div style={{ color: '#4A6A4E', fontSize: '0.9rem', padding: '1rem 0' }}>No confirmed upcoming sessions.</div>}
                 </div>
               </div>
+
+              {/* DANGER ZONE - ACCOUNT DELETION */}
+              <div style={{ marginTop: '4rem', padding: '2rem', border: '1px dashed rgba(255,82,82,0.3)', borderRadius: 24, background: 'rgba(255,82,82,0.02)' }}>
+                <h4 style={{ fontFamily: 'Syne, sans-serif', color: '#ff5252', fontSize: '1.2rem', margin: '0 0 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  ⚠️ Danger Zone
+                </h4>
+                <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.95rem', marginBottom: '1.5rem', maxWidth: 600, lineHeight: 1.5 }}>
+                  Deleting your account is permanent. All your uploaded resources, purchases, tutor status, and active bookings will be wiped immediately. This action cannot be undone.
+                </p>
+                <button
+                  onClick={handleDeleteAccount}
+                  style={{ background: 'transparent', color: '#ff5252', border: '1px solid #ff5252', borderRadius: '100px', padding: '0.75rem 2rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.9rem', transition: 'all 0.2s', ...hoverStyles('#ff5252', '#000') }}
+                  onMouseOver={e => { e.currentTarget.style.background = '#ff5252'; e.currentTarget.style.color = '#000'; }}
+                  onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ff5252'; }}
+                >
+                  Delete Account...
+                </button>
+              </div>
             </div>
           )}
         </>
@@ -716,3 +776,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+const hoverStyles = (bg, fg) => ({});

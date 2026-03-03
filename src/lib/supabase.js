@@ -58,6 +58,19 @@ export const signOut = async () => {
   return { error: null };
 };
 
+export const deleteAccount = async () => {
+  // 1. Call the secure RPC function to delete the auth.users record
+  const { error: rpcError } = await supabase.rpc('delete_user_account');
+  if (rpcError) {
+    console.error('Failed to delete account from database', rpcError);
+    return { error: rpcError };
+  }
+
+  // 2. Sign out the user locally
+  await signOut();
+  return { error: null };
+};
+
 export const getSession = () => supabase.auth.getSession();
 
 export const onAuthChange = (callback) =>
@@ -464,6 +477,12 @@ export const getTutorBookings = async (tutorProfileId) => {
     `)
     .eq('tutor_id', tutorProfileId)
     .order('scheduled_at', { ascending: true });
+};
+
+export const deleteBooking = async (bookingId) => {
+  return supabase.from('bookings')
+    .delete()
+    .eq('id', bookingId);
 };
 
 export const confirmBooking = async (bookingId, meetLink) => {
