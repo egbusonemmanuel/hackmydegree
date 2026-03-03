@@ -9,7 +9,7 @@ import { Button } from '../components/SharedUI';
 export default function ResourceDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
 
     const [resource, setResource] = useState(null);
     const [reviews, setReviews] = useState([]);
