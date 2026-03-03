@@ -491,7 +491,7 @@ export default function DashboardPage() {
                     <div key={r.id} style={{ background: '#050705', borderRadius: 16, padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', border: '1px solid rgba(255,255,255,0.03)' }}>
                       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flex: 1 }}>
                         {r.thumbnail_url ? (
-                          <img src={r.thumbnail_url} style={{ width: 44, height: 44, borderRadius: 10, objectFit: 'cover' }} />
+                          <img src={r.thumbnail_url} alt={r.title} style={{ width: 44, height: 44, borderRadius: 10, objectFit: 'cover' }} />
                         ) : (
                           <div style={{ width: 44, height: 44, borderRadius: 10, background: 'var(--surface-variant)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>📄</div>
                         )}

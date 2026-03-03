@@ -8,7 +8,6 @@ import { WhatsAppButton, Button } from './SharedUI';
 const Navbar = () => {
     const { user, profile, signOut } = useAuth();
     const { theme, toggleTheme } = useTheme();
-    const navigate = useNavigate();
 
     const handleSignOut = async () => {
         console.log('[Navbar] Sign out clicked');
@@ -54,7 +53,7 @@ const Navbar = () => {
                         background: 'var(--surface-variant)', border: 'none', cursor: 'pointer', fontSize: '1.2rem',
                         width: 40, height: 40, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                         color: 'var(--on-surface)', transition: 'all 0.3s ease',
-                        border: '1px solid var(--outline-variant)'
+                        borderBottom: '1px solid var(--outline-variant)'
                     }}
                 >
                     {theme === 'dark' ? '☀️' : '🌙'}

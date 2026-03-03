@@ -65,7 +65,7 @@ const AuthProvider = ({ children }) => {
       setSession(session ?? null);
       if (session?.user) {
         try {
-          const { data, error } = await getProfile(session.user.id);
+          const { data } = await getProfile(session.user.id);
           if (mounted) {
             setProfile(data);
           }
@@ -120,14 +120,6 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-// ─── PROTECTED ROUTE ─────────────────────────────────
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  if (loading) return <PageLoader />;
-  if (!user) return <Navigate to="/login" replace />;
-  return children;
-};
-
 // ─── THEME PROVIDER ──────────────────────────────────
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = React.useState(() => localStorage.getItem('theme') || 'dark');
@@ -162,7 +154,7 @@ export default function App() {
 }
 
 const AppInner = () => {
-  const { session, loading, user } = useAuth();
+  const { session, loading } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
