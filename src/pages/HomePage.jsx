@@ -82,7 +82,7 @@ export default function HomePage() {
             The ultimate resource platform for Nigerian students. Download past questions,
             lecture notes, and book top-rated tutors in minutes.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap-reverse' }}>
             {user ? (
               <Link to="/dashboard">
                 <button style={{
@@ -136,7 +136,7 @@ export default function HomePage() {
           <section style={{ marginBottom: '8rem' }}>
             <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
               <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.75rem' }}>Browse</span>
-              <h2 style={{ fontSize: '2.2rem', marginTop: '0.5rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Core Categories</h2>
+              <h2 style={{ fontSize: 'clamp(1.5rem, 6vw, 2.2rem)', marginTop: '0.5rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Core Categories</h2>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
               {categories.map(cat => (
@@ -170,7 +170,7 @@ export default function HomePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
               <div>
                 <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.8rem' }}>Hot</span>
-                <h2 style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Latest Resources</h2>
+                <h2 style={{ fontSize: 'clamp(1.8rem, 7vw, 2.5rem)', marginTop: '0.5rem' }}>Latest Resources</h2>
               </div>
               <Link to="/resources" style={{
                 color: 'var(--primary)', padding: '0.75rem 1.75rem', borderRadius: '100px',
@@ -233,7 +233,7 @@ export default function HomePage() {
           <section>
             <div style={{ textAlign: 'center', marginBottom: '4.5rem' }}>
               <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.8rem' }}>Mentorship</span>
-              <h2 style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Elite Tutors</h2>
+              <h2 style={{ fontSize: 'clamp(1.8rem, 7vw, 2.5rem)', marginTop: '0.5rem' }}>Elite Tutors</h2>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
               {featuredTutors.map(tutor => (

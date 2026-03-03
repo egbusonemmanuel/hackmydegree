@@ -115,11 +115,15 @@ const Navbar = () => {
                     <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {!user ? (
                             <>
-                                <Link to="/login" onClick={toggleMenu}><Button variant="secondary" style={{ height: 56 }}>Log In</Button></Link>
-                                <Link to="/signup" onClick={toggleMenu}><Button style={{ height: 56 }}>Get Started Free</Button></Link>
+                                <Link to="/login" onClick={toggleMenu} style={{ display: 'block', width: '100%' }}>
+                                    <Button variant="secondary" style={{ height: 56, width: '100%' }}>Log In</Button>
+                                </Link>
+                                <Link to="/signup" onClick={toggleMenu} style={{ display: 'block', width: '100%' }}>
+                                    <Button style={{ height: 56, width: '100%' }}>Get Started Free</Button>
+                                </Link>
                             </>
                         ) : (
-                            <Button onClick={handleSignOut} variant="secondary" style={{ height: 56 }}>Sign Out</Button>
+                            <Button onClick={handleSignOut} variant="secondary" style={{ height: 56, width: '100%' }}>Sign Out</Button>
                         )}
 
                         <div style={{ marginTop: '1rem' }}>
