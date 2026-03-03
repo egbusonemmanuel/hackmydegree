@@ -179,7 +179,7 @@ export default function UploadPage() {
             }} placeholder="What makes this resource valuable?" value={form.description} onChange={set('description')} />
           </Field>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem' }}>
             <Field label="Category">
               <select required className="glass" style={{
                 width: '100%', padding: '1.1rem 1.25rem', borderRadius: '14px',
@@ -200,7 +200,7 @@ export default function UploadPage() {
         {/* Step 3: Monetization */}
         <section className="glass" style={{ borderRadius: '32px', padding: '3.5rem', marginBottom: '4rem' }}>
           <label style={labelStyle}>Monetization Engine</label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
             {['free', 'premium'].map(type => (
               <div key={type} onClick={() => setForm(f => ({ ...f, resource_type: type }))} style={{
                 padding: '2.5rem', borderRadius: '24px', cursor: 'pointer', textAlign: 'center',
