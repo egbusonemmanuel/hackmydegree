@@ -4,12 +4,12 @@ import { getResource, getResourceReviews, getDownloadUrl, hasPurchased } from '.
 import { payForResource } from '../lib/paystack';
 import { useAuth } from '../App';
 import PageLoader from '../components/PageLoader';
-import { Button, Banner } from '../components/SharedUI';
+import { Button } from '../components/SharedUI';
 
 export default function ResourceDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user, profile } = useAuth();
+    const { user } = useAuth();
 
     const [resource, setResource] = useState(null);
     const [reviews, setReviews] = useState([]);

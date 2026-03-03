@@ -11,13 +11,12 @@ export default function UploadPage() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [file, setFile] = useState(null);
-  const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnail] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const [form, setForm] = useState({
     title: '', description: '', category_id: '',
@@ -28,13 +27,9 @@ export default function UploadPage() {
   useEffect(() => {
     let mounted = true;
     const safetyTimeout = setTimeout(() => {
-      setLoadingCategories(current => {
-        if (current && mounted) {
-          setError('Category loading timed out. Please check your connection.');
-          return false;
-        }
-        return current;
-      });
+      if (mounted) {
+        setError('Category loading timed out. Please check your connection.');
+      }
     }, 10000);
 
     getCategories()
@@ -45,7 +40,6 @@ export default function UploadPage() {
       })
       .finally(() => {
         if (mounted) {
-          setLoadingCategories(false);
           clearTimeout(safetyTimeout);
         }
       });

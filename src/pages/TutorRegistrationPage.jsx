@@ -6,7 +6,7 @@ import { createTutorProfile } from '../lib/supabase';
 import { Button, Field, Input, Banner } from '../components/SharedUI';
 
 export default function TutorRegistrationPage() {
-    const { user, profile, refreshProfile } = useAuth();
+    const { user, refreshProfile } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
