@@ -42,7 +42,7 @@ export default function ChatPage() {
         if (!bookingId || !user) return;
 
         const load = async () => {
-            const [{ data: bk, error: bkErr }, { data: msgs, error: mErr }] = await Promise.all([
+            const [{ data: bk, error: bkErr }, { data: msgs }] = await Promise.all([
                 getBookingForChat(bookingId),
                 getBookingMessages(bookingId)
             ]);
