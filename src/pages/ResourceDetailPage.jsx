@@ -103,7 +103,7 @@ export default function ResourceDetailPage() {
                 <span>←</span> Back to Repository
             </Link>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 350px', gap: '3rem', alignItems: 'start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'start' }}>
                 {/* Left Column: Details */}
                 <div>
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.25rem' }}>
@@ -113,7 +113,7 @@ export default function ResourceDetailPage() {
                         <span style={{ color: 'var(--on-surface-variant)', fontSize: '0.95rem', fontWeight: 500 }}>• {resource.school} {resource.subject && `• ${resource.subject}`}</span>
                     </div>
 
-                    <h1 style={{ fontSize: '3rem', marginBottom: '1.25rem', marginTop: 0, fontWeight: 900, letterSpacing: '-0.04em' }}>
+                    <h1 style={{ fontSize: 'clamp(2rem, 8vw, 3rem)', marginBottom: '1.25rem', marginTop: 0, fontWeight: 900, letterSpacing: '-0.04em' }}>
                         {resource.title}
                     </h1>
 
@@ -153,7 +153,7 @@ export default function ResourceDetailPage() {
                 </div>
 
                 {/* Right Column: Sticky Action Card */}
-                <div className="glass" style={{ position: 'sticky', top: '120px', borderRadius: '24px', padding: '2.5rem', border: '1px solid var(--outline-variant)' }}>
+                <div className="glass" style={{ position: 'sticky', top: '100px', borderRadius: '24px', padding: 'clamp(1.5rem, 5vw, 2.5rem)', border: '1px solid var(--outline-variant)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--on-surface-variant)' }}>Access Price</span>
                         <span style={{ fontSize: '2.2rem', fontWeight: 900, color: resource.resource_type === 'free' ? 'var(--primary)' : 'var(--on-surface)' }}>

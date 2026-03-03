@@ -41,11 +41,11 @@ export default function ResourcesPage() {
     }, [activeCategory, search]);
 
     return (
-        <div style={{ color: 'var(--on-surface)', fontFamily: 'var(--font-body)', maxWidth: '1200px', margin: '0 auto', padding: '4rem 2rem' }}>
-            <h1 style={{ fontFamily: 'var(--font-header)', fontSize: '3rem', marginBottom: '1rem', fontWeight: 900, letterSpacing: '-0.05em' }}>
+        <div style={{ color: 'var(--on-surface)', fontFamily: 'var(--font-body)', maxWidth: '1200px', margin: '0 auto', padding: 'clamp(2rem, 8vw, 4rem) clamp(1rem, 4vw, 2rem)' }}>
+            <h1 style={{ fontFamily: 'var(--font-header)', fontSize: 'clamp(2rem, 6vw, 3rem)', marginBottom: '1rem', fontWeight: 900, letterSpacing: '-0.05em' }}>
                 Resource Vault 📚
             </h1>
-            <p style={{ color: 'var(--on-surface-variant)', marginBottom: '3.5rem', fontSize: '1.2rem', fontWeight: 500 }}>
+            <p style={{ color: 'var(--on-surface-variant)', marginBottom: 'clamp(2rem, 6vw, 3.5rem)', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', fontWeight: 500 }}>
                 High-quality past questions, lecture notes, and study guides from across Nigeria.
             </p>
 
@@ -92,7 +92,7 @@ export default function ResourcesPage() {
                     No resources found. Try adjusting your search or category.
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
                     {resources.map(res => (
                         <Link to={`/resources/${res.id}`} key={res.id} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <div style={{

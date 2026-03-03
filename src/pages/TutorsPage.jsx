@@ -41,7 +41,7 @@ export default function TutorsPage() {
                 <h1 style={{ fontFamily: 'var(--font-header)', fontSize: '3.5rem', marginBottom: '1.25rem', fontWeight: 900, letterSpacing: '-0.06em' }}>
                     Elite Tutors 👨‍🏫
                 </h1>
-                <p style={{ color: 'var(--on-surface-variant)', fontSize: '1.25rem', maxWidth: '700px', margin: '0 auto 2.5rem', fontWeight: 500, lineHeight: 1.6 }}>
+                <p style={{ color: 'var(--on-surface-variant)', fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', maxWidth: '700px', margin: '0 auto 2.5rem', fontWeight: 500, lineHeight: 1.6 }}>
                     Struggling with a course? Book 1-on-1 virtual sessions with top-performing scholars from your university network.
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
@@ -71,7 +71,7 @@ export default function TutorsPage() {
                     No tutors found matching your search.
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
                     {filteredTutors.map(tutor => (
                         <div key={tutor.id} style={{
                             background: 'rgba(255,255,255,0.02)', borderRadius: '16px', padding: '2rem',

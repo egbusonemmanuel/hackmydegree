@@ -1,5 +1,4 @@
-// src/components/Navbar.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../App';
 import { useTheme } from '../App';
@@ -8,12 +7,11 @@ import { WhatsAppButton, Button } from './SharedUI';
 const Navbar = () => {
     const { user, profile, signOut } = useAuth();
     const { theme, toggleTheme } = useTheme();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleSignOut = async () => {
-        console.log('[Navbar] Sign out clicked');
         try {
             await signOut();
-            console.log('[Navbar] Sign out successful - forcing reload');
             window.location.href = '/';
         } catch (err) {
             console.error('[Navbar] Sign out error:', err);
@@ -21,88 +19,119 @@ const Navbar = () => {
         }
     };
 
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
     return (
-        <nav className="glass" style={{
-            position: 'sticky', top: 0, zIndex: 100,
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '1rem 2.5rem',
-            background: 'var(--surface)',
-            borderBottom: '1px solid var(--outline-variant)',
-            fontFamily: 'var(--font-header)',
-            backdropFilter: 'blur(10px)',
-        }}>
-            <Link to="/" style={{ textDecoration: 'none' }}>
-                <span style={{ fontWeight: 900, fontSize: '1.6rem', color: 'var(--primary)', letterSpacing: '-0.04em' }}>
-                    Hack<span style={{ color: 'var(--on-surface)' }}>MyDegree</span>
-                </span>
-            </Link>
+        <>
+            <nav className="glass" style={{
+                position: 'sticky', top: 0, zIndex: 100,
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '1rem 1.5rem',
+                background: 'var(--surface)',
+                borderBottom: '1px solid var(--outline-variant)',
+                fontFamily: 'var(--font-header)',
+                backdropFilter: 'blur(10px)',
+            }}>
+                <Link to="/" style={{ textDecoration: 'none' }}>
+                    <span style={{ fontWeight: 900, fontSize: '1.4rem', color: 'var(--primary)', letterSpacing: '-0.04em' }}>
+                        Hack<span style={{ color: 'var(--on-surface)' }}>MyDegree</span>
+                    </span>
+                </Link>
 
-            <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                <Link to="/resources" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, transition: 'color 0.3s' }}>Resources</Link>
-                <Link to="/tutors" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, transition: 'color 0.3s' }}>Tutors</Link>
-                {user && <Link to="/upload" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, transition: 'color 0.3s' }}>Upload</Link>}
+                {/* Desktop Nav Items */}
+                <div className="desktop-only" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                    <Link to="/resources" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600 }}>Resources</Link>
+                    <Link to="/tutors" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600 }}>Tutors</Link>
+                    {user && <Link to="/upload" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600 }}>Upload</Link>}
 
-                <WhatsAppButton
-                    text="Check out HackMyDegree — The ultimate resource platform for Nigerian students! 🚀"
-                    style={{ width: 'auto', padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}
-                />
+                    <WhatsAppButton
+                        text="Check out HackMyDegree — The ultimate resource platform for Nigerian students! 🚀"
+                        style={{ width: 'auto', padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}
+                    />
 
-                <button
-                    onClick={toggleTheme}
-                    style={{
-                        background: 'var(--surface-variant)', border: 'none', cursor: 'pointer', fontSize: '1.2rem',
-                        width: 40, height: 40, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'var(--on-surface)', transition: 'all 0.3s ease',
-                        borderBottom: '1px solid var(--outline-variant)'
-                    }}
-                >
-                    {theme === 'dark' ? '☀️' : '🌙'}
-                </button>
+                    <button
+                        onClick={toggleTheme}
+                        style={{
+                            background: 'var(--surface-variant)', border: 'none', cursor: 'pointer', fontSize: '1.2rem',
+                            width: 38, height: 38, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: 'var(--on-surface)', borderBottom: '1px solid var(--outline-variant)'
+                        }}
+                    >
+                        {theme === 'dark' ? '☀️' : '🌙'}
+                    </button>
 
-                {user ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                        {profile?.is_pro && (
-                            <span style={{
-                                background: 'rgba(212, 160, 32, 0.1)', color: 'var(--primary)',
-                                fontSize: '0.75rem', fontWeight: 800, padding: '0.25rem 0.75rem',
-                                borderRadius: '100px', border: '1px solid var(--primary)'
-                            }}>PRO</span>
+                    {user ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                            {profile?.is_pro && (
+                                <span style={{
+                                    background: 'rgba(212, 160, 32, 0.1)', color: 'var(--primary)',
+                                    fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.6rem',
+                                    borderRadius: '100px', border: '1px solid var(--primary)'
+                                }}>PRO</span>
+                            )}
+                            <Link to="/dashboard" style={{ color: 'var(--on-surface)', textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem' }}>
+                                {profile?.username || user.email?.split('@')[0]}
+                            </Link>
+                            <Button variant="secondary" onClick={handleSignOut} style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>Sign Out</Button>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <Link to="/login"><Button variant="secondary" style={{ width: 'auto', padding: '0.5rem 1.25rem' }}>Login</Button></Link>
+                            <Link to="/signup"><Button style={{ width: 'auto', padding: '0.5rem 1.5rem' }}>Join Free</Button></Link>
+                        </div>
+                    )}
+                </div>
+
+                {/* Mobile Hamburger */}
+                <div className="mobile-only" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <button
+                        onClick={toggleTheme}
+                        style={{
+                            background: 'var(--surface-variant)', border: 'none', cursor: 'pointer', fontSize: '1rem',
+                            width: 36, height: 36, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: 'var(--on-surface)', borderBottom: '1px solid var(--outline-variant)'
+                        }}
+                    >
+                        {theme === 'dark' ? '☀️' : '🌙'}
+                    </button>
+                    <button onClick={toggleMenu} style={{ background: 'none', border: 'none', color: 'var(--on-surface)', fontSize: '1.5rem', cursor: 'pointer' }}>
+                        {isMenuOpen ? '✕' : '☰'}
+                    </button>
+                </div>
+            </nav>
+
+            {/* Mobile Sidebar Overlay */}
+            {isMenuOpen && (
+                <div className="mobile-nav-overlay mobile-only">
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '2rem' }}>
+                        <button onClick={toggleMenu} style={{ background: 'none', border: 'none', color: 'var(--on-surface)', fontSize: '2rem' }}>✕</button>
+                    </div>
+
+                    <Link to="/resources" className="mobile-nav-link" onClick={toggleMenu}>Explore Resources</Link>
+                    <Link to="/tutors" className="mobile-nav-link" onClick={toggleMenu}>Find a Tutor</Link>
+                    {user && <Link to="/upload" className="mobile-nav-link" onClick={toggleMenu}>Upload Study Material</Link>}
+                    {user && <Link to="/dashboard" className="mobile-nav-link" onClick={toggleMenu}>My Dashboard</Link>}
+
+                    <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {!user ? (
+                            <>
+                                <Link to="/login" onClick={toggleMenu}><Button variant="secondary" style={{ height: 56 }}>Log In</Button></Link>
+                                <Link to="/signup" onClick={toggleMenu}><Button style={{ height: 56 }}>Get Started Free</Button></Link>
+                            </>
+                        ) : (
+                            <Button onClick={handleSignOut} variant="secondary" style={{ height: 56 }}>Sign Out</Button>
                         )}
-                        <Link to="/dashboard" style={{ color: 'var(--on-surface)', textDecoration: 'none', fontWeight: 700, fontSize: '0.95rem' }}>
-                            {profile?.username || user.email?.split('@')[0]}
-                        </Link>
-                        <Button
-                            variant="secondary"
-                            onClick={handleSignOut}
-                            style={{
-                                width: 'auto', padding: '0.6rem 1.25rem',
-                                fontSize: '0.9rem', fontWeight: 700,
-                                borderRadius: '100px'
-                            }}>
-                            Sign Out
-                        </Button>
+
+                        <div style={{ marginTop: '1rem' }}>
+                            <WhatsAppButton
+                                text="Check out HackMyDegree — The ultimate resource platform for Nigerian students! 🚀"
+                                style={{ width: '100%', height: 56 }}
+                            />
+                        </div>
                     </div>
-                ) : (
-                    <div style={{ display: 'flex', gap: '0.75rem' }}>
-                        <Link to="/login">
-                            <button style={{
-                                background: 'transparent', color: 'var(--on-surface)', border: '1px solid var(--outline-variant)',
-                                borderRadius: '100px', padding: '0.7rem 1.5rem', cursor: 'pointer',
-                                fontFamily: 'var(--font-header)', fontWeight: 700, fontSize: '0.95rem'
-                            }}>Login</button>
-                        </Link>
-                        <Link to="/signup">
-                            <button style={{
-                                background: 'var(--on-surface)', color: 'var(--surface)', border: 'none',
-                                borderRadius: '100px', padding: '0.7rem 1.75rem', cursor: 'pointer',
-                                fontFamily: 'var(--font-header)', fontWeight: 800, fontSize: '0.95rem',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
-                            }}>Join Free</button>
-                        </Link>
-                    </div>
-                )}
-            </div>
-        </nav>
+                </div>
+            )}
+        </>
     );
 };
 

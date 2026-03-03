@@ -51,7 +51,7 @@ export default function HomePage() {
     <div style={{ background: 'var(--surface)' }}>
       {/* Hero Section */}
       <section style={{
-        padding: '10rem 2rem 8rem',
+        padding: 'clamp(6rem, 15vh, 10rem) 1.5rem clamp(4rem, 10vh, 8rem)',
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden',
@@ -69,25 +69,25 @@ export default function HomePage() {
 
         <div style={{ position: 'relative', zIndex: 1 }}>
           <h1 className="gradient-text" style={{
-            fontSize: 'max(3.5rem, 5vw)', lineHeight: 0.9, marginBottom: '1.5rem',
+            fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', lineHeight: 1, marginBottom: '1.5rem',
             fontFamily: 'var(--font-header)', fontWeight: 900, letterSpacing: '-0.06em'
           }}>
             Ace Your Degree.<br />
             Zero Stress.
           </h1>
           <p style={{
-            color: 'var(--on-surface-variant)', fontSize: '1.15rem', maxWidth: '600px',
+            color: 'var(--on-surface-variant)', fontSize: 'clamp(1rem, 2vw, 1.15rem)', maxWidth: '600px',
             margin: '0 auto 3.5rem', fontFamily: 'var(--font-body)', fontWeight: 500, lineHeight: 1.6
           }}>
             The ultimate resource platform for Nigerian students. Download past questions,
             lecture notes, and book top-rated tutors in minutes.
           </p>
-          <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             {user ? (
               <Link to="/dashboard">
                 <button style={{
                   background: 'var(--on-surface)', color: 'var(--surface)', border: 'none',
-                  borderRadius: '100px', padding: '1.2rem 3rem', fontSize: '1.1rem',
+                  borderRadius: '100px', padding: '1rem 2.5rem', fontSize: '1rem',
                   fontFamily: 'var(--font-header)', fontWeight: 800, cursor: 'pointer',
                   boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -100,7 +100,7 @@ export default function HomePage() {
               <Link to="/resources">
                 <button style={{
                   background: 'var(--on-surface)', color: 'var(--surface)', border: 'none',
-                  borderRadius: '100px', padding: '1.2rem 3rem', fontSize: '1.1rem',
+                  borderRadius: '100px', padding: '1rem 2.5rem', fontSize: '1rem',
                   fontFamily: 'var(--font-header)', fontWeight: 800, cursor: 'pointer',
                   boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -114,7 +114,7 @@ export default function HomePage() {
               <button style={{
                 background: 'var(--surface-variant)', color: 'var(--on-surface)',
                 border: '1px solid var(--outline-variant)', borderRadius: '100px',
-                padding: '1.2rem 2.5rem', fontSize: '1.1rem',
+                padding: '1rem 2.25rem', fontSize: '1rem',
                 fontFamily: 'var(--font-header)', fontWeight: 700,
                 cursor: 'pointer', backdropFilter: 'blur(8px)',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -138,7 +138,7 @@ export default function HomePage() {
               <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.75rem' }}>Browse</span>
               <h2 style={{ fontSize: '2.2rem', marginTop: '0.5rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Core Categories</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
               {categories.map(cat => (
                 <Link to={`/resources?category=${cat.id}`} key={cat.id} className="glass" style={{
                   borderRadius: '24px', padding: '3rem 2rem', textAlign: 'center',
@@ -178,7 +178,7 @@ export default function HomePage() {
                 border: '1px solid rgba(188, 149, 92, 0.2)'
               }}>View Repository →</Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
               {featuredResources.map(res => (
                 <Link to={`/resources/${res.id}`} key={res.id} className="glass" style={{
                   borderRadius: '24px', overflow: 'hidden', transition: 'var(--transition-smooth)',
@@ -235,7 +235,7 @@ export default function HomePage() {
               <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.8rem' }}>Mentorship</span>
               <h2 style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Elite Tutors</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
               {featuredTutors.map(tutor => (
                 <div key={tutor.id} className="glass" style={{
                   borderRadius: '24px', padding: '2rem', display: 'flex', gap: '1.5rem',
@@ -270,10 +270,10 @@ export default function HomePage() {
 
           {/* Share Section */}
           <section className="animate-fade-in" style={{
-            marginTop: '8rem', padding: '6rem 3rem', borderRadius: '40px',
+            marginTop: 'clamp(4rem, 10vh, 8rem)', padding: 'clamp(3rem, 8vw, 6rem) 1.5rem', borderRadius: '32px',
             background: 'var(--on-surface)', color: 'var(--surface)', textAlign: 'center'
           }}>
-            <h2 style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '1.5rem', letterSpacing: '-0.06em' }}>Empower Your Circle</h2>
+            <h2 style={{ fontSize: 'clamp(2rem, 6vw, 3rem)', fontWeight: 900, marginBottom: '1.5rem', letterSpacing: '-0.06em' }}>Empower Your Circle</h2>
             <p style={{ fontSize: '1.2rem', opacity: 0.8, maxWidth: '600px', margin: '0 auto 3rem', fontWeight: 500 }}>
               Sharing is the fastest way to build a stronger academic community. Send HackMyDegree to your course groups and help your classmates ace their exams.
             </p>

@@ -136,9 +136,9 @@ export default function DashboardPage() {
   const totalDownloads = uploads.reduce((acc, r) => acc + (r.download_count || 0), 0);
 
   const s = {
-    page: { maxWidth: 1080, margin: '0 auto', padding: '3rem 2.5rem', fontFamily: 'var(--font-body)' },
-    card: { background: 'var(--surface)', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: '2rem', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' },
-    statCard: { background: 'var(--surface)', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: '1.75rem', textAlign: 'center', transition: 'all 0.3s ease' },
+    page: { maxWidth: 1080, margin: '0 auto', padding: 'clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2.5rem)', fontFamily: 'var(--font-body)' },
+    card: { background: 'var(--surface)', border: '1px solid var(--outline-variant)', borderRadius: 20, padding: 'clamp(1rem, 4vw, 2rem)', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' },
+    statCard: { background: 'var(--surface)', border: '1px solid var(--outline-variant)', borderRadius: 20, padding: '1.25rem', textAlign: 'center', transition: 'all 0.3s ease' },
     tab: (active) => ({
       padding: '0.8rem 1.75rem', borderRadius: '100px', cursor: 'pointer',
       fontFamily: 'var(--font-header)', fontWeight: 700, fontSize: '0.95rem',
@@ -202,7 +202,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '2rem' }}>
         {[
           { label: 'Uploads', value: uploads.length, icon: '📤' },
           { label: 'Total Downloads', value: totalDownloads.toLocaleString(), icon: '📥' },
@@ -559,7 +559,7 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(300px, 1fr)', gap: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
                 <div className="stat-card" style={{ ...s.card, cursor: 'pointer', padding: '1.5rem' }} onClick={() => setTab(TAB.UPLOADS)}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, color: '#fff', fontSize: '1.2rem' }}>📤 Recent Uploads</div>
