@@ -18,6 +18,7 @@ import ResourceDetailPage from './pages/ResourceDetailPage';
 import TutorsPage from './pages/TutorsPage';
 import LegalPage from './pages/LegalPage';
 import TutorRegistrationPage from './pages/TutorRegistrationPage';
+import ChatPage from './pages/ChatPage';
 
 // Component imports
 import Navbar from './components/Navbar';
@@ -185,6 +186,7 @@ const AppInner = () => {
           <Route path="/dashboard" element={session ? <DashboardPage /> : <Navigate to="/login" />} />
           <Route path="/book/:tutorId" element={session ? <BookingPage /> : <Navigate to="/login" />} />
           <Route path="/become-a-tutor" element={session ? <TutorRegistrationPage /> : <Navigate to="/login" />} />
+          <Route path="/chat/:bookingId" element={session ? <ChatPage /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

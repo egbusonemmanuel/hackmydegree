@@ -15,8 +15,7 @@ export default function TutorRegistrationPage() {
     const [form, setForm] = useState({
         bio: '',
         hourly_rate: 1500,
-        subjects: '', // Will be split by comma
-        availability_info: 'Flexible'
+        subjects: '' // Will be split by comma
     });
 
     const handleChange = (field) => (e) => {
@@ -38,7 +37,6 @@ export default function TutorRegistrationPage() {
                 bio: form.bio,
                 hourly_rate: parseInt(form.hourly_rate),
                 subjects: subjectsArray,
-                availability_info: form.availability_info,
                 is_available: false // Set to false for moderation
             });
 
@@ -114,14 +112,7 @@ export default function TutorRegistrationPage() {
                         />
                     </Field>
 
-                    <Field label="Availability Info" helper="When are you usually free for sessions?">
-                        <Input
-                            placeholder="e.g. Weeknights and Weekends"
-                            value={form.availability_info}
-                            onChange={handleChange('availability_info')}
-                            required
-                        />
-                    </Field>
+
 
                     <div style={{ paddingTop: '1rem' }}>
                         <Button type="submit" loading={loading} style={{ height: '56px', fontSize: '1.1rem' }}>

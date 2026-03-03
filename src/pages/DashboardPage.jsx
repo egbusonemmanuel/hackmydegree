@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import PageLoader from '../components/PageLoader';
 import { Button, Banner, Field, Input } from '../components/SharedUI';
 
-const TAB = { OVERVIEW: 'overview', UPLOADS: 'uploads', PURCHASES: 'purchases', BOOKINGS: 'bookings', EARNINGS: 'earnings', SESSIONS: 'sessions', ADMIN: 'admin' };
+const TAB = { OVERVIEW: 'overview', UPLOADS: 'uploads', PURCHASES: 'purchases', BOOKINGS: 'bookings', MESSAGES: 'messages', EARNINGS: 'earnings', SESSIONS: 'sessions', ADMIN: 'admin' };
 
 export default function DashboardPage() {
   const { user, profile, refreshProfile, session } = useAuth();
@@ -224,9 +224,11 @@ export default function DashboardPage() {
         {Object.values(TAB).map(t => {
           if (t === TAB.SESSIONS && !profile?.is_tutor) return null;
           if (t === TAB.ADMIN && !profile?.is_admin) return null;
+          const icons = { overview: '🏠', uploads: '📤', purchases: '🛍️', bookings: '📅', messages: '💬', earnings: '💰', sessions: '🎓', admin: '⚙️' };
+          const label = `${icons[t] || ''} ${t.charAt(0).toUpperCase() + t.slice(1)}`;
           return (
             <button key={t} onClick={() => setTab(t)} style={s.tab(tab === t)}>
-              {t.charAt(0).toUpperCase() + t.slice(1)}
+              {label}
             </button>
           );
         })}
@@ -342,11 +344,14 @@ export default function DashboardPage() {
                           <span style={{ color: '#FFD600' }}>₦{b.amount_paid}</span>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
                         <span style={s.badge(b.status)}>{b.status}</span>
+                        <button onClick={() => navigate(`/chat/${b.id}`)} style={{ background: 'var(--surface-variant)', color: 'var(--on-surface)', border: '1px solid var(--outline-variant)', borderRadius: '100px', padding: '0.5rem 1.1rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'var(--primary-container)'; e.currentTarget.style.color = 'var(--primary)'; }} onMouseOut={e => { e.currentTarget.style.background = 'var(--surface-variant)'; e.currentTarget.style.color = 'var(--on-surface)'; }}>
+                          💬 Chat
+                        </button>
                         {b.meet_link && (
                           <a href={b.meet_link} target="_blank" rel="noreferrer"
-                            style={{ background: '#00C853', color: '#000', textDecoration: 'none', borderRadius: '100px', padding: '0.6rem 1.25rem', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'transform 0.2s' }} onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
+                            style={{ background: '#00C853', color: '#000', textDecoration: 'none', borderRadius: '100px', padding: '0.5rem 1.1rem', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15.6 11.6L22 7v10l-6.4-4.5v-1zM4 5h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7c0-1.1.9-2 2-2z" /></svg>
                             Join Session
                           </a>
@@ -429,8 +434,11 @@ export default function DashboardPage() {
                         </div>
                         {sess.message && <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.5rem', fontStyle: 'italic' }}>"{sess.message}"</div>}
                       </div>
-                      <div style={{ display: 'flex', gap: '0.75rem' }}>
+                      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
                         <span style={s.badge(sess.status)}>{sess.status}</span>
+                        <button onClick={() => navigate(`/chat/${sess.id}`)} style={{ background: 'var(--surface-variant)', color: 'var(--on-surface)', border: '1px solid var(--outline-variant)', borderRadius: '100px', padding: '0.5rem 1.1rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'var(--primary-container)'; e.currentTarget.style.color = 'var(--primary)'; }} onMouseOut={e => { e.currentTarget.style.background = 'var(--surface-variant)'; e.currentTarget.style.color = 'var(--on-surface)'; }}>
+                          💬 Chat
+                        </button>
                         {sess.status === 'pending' || !sess.meet_link ? (
                           <Button onClick={() => handleConfirmBooking(sess.id)} style={{ width: 'auto', padding: '0.5rem 1.25rem' }}>
                             Share Meet Link
@@ -443,6 +451,77 @@ export default function DashboardPage() {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* MESSAGES TAB */}
+          {tab === TAB.MESSAGES && (
+            <div style={s.card}>
+              <h3 style={{ fontFamily: 'Syne, sans-serif', color: '#fff', fontSize: '1.5rem', margin: '0 0 1.5rem' }}>
+                💬 My Chats <span style={{ color: 'var(--primary)' }}>({[...bookings, ...(profile?.is_tutor ? tutorSessions : [])].length})</span>
+              </h3>
+              {(() => {
+                const allThreads = [
+                  ...bookings.map(b => ({
+                    id: b.id,
+                    subject: b.subject,
+                    other: b.tutor?.profile?.full_name || b.tutor?.profile?.username || 'Tutor',
+                    otherAvatar: b.tutor?.profile?.avatar_url,
+                    date: b.scheduled_at,
+                    status: b.status,
+                    role: 'student'
+                  })),
+                  ...(profile?.is_tutor ? tutorSessions.map(s => ({
+                    id: s.id,
+                    subject: s.subject,
+                    other: s.student?.full_name || s.student?.username || 'Student',
+                    otherAvatar: s.student?.avatar_url,
+                    date: s.scheduled_at,
+                    status: s.status,
+                    role: 'tutor'
+                  })) : [])
+                ];
+
+                if (allThreads.length === 0) {
+                  return (
+                    <div style={{ textAlign: 'center', padding: '4rem 2rem', background: '#050705', borderRadius: 16, border: '1px dashed rgba(188,149,92,0.2)' }}>
+                      <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.8 }}>💬</div>
+                      <p style={{ color: 'var(--on-surface-variant)', margin: 0 }}>No active chats yet. Book a session to get started.</p>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {allThreads.map(thread => (
+                      <div
+                        key={`${thread.role}-${thread.id}`}
+                        onClick={() => navigate(`/chat/${thread.id}`)}
+                        style={{ background: '#050705', borderRadius: 16, padding: '1.25rem 1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'center', border: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer', transition: 'all 0.2s' }}
+                        onMouseOver={e => { e.currentTarget.style.background = '#111611'; e.currentTarget.style.borderColor = 'var(--outline-variant)'; }}
+                        onMouseOut={e => { e.currentTarget.style.background = '#050705'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'; }}
+                      >
+                        <div style={{ width: 48, height: 48, borderRadius: '50%', flexShrink: 0, background: 'var(--surface-variant)', backgroundImage: thread.otherAvatar ? `url(${thread.otherAvatar})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+                          {!thread.otherAvatar && '👤'}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#E8F5E9', fontSize: '1rem', marginBottom: '0.2rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {thread.other}
+                          </div>
+                          <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {thread.subject}{thread.date ? ` · ${new Date(thread.date).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })}` : ''}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem', flexShrink: 0 }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.3rem 0.8rem', borderRadius: '100px', background: thread.status === 'confirmed' ? 'var(--primary-container)' : 'rgba(212,160,32,0.1)', color: 'var(--primary)', border: '1px solid var(--outline-variant)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>{thread.status}</span>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--on-surface-variant)', fontWeight: 600 }}>{thread.role === 'tutor' ? '🎓 Tutor' : '📚 Student'}</span>
+                        </div>
+                        <div style={{ color: 'var(--on-surface-variant)', fontSize: '1.2rem', marginLeft: '0.25rem' }}>›</div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           )}
 

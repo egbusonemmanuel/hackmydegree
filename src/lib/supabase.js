@@ -513,3 +513,75 @@ export const getResourceReviews = async (resourceId) => {
     .eq('resource_id', resourceId)
     .order('created_at', { ascending: false });
 };
+
+// ─── MESSAGING ───────────────────────────────────────
+
+/**
+ * Fetch all messages for a booking, ordered oldest first.
+ * Each message includes basic sender profile info.
+ */
+export const getBookingMessages = async (bookingId) => {
+  return supabase
+    .from('booking_messages')
+    .select(`
+      *,
+      sender:profiles!sender_id(id, username, full_name, avatar_url)
+    `)
+    .eq('booking_id', bookingId)
+    .order('created_at', { ascending: true });
+};
+
+/**
+ * Send a message in a booking thread.
+ */
+export const sendBookingMessage = async (bookingId, senderId, content) => {
+  return supabase
+    .from('booking_messages')
+    .insert({ booking_id: bookingId, sender_id: senderId, content })
+    .select()
+    .single();
+};
+
+/**
+ * Subscribe to new messages in a booking thread via Supabase Realtime.
+ * Returns the channel so the caller can call .unsubscribe() on cleanup.
+ *
+ * Usage:
+ *   const channel = subscribeToMessages(bookingId, (newMsg) => { ... });
+ *   return () => supabase.removeChannel(channel);
+ */
+export const subscribeToMessages = (bookingId, onNewMessage) => {
+  const channel = supabase
+    .channel(`booking-chat-${bookingId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'booking_messages',
+        filter: `booking_id=eq.${bookingId}`
+      },
+      (payload) => onNewMessage(payload.new)
+    )
+    .subscribe();
+  return channel;
+};
+
+/**
+ * Fetch minimal booking info needed to render the chat header.
+ * Returns subject, scheduled_at, student_id, tutor_id, meet_link.
+ */
+export const getBookingForChat = async (bookingId) => {
+  return supabase
+    .from('bookings')
+    .select(`
+      id, subject, scheduled_at, student_id, meet_link, status, duration_hours,
+      tutor:tutor_profiles(
+        id, user_id,
+        profile:profiles(id, full_name, username, avatar_url)
+      ),
+      student:profiles!student_id(id, full_name, username, avatar_url)
+    `)
+    .eq('id', bookingId)
+    .single();
+};
