@@ -175,7 +175,8 @@ const AppInner = () => {
       <main key={location.pathname} className="animate-fade-in" style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={!session ? <AuthPage /> : <Navigate to="/dashboard" />} />
+          <Route path="/login" element={!session ? <AuthPage mode="login" /> : <Navigate to="/dashboard" />} />
+          <Route path="/signup" element={!session ? <AuthPage mode="signup" /> : <Navigate to="/dashboard" />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/resources/:id" element={<ResourceDetailPage />} />
           <Route path="/tutors" element={<TutorsPage />} />
