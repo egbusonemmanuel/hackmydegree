@@ -1,13 +1,139 @@
 // src/pages/DashboardPage.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../App';
-import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteTutorProfile, deleteBooking } from '../lib/supabase';
+import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteTutorProfile, deleteBooking, requestWithdrawal, getWithdrawals } from '../lib/supabase';
 import { payForProSubscription } from '../lib/paystack';
 import { useNavigate } from 'react-router-dom';
 import PageLoader from '../components/PageLoader';
 import { Button, Banner, Field, Input } from '../components/SharedUI';
 
 const TAB = { OVERVIEW: 'overview', UPLOADS: 'uploads', PURCHASES: 'purchases', BOOKINGS: 'bookings', MESSAGES: 'messages', EARNINGS: 'earnings', SESSIONS: 'sessions', ADMIN: 'admin' };
+
+/* ─── Withdrawal UI Component ─── */
+function WithdrawalUI({ profile, refreshProfile }) {
+  const [amount, setAmount] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [accountName, setAccountName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [history, setHistory] = useState([]);
+
+  useEffect(() => {
+    if (profile?.id) loadHistory();
+  }, [profile?.id, profile?.balance]);
+
+  const loadHistory = async () => {
+    const { data } = await getWithdrawals(profile.id);
+    if (data) setHistory(data);
+  };
+
+  const handleWithdraw = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    const withdrawAmount = Number(amount);
+    if (isNaN(withdrawAmount) || withdrawAmount < 100) {
+      return setError('Minimum withdrawal is ₦100');
+    }
+    if (withdrawAmount > (profile?.balance || 0)) {
+      return setError('Insufficient balance');
+    }
+    if (!bankName || !accountNumber || !accountName) {
+      return setError('Please fill in all bank details');
+    }
+
+    setLoading(true);
+    try {
+      const { error: rpcErr } = await requestWithdrawal(withdrawAmount, bankName, accountNumber, accountName);
+      if (rpcErr) throw rpcErr;
+
+      setSuccess(`Success! ₦${withdrawAmount.toLocaleString()} withdrawal requested.`);
+      setAmount('');
+      await refreshProfile(); // Will auto-update the balance at the top
+    } catch (err) {
+      setError(err.message || 'Failed to request withdrawal');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ background: '#050705', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: 'clamp(1.5rem, 4vw, 2.5rem)', marginTop: '2rem' }}>
+      <h3 style={{ fontFamily: 'Syne, sans-serif', color: '#fff', fontSize: '1.4rem', margin: '0 0 1.5rem' }}>Withdraw Earnings</h3>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 1.5fr)', gap: '3rem', alignItems: 'start' }}>
+        {/* Left: Form */}
+        <div>
+          <div style={{ background: 'rgba(212, 160, 32, 0.05)', border: '1px dashed var(--primary)', borderRadius: 16, padding: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.9rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.4rem' }}>Available to Withdraw</div>
+            <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary)' }}>₦{(profile?.balance || 0).toLocaleString()}</div>
+          </div>
+
+          <form onSubmit={handleWithdraw} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {error && <Banner type="error" msg={error} />}
+            {success && <Banner type="success" msg={success} />}
+
+            <Field label="Amount to Withdraw (₦)">
+              <Input type="number" min="100" max={profile?.balance || 0} placeholder="e.g. 5000" value={amount} onChange={e => setAmount(e.target.value)} required />
+            </Field>
+
+            <Field label="Bank Name">
+              <Input type="text" placeholder="e.g. Access Bank" value={bankName} onChange={e => setBankName(e.target.value)} required />
+            </Field>
+
+            <Field label="Account Number">
+              <Input type="text" placeholder="e.g. 0123456789" value={accountNumber} onChange={e => setAccountNumber(e.target.value)} required />
+            </Field>
+
+            <Field label="Account Name">
+              <Input type="text" placeholder="e.g. John Doe" value={accountName} onChange={e => setAccountName(e.target.value)} required />
+            </Field>
+
+            <Button type="submit" loading={loading} style={{ marginTop: '1rem' }}>
+              Request Withdrawal
+            </Button>
+          </form>
+        </div>
+
+        {/* Right: History */}
+        <div>
+          <h4 style={{ color: 'var(--on-surface-variant)', margin: '0 0 1rem', fontSize: '1rem', fontWeight: 700 }}>Withdrawal History</h4>
+          {history.length === 0 ? (
+            <div style={{ color: '#888', fontStyle: 'italic', fontSize: '0.9rem' }}>No past withdrawals.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '450px', overflowY: 'auto', paddingRight: '0.5rem' }}>
+              {history.map(item => (
+                <div key={item.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: 14, border: '1px solid rgba(255,255,255,0.04)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', alignItems: 'center' }}>
+                    <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1.2rem', color: '#E8F5E9' }}>₦{item.amount.toLocaleString()}</span>
+                    <span style={{
+                      fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '100px',
+                      background: item.status === 'success' ? 'var(--primary-container)' : item.status === 'failed' ? 'rgba(255,82,82,0.1)' : 'rgba(255,255,255,0.1)',
+                      color: item.status === 'success' ? 'var(--primary)' : item.status === 'failed' ? '#FF5252' : '#aaa',
+                      textTransform: 'uppercase'
+                    }}>
+                      {item.status}
+                    </span>
+                  </div>
+                  <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem' }}>
+                    {item.bank_name} • {item.account_number}<br />
+                    {item.account_name}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
+                    {new Date(item.created_at).toLocaleDateString()} at {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const { user, profile, refreshProfile, session } = useAuth();
@@ -687,17 +813,22 @@ export default function DashboardPage() {
           {tab === TAB.OVERVIEW && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {profile?.is_tutor ? (
-                <div style={{ background: 'linear-gradient(135deg, rgba(0,200,83,0.1), rgba(var(--primary-rgb), 0.05))', border: '1px solid rgba(0,200,83,0.3)', borderRadius: 24, padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
-                  <div style={{ flex: 1, minWidth: 250 }}>
-                    <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, color: '#fff', fontSize: '1.4rem', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ fontSize: '1.8rem' }}>🎓</span> You are a Verified Tutor
+                <>
+                  <div style={{ background: 'linear-gradient(135deg, rgba(0,200,83,0.1), rgba(var(--primary-rgb), 0.05))', border: '1px solid rgba(0,200,83,0.3)', borderRadius: 24, padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
+                    <div style={{ flex: 1, minWidth: 250 }}>
+                      <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, color: '#fff', fontSize: '1.4rem', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '1.8rem' }}>🎓</span> You are a Verified Tutor
+                      </div>
+                      <div style={{ color: '#7A9E7E', fontSize: '1rem', lineHeight: 1.5 }}>You are now visible in the tutor directory. Keep your profile updated and monitor your bookings tab for new sessions.</div>
                     </div>
-                    <div style={{ color: '#7A9E7E', fontSize: '1rem', lineHeight: 1.5 }}>You are now visible in the tutor directory. Keep your profile updated and monitor your bookings tab for new sessions.</div>
+                    <button onClick={handleDeleteTutorProfile} style={{ background: 'transparent', color: '#ff5252', border: '1px solid rgba(255,82,82,0.3)', borderRadius: '100px', padding: '0.75rem 1.5rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,82,82,0.1)'; e.currentTarget.style.borderColor = '#ff5252'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,82,82,0.3)'; }}>
+                      Deactivate Profile
+                    </button>
                   </div>
-                  <button onClick={handleDeleteTutorProfile} style={{ background: 'transparent', color: '#ff5252', border: '1px solid rgba(255,82,82,0.3)', borderRadius: '100px', padding: '0.75rem 1.5rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,82,82,0.1)'; e.currentTarget.style.borderColor = '#ff5252'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,82,82,0.3)'; }}>
-                    Deactivate Profile
-                  </button>
-                </div>
+
+                  {/* ─── Tutor Withdrawal Component ─── */}
+                  <WithdrawalUI profile={profile} refreshProfile={refreshProfile} />
+                </>
               ) : (
                 <div style={{ background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.1), rgba(0,200,83,0.05))', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
                   <div style={{ flex: 1, minWidth: 250 }}>
@@ -755,9 +886,11 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
-          )}
+          )
+          }
         </>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }

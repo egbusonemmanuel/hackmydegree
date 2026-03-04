@@ -625,6 +625,29 @@ export const sendBookingMessage = async (bookingId, senderId, content) => {
 };
 
 /**
+ * Request a withdrawal (deducts balance and creates record via RPC)
+ */
+export const requestWithdrawal = async (amount, bankName, accountNumber, accountName) => {
+  return supabase.rpc('request_withdrawal', {
+    p_amount: amount,
+    p_bank_name: bankName,
+    p_account_number: accountNumber,
+    p_account_name: accountName
+  });
+};
+
+/**
+ * Get user's withdrawal history
+ */
+export const getWithdrawals = async (userId) => {
+  return supabase
+    .from('withdrawals')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+};
+
+/**
  * Subscribe to new messages in a booking thread via Supabase Realtime.
  * Returns the channel so the caller can call .unsubscribe() on cleanup.
  *
