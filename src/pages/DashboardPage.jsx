@@ -61,77 +61,117 @@ function WithdrawalUI({ profile, refreshProfile }) {
   };
 
   return (
-    <div style={{ background: '#050705', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: 'clamp(1.5rem, 4vw, 2.5rem)', marginTop: '2rem' }}>
-      <h3 style={{ fontFamily: 'Syne, sans-serif', color: '#fff', fontSize: '1.4rem', margin: '0 0 1.5rem' }}>Withdraw Earnings</h3>
+    <>
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+      <div style={{ background: '#050705', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: 'clamp(1.5rem, 4vw, 2.5rem)', marginTop: '2rem' }}>
+        <h3 style={{ fontFamily: 'Syne, sans-serif', color: '#fff', fontSize: '1.4rem', margin: '0 0 1.5rem' }}>Withdraw Earnings</h3>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 1.5fr)', gap: '3rem', alignItems: 'start' }}>
-        {/* Left: Form */}
-        <div>
-          <div style={{ background: 'rgba(212, 160, 32, 0.05)', border: '1px dashed var(--primary)', borderRadius: 16, padding: '1.5rem', marginBottom: '2rem' }}>
-            <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.9rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.4rem' }}>Available to Withdraw</div>
-            <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary)' }}>₦{(profile?.balance || 0).toLocaleString()}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 1.5fr)', gap: '3rem', alignItems: 'start' }}>
+          {/* Left: Form */}
+          <div>
+            <div style={{ background: 'rgba(212, 160, 32, 0.05)', border: '1px dashed var(--primary)', borderRadius: 16, padding: '1.5rem', marginBottom: '2rem' }}>
+              <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.9rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.4rem' }}>Available to Withdraw</div>
+              <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary)' }}>₦{(profile?.balance || 0).toLocaleString()}</div>
+            </div>
+
+            <form onSubmit={handleWithdraw} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {error && <Banner type="error" msg={error} />}
+              {success && <Banner type="success" msg={success} />}
+
+              <Field label="Amount to Withdraw (₦)">
+                <Input type="number" min="100" max={profile?.balance || 0} placeholder="e.g. 5000" value={amount} onChange={e => setAmount(e.target.value)} required />
+              </Field>
+
+              <Field label="Bank Name">
+                <Input type="text" placeholder="e.g. Access Bank" value={bankName} onChange={e => setBankName(e.target.value)} required />
+              </Field>
+
+              <Field label="Account Number">
+                <Input type="text" placeholder="e.g. 0123456789" value={accountNumber} onChange={e => setAccountNumber(e.target.value)} required />
+              </Field>
+
+              <Field label="Account Name">
+                <Input type="text" placeholder="e.g. John Doe" value={accountName} onChange={e => setAccountName(e.target.value)} required />
+              </Field>
+
+              <button type="submit" disabled={loading} style={{
+                marginTop: '1.5rem',
+                width: '100%',
+                padding: '1.2rem',
+                borderRadius: '16px',
+                border: 'none',
+                background: 'linear-gradient(135deg, var(--primary), #e6b840)',
+                color: '#050705',
+                fontFamily: 'Syne, sans-serif',
+                fontWeight: 800,
+                fontSize: '1.1rem',
+                letterSpacing: '0.5px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                boxShadow: '0 8px 24px rgba(212, 160, 32, 0.25), inset 0 2px 0 rgba(255,255,255,0.2)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem'
+              }}
+                onMouseOver={e => {
+                  if (loading) return;
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(212, 160, 32, 0.4), inset 0 2px 0 rgba(255,255,255,0.2)';
+                }}
+                onMouseOut={e => {
+                  if (loading) return;
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(212, 160, 32, 0.25), inset 0 2px 0 rgba(255,255,255,0.2)';
+                }}
+              >
+                {loading ? <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }}>⌛</span> : '💸'}
+                {loading ? 'Processing...' : 'Request Withdrawal'}
+              </button>
+            </form>
           </div>
 
-          <form onSubmit={handleWithdraw} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {error && <Banner type="error" msg={error} />}
-            {success && <Banner type="success" msg={success} />}
-
-            <Field label="Amount to Withdraw (₦)">
-              <Input type="number" min="100" max={profile?.balance || 0} placeholder="e.g. 5000" value={amount} onChange={e => setAmount(e.target.value)} required />
-            </Field>
-
-            <Field label="Bank Name">
-              <Input type="text" placeholder="e.g. Access Bank" value={bankName} onChange={e => setBankName(e.target.value)} required />
-            </Field>
-
-            <Field label="Account Number">
-              <Input type="text" placeholder="e.g. 0123456789" value={accountNumber} onChange={e => setAccountNumber(e.target.value)} required />
-            </Field>
-
-            <Field label="Account Name">
-              <Input type="text" placeholder="e.g. John Doe" value={accountName} onChange={e => setAccountName(e.target.value)} required />
-            </Field>
-
-            <Button type="submit" loading={loading} style={{ marginTop: '1rem' }}>
-              Request Withdrawal
-            </Button>
-          </form>
-        </div>
-
-        {/* Right: History */}
-        <div>
-          <h4 style={{ color: 'var(--on-surface-variant)', margin: '0 0 1rem', fontSize: '1rem', fontWeight: 700 }}>Withdrawal History</h4>
-          {history.length === 0 ? (
-            <div style={{ color: '#888', fontStyle: 'italic', fontSize: '0.9rem' }}>No past withdrawals.</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '450px', overflowY: 'auto', paddingRight: '0.5rem' }}>
-              {history.map(item => (
-                <div key={item.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: 14, border: '1px solid rgba(255,255,255,0.04)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', alignItems: 'center' }}>
-                    <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1.2rem', color: '#E8F5E9' }}>₦{item.amount.toLocaleString()}</span>
-                    <span style={{
-                      fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '100px',
-                      background: item.status === 'success' ? 'var(--primary-container)' : item.status === 'failed' ? 'rgba(255,82,82,0.1)' : 'rgba(255,255,255,0.1)',
-                      color: item.status === 'success' ? 'var(--primary)' : item.status === 'failed' ? '#FF5252' : '#aaa',
-                      textTransform: 'uppercase'
-                    }}>
-                      {item.status}
-                    </span>
+          {/* Right: History */}
+          <div>
+            <h4 style={{ color: 'var(--on-surface-variant)', margin: '0 0 1rem', fontSize: '1rem', fontWeight: 700 }}>Withdrawal History</h4>
+            {history.length === 0 ? (
+              <div style={{ color: '#888', fontStyle: 'italic', fontSize: '0.9rem' }}>No past withdrawals.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '450px', overflowY: 'auto', paddingRight: '0.5rem' }}>
+                {history.map(item => (
+                  <div key={item.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: 14, border: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', alignItems: 'center' }}>
+                      <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1.2rem', color: '#E8F5E9' }}>₦{item.amount.toLocaleString()}</span>
+                      <span style={{
+                        fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '100px',
+                        background: item.status === 'success' ? 'var(--primary-container)' : item.status === 'failed' ? 'rgba(255,82,82,0.1)' : 'rgba(255,255,255,0.1)',
+                        color: item.status === 'success' ? 'var(--primary)' : item.status === 'failed' ? '#FF5252' : '#aaa',
+                        textTransform: 'uppercase'
+                      }}>
+                        {item.status}
+                      </span>
+                    </div>
+                    <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem' }}>
+                      {item.bank_name} • {item.account_number}<br />
+                      {item.account_name}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
+                      {new Date(item.created_at).toLocaleDateString()} at {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
                   </div>
-                  <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem' }}>
-                    {item.bank_name} • {item.account_number}<br />
-                    {item.account_name}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
-                    {new Date(item.created_at).toLocaleDateString()} at {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
