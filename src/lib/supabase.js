@@ -578,16 +578,30 @@ export const getResourceReviews = async (resourceId) => {
 /**
  * Fetch all messages for a booking, ordered oldest first.
  * Each message includes basic sender profile info.
+ * We use a two-step fetch to avoid foreign key join issues.
  */
 export const getBookingMessages = async (bookingId) => {
-  return supabase
+  // Step 1: Fetch messages
+  const { data: messages, error } = await supabase
     .from('booking_messages')
-    .select(`
-      *,
-      sender:profiles!sender_id(id, username, full_name, avatar_url)
-    `)
+    .select('*')
     .eq('booking_id', bookingId)
     .order('created_at', { ascending: true });
+
+  if (error || !messages || messages.length === 0) return { data: messages || [], error };
+
+  // Step 2: Fetch all unique sender profiles
+  const senderIds = [...new Set(messages.map(m => m.sender_id))];
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, username, full_name, avatar_url')
+    .in('id', senderIds);
+
+  const profileMap = Object.fromEntries((profiles || []).map(p => [p.id, p]));
+
+  // Step 3: Merge sender into each message
+  const enriched = messages.map(m => ({ ...m, sender: profileMap[m.sender_id] || null }));
+  return { data: enriched, error: null };
 };
 
 /**
@@ -596,9 +610,7 @@ export const getBookingMessages = async (bookingId) => {
 export const sendBookingMessage = async (bookingId, senderId, content) => {
   return supabase
     .from('booking_messages')
-    .insert({ booking_id: bookingId, sender_id: senderId, content })
-    .select()
-    .single();
+    .insert({ booking_id: bookingId, sender_id: senderId, content });
 };
 
 /**
