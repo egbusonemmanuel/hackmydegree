@@ -168,31 +168,13 @@ export const payForTutorBooking = async ({
 // This function is a client-side fallback only.
 const verifyAndActivate = async ({ reference, type, resourceId, userId, bookingId, tutorUserId, amount }) => {
   if (type === 'resource') {
-    // 1. Mark purchase as success
-    const { error: updErr } = await supabase.from('purchases')
-      .update({ paystack_status: 'success' })
-      .eq('paystack_reference', reference)
-      .eq('user_id', userId);
+    // 1. Mark purchase as success and credit tutor atomically via RPC
+    const { data: success, error: rpcErr } = await supabase.rpc('confirm_resource_purchase', {
+      p_reference: reference
+    });
 
-    if (updErr) {
-      console.error('[Paystack] Error updating purchase status:', updErr);
-    }
-
-    // 2. Fetch the resource to find the uploader and price
-    const { data: resRows } = await supabase.from('resources').select('uploader_id, price').eq('id', resourceId);
-    const res = resRows?.[0];
-
-    if (res && res.price > 0) {
-      // 3. Credit 70% to uploader
-      const tutorShare = res.price * 0.70;
-      const { data: profRows } = await supabase.from('profiles').select('balance, total_earned').eq('id', res.uploader_id);
-      const prof = profRows?.[0];
-      if (prof) {
-        await supabase.from('profiles').update({
-          balance: (prof.balance || 0) + tutorShare,
-          total_earned: (prof.total_earned || 0) + tutorShare
-        }).eq('id', res.uploader_id);
-      }
+    if (rpcErr || !success) {
+      console.error('[Paystack] Error confirming resource purchase via RPC:', rpcErr || 'Function returned false');
     }
   }
 
