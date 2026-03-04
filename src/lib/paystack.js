@@ -169,8 +169,11 @@ export const payForTutorBooking = async ({
 const verifyAndActivate = async ({ reference, type, resourceId, userId, bookingId, tutorUserId, amount }) => {
   if (type === 'resource') {
     // 1. Mark purchase as success and credit tutor atomically via RPC
+    // We pass userId and resourceId as well to handle "heal" if INSERT was blocked
     const { data: success, error: rpcErr } = await supabase.rpc('confirm_resource_purchase', {
-      p_reference: reference
+      p_reference: reference,
+      p_user_id: userId,
+      p_resource_id: resourceId
     });
 
     if (rpcErr || !success) {
