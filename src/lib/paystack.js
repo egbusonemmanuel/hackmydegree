@@ -169,9 +169,14 @@ export const payForTutorBooking = async ({
 const verifyAndActivate = async ({ reference, type, resourceId, userId, bookingId, tutorUserId, amount }) => {
   if (type === 'resource') {
     // 1. Mark purchase as success
-    await supabase.from('purchases')
+    const { error: updErr } = await supabase.from('purchases')
       .update({ paystack_status: 'success' })
-      .eq('paystack_reference', reference);
+      .eq('paystack_reference', reference)
+      .eq('user_id', userId);
+
+    if (updErr) {
+      console.error('[Paystack] Error updating purchase status:', updErr);
+    }
 
     // 2. Fetch the resource to find the uploader and price
     const { data: resRows } = await supabase.from('resources').select('uploader_id, price').eq('id', resourceId);

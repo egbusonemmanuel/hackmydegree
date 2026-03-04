@@ -81,7 +81,10 @@ export default function ResourceDetailPage() {
             user,
             onSuccess: () => {
                 alert('Payment successful! You can now download the resource.');
-                setPurchased(true);
+                // Small delay to ensure DB sync before first download attempt
+                setTimeout(() => {
+                    setPurchased(true);
+                }, 1000);
             },
             onClose: () => {
                 console.log('Payment cancelled');
