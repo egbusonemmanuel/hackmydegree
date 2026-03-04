@@ -159,9 +159,14 @@ export default function ResourceDetailPage() {
                 <div className="glass" style={{ position: 'sticky', top: '100px', borderRadius: '24px', padding: 'clamp(1.5rem, 5vw, 2.5rem)', border: '1px solid var(--outline-variant)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--on-surface-variant)' }}>Access Price</span>
-                        <span style={{ fontSize: '2.2rem', fontWeight: 900, color: resource.resource_type === 'free' ? 'var(--primary)' : 'var(--on-surface)' }}>
-                            {resource.resource_type === 'free' ? 'FREE' : `₦${resource.price}`}
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
+                            <span style={{ fontSize: '2.2rem', fontWeight: 900, color: (resource.resource_type === 'free' || profile?.is_pro) ? 'var(--primary)' : 'var(--on-surface)' }}>
+                                {resource.resource_type === 'free' || profile?.is_pro ? 'FREE' : `₦${resource.price}`}
+                            </span>
+                            {profile?.is_pro && resource.resource_type !== 'free' && (
+                                <span style={{ fontSize: '0.72rem', fontWeight: 800, background: 'var(--primary)', color: 'var(--on-primary, #000)', padding: '0.2rem 0.6rem', borderRadius: 100, letterSpacing: '0.5px' }}>⭐ Pro Benefit</span>
+                            )}
+                        </div>
                     </div>
 
                     <Button
@@ -171,6 +176,7 @@ export default function ResourceDetailPage() {
                         {purchased ? 'Download Asset' : 'Unlock & Download'}
                     </Button>
 
+                    {/* ─── Curator ─── */}
                     <div style={{ marginTop: '2.5rem', paddingTop: '2rem', borderTop: '1px solid var(--outline-variant)' }}>
                         <h4 style={{ margin: '0 0 1.25rem 0', color: 'var(--on-surface-variant)', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>Curator</h4>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -181,6 +187,50 @@ export default function ResourceDetailPage() {
                             </div>
                         </div>
                     </div>
+
+                    {/* ─── Pro Benefits ─── */}
+                    {resource.resource_type !== 'free' && (
+                        <div style={{ marginTop: '2rem', borderTop: '1px solid var(--outline-variant)', paddingTop: '2rem' }}>
+                            {profile?.is_pro ? (
+                                /* ── User IS Pro: show confirmation badge ── */
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(var(--primary-rgb, 188,149,92), 0.08)', border: '1.5px solid var(--primary)', borderRadius: 12, padding: '0.9rem 1.1rem' }}>
+                                    <span style={{ fontSize: '1.4rem' }}>⭐</span>
+                                    <div>
+                                        <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--primary)' }}>Pro Access</div>
+                                        <div style={{ fontSize: '0.78rem', color: 'var(--on-surface-variant)', fontWeight: 500 }}>You get this resource free as a Pro member.</div>
+                                    </div>
+                                </div>
+                            ) : (
+                                /* ── User is NOT Pro: upsell ── */
+                                <div style={{ background: 'linear-gradient(135deg, rgba(188,149,92,0.06) 0%, rgba(188,149,92,0.12) 100%)', border: '1.5px solid var(--outline-variant)', borderRadius: 14, padding: '1.25rem', position: 'relative', overflow: 'hidden' }}>
+                                    {/* Decorative glow */}
+                                    <div style={{ position: 'absolute', top: -20, right: -20, width: 80, height: 80, borderRadius: '50%', background: 'var(--primary)', opacity: 0.07, filter: 'blur(20px)' }} />
+                                    <div style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--on-surface)', marginBottom: '0.85rem', fontFamily: 'var(--font-header)' }}>
+                                        ⭐ Upgrade to Pro
+                                    </div>
+                                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.1rem 0', display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+                                        {[
+                                            ['📚', 'Free access to ALL premium PDFs'],
+                                            ['🚀', 'Unlimited downloads, forever'],
+                                            ['✅', 'Priority support from tutors'],
+                                        ].map(([icon, text]) => (
+                                            <li key={text} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--on-surface-variant)', fontWeight: 600 }}>
+                                                <span style={{ fontSize: '1rem' }}>{icon}</span> {text}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <a
+                                        href="/pricing"
+                                        style={{ display: 'block', textAlign: 'center', background: 'var(--primary)', color: 'var(--on-primary, #000)', fontFamily: 'var(--font-header)', fontWeight: 800, fontSize: '0.9rem', padding: '0.7rem 1rem', borderRadius: 10, textDecoration: 'none', transition: 'opacity 0.2s' }}
+                                        onMouseOver={e => e.currentTarget.style.opacity = '0.85'}
+                                        onMouseOut={e => e.currentTarget.style.opacity = '1'}
+                                    >
+                                        Get Pro – ₦500/mo →
+                                    </a>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
