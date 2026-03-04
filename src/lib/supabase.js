@@ -47,6 +47,17 @@ export const signIn = async ({ email, password }) => {
   return { data, error };
 };
 
+export const signInWithGoogle = async () => {
+  return supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${window.location.origin}/dashboard`,
+      queryParams: { access_type: 'offline', prompt: 'consent' }
+    }
+  });
+};
+
+
 export const signOut = async () => {
   console.log('[Supabase] signOut() called');
   const { error } = await supabase.auth.signOut();
