@@ -761,5 +761,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-const hoverStyles = (bg, fg) => ({});
