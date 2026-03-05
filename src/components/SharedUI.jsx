@@ -96,40 +96,41 @@ export const Button = ({ children, variant = 'primary', loading = false, ...prop
         <button
             disabled={loading}
             style={{
-                width: '100%', padding: '1.1rem',
+                width: '100%',
+                height: '48px',
+                padding: '0 1.5rem',
                 background: loading ? 'var(--outline-variant)' : background,
                 color: loading ? 'var(--outline)' : color,
                 border: border,
-                borderRadius: '16px', cursor: loading ? 'not-allowed' : 'pointer',
-                fontFamily: 'var(--font-header)', fontWeight: 800, fontSize: '1rem',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: isPrimary && !loading ? '0 8px 30px rgba(0,0,0,0.15)' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem'
+                borderRadius: '12px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: isPrimary && !loading ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem'
             }}
             onMouseOver={(e) => {
                 if (!loading) {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    if (isPrimary) e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.2)';
-                    if (isDanger) {
-                        e.currentTarget.style.background = 'rgba(255, 82, 82, 0.15)';
-                    }
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    if (isPrimary) e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
+                    if (isDanger) e.currentTarget.style.background = 'rgba(255, 82, 82, 0.15)';
                 }
             }}
             onMouseOut={(e) => {
                 if (!loading) {
                     e.currentTarget.style.transform = 'translateY(0)';
-                    if (isPrimary) e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.15)';
-                    if (isDanger) {
-                        e.currentTarget.style.background = 'rgba(255, 82, 82, 0.1)';
-                    }
+                    if (isPrimary) e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                    if (isDanger) e.currentTarget.style.background = 'rgba(255, 82, 82, 0.1)';
                 }
             }}
             {...props}
         >
             {loading ? (
                 <div style={{
-                    width: 20, height: 20, border: '2px solid rgba(255,255,255,0.3)',
-                    borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite'
+                    width: 18, height: 18, border: '2px solid rgba(255,255,255,0.3)',
+                    borderTopColor: 'currentColor', borderRadius: '50%', animation: 'spin 0.8s linear infinite'
                 }} />
             ) : children}
         </button>
@@ -147,23 +148,24 @@ export const WhatsAppButton = ({ text, url = window.location.origin, ...props })
         >
             <button
                 style={{
-                    width: '100%', padding: '0.85rem 1.75rem',
+                    width: '100%',
+                    height: '52px',
+                    padding: '0 2rem',
                     background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
                     color: '#fff',
                     border: 'none', borderRadius: '100px',
-                    fontFamily: 'var(--font-header)', fontWeight: 800, fontSize: '0.9rem',
+                    fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.9rem',
                     cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-                    boxShadow: '0 8px 20px rgba(37, 211, 102, 0.25)',
-                    borderBottom: '2px solid rgba(0,0,0,0.1)'
+                    boxShadow: '0 6px 16px rgba(37, 211, 102, 0.2)',
                 }}
                 onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(37, 211, 102, 0.4)';
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.01)';
+                    e.currentTarget.style.boxShadow = '0 10px 25px rgba(37, 211, 102, 0.35)';
                 }}
                 onMouseOut={(e) => {
                     e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(37, 211, 102, 0.25)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(37, 211, 102, 0.2)';
                 }}
                 {...props}
             >

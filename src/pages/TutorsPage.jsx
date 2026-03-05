@@ -43,7 +43,14 @@ function ReviewSection({ tutorId }) {
                                     <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{r.profiles?.full_name || r.profiles?.username}</span>
                                     <span style={{ fontSize: '0.85rem', color: '#FFD600' }}>{'★'.repeat(r.rating)}</span>
                                 </div>
-                                <button onClick={() => handleReport(r.id)} style={{ background: 'transparent', border: 'none', color: '#ff5252', fontSize: '0.75rem', cursor: 'pointer', opacity: 0.6 }} title="Report Review">🚩 Report</button>
+                                <Button
+                                    onClick={() => handleReport(r.id)}
+                                    variant="danger"
+                                    style={{ height: '28px', width: 'auto', padding: '0 0.75rem', fontSize: '0.75rem' }}
+                                    title="Report Review"
+                                >
+                                    🚩 Report
+                                </Button>
                             </div>
                             <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--on-surface-variant)', lineHeight: 1.4 }}>"{r.review_text}"</p>
                         </div>
@@ -156,12 +163,13 @@ export default function TutorsPage() {
                                         }}>{sub}</span>
                                     ))}
                                 </div>
-                                <button
+                                <Button
+                                    variant="secondary"
                                     onClick={() => setExpandedTutor(expandedTutor === tutor.id ? null : tutor.id)}
-                                    style={{ background: 'transparent', color: 'var(--primary)', border: 'none', padding: 0, fontSize: '0.9rem', cursor: 'pointer', fontWeight: 600, marginBottom: '1rem' }}
+                                    style={{ height: '36px', width: 'auto', padding: '0 1rem', fontSize: '0.85rem', marginBottom: '1rem' }}
                                 >
                                     {expandedTutor === tutor.id ? 'Hide Reviews' : `Show Reviews (${tutor.total_reviews})`}
-                                </button>
+                                </Button>
                                 {expandedTutor === tutor.id && <ReviewSection tutorId={tutor.id} />}
                             </div>
 
@@ -171,7 +179,7 @@ export default function TutorsPage() {
                                     <div style={{ color: '#7A9E7E', fontSize: '0.8rem' }}>per hour</div>
                                 </div>
                                 <Link to={`/book/${tutor.id}`} style={{ width: 'auto' }}>
-                                    <Button style={{ padding: '0.8rem 2rem', fontSize: '0.95rem', width: 'auto' }}>
+                                    <Button style={{ padding: '0 2rem', fontSize: '0.95rem', width: 'auto' }}>
                                         Book Session
                                     </Button>
                                 </Link>

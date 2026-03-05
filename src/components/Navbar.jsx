@@ -72,7 +72,7 @@ const Navbar = () => {
                             <Link to="/dashboard" style={{ color: 'var(--on-surface)', textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem' }}>
                                 {profile?.username || user.email?.split('@')[0]}
                             </Link>
-                            <Button variant="danger" onClick={handleSignOut} style={{ width: 'auto', padding: '0.6rem 1.25rem', fontSize: '0.85rem', gap: '0.5rem' }}>
+                            <Button variant="danger" onClick={handleSignOut} style={{ width: 'auto', gap: '0.5rem' }}>
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                                     <polyline points="16 17 21 12 16 7"></polyline>
@@ -83,8 +83,8 @@ const Navbar = () => {
                         </div>
                     ) : (
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
-                            <Link to="/login"><Button variant="secondary" style={{ width: 'auto', padding: '0.5rem 1.25rem' }}>Login</Button></Link>
-                            <Link to="/signup"><Button style={{ width: 'auto', padding: '0.5rem 1.5rem' }}>Join Free</Button></Link>
+                            <Link to="/login"><Button variant="secondary" style={{ width: 'auto' }}>Login</Button></Link>
+                            <Link to="/signup"><Button style={{ width: 'auto' }}>Join Free</Button></Link>
                         </div>
                     )}
                 </div>

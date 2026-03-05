@@ -100,41 +100,18 @@ function WithdrawalUI({ profile, refreshProfile }) {
                 <Input type="text" placeholder="e.g. John Doe" value={accountName} onChange={e => setAccountName(e.target.value)} required />
               </Field>
 
-              <button type="submit" disabled={loading} style={{
-                marginTop: '1.5rem',
-                width: '100%',
-                padding: '1.2rem',
-                borderRadius: '16px',
-                border: 'none',
-                background: 'linear-gradient(135deg, var(--primary), #e6b840)',
-                color: '#050705',
-                fontFamily: 'Syne, sans-serif',
-                fontWeight: 800,
-                fontSize: '1.1rem',
-                letterSpacing: '0.5px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                boxShadow: '0 8px 24px rgba(212, 160, 32, 0.25), inset 0 2px 0 rgba(255,255,255,0.2)',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem'
-              }}
-                onMouseOver={e => {
-                  if (loading) return;
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(212, 160, 32, 0.4), inset 0 2px 0 rgba(255,255,255,0.2)';
-                }}
-                onMouseOut={e => {
-                  if (loading) return;
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(212, 160, 32, 0.25), inset 0 2px 0 rgba(255,255,255,0.2)';
+              <Button
+                type="submit"
+                loading={loading}
+                style={{
+                  marginTop: '1rem',
+                  borderRadius: '100px',
+                  background: 'linear-gradient(135deg, var(--primary), #e6b840)',
+                  color: '#050705',
                 }}
               >
-                {loading ? <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }}>⌛</span> : '💸'}
-                {loading ? 'Processing...' : 'Request Withdrawal'}
-              </button>
+                Request Withdrawal
+              </Button>
             </form>
           </div>
 
@@ -409,16 +386,20 @@ export default function DashboardPage() {
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
           {!profile?.is_pro && (
-            <button onClick={handleUpgradePro} disabled={upgradingPro}
+            <Button
+              variant="secondary"
+              onClick={handleUpgradePro}
+              disabled={upgradingPro}
               style={{
-                background: 'rgba(212, 160, 32, 0.1)', color: 'var(--primary)',
-                border: '1px solid var(--primary)', borderRadius: '100px',
-                padding: '0.75rem 1.5rem', cursor: 'pointer',
-                fontFamily: 'var(--font-header)', fontWeight: 800, fontSize: '0.9rem',
-                transition: 'all 0.3s ease'
+                width: 'auto',
+                padding: '0 1.5rem',
+                borderRadius: '100px',
+                background: 'rgba(212, 160, 32, 0.1)',
+                color: 'var(--primary)',
+                border: '1px solid var(--primary)',
               }}>
               {upgradingPro ? '⏳...' : '⚡ Upgrade — ₦500/mo'}
-            </button>
+            </Button>
           )}
           {profile?.is_pro && (
             <span style={{
@@ -461,11 +442,25 @@ export default function DashboardPage() {
           if (t === TAB.ADMIN && !profile?.is_admin) return null;
           const icons = { overview: '🏠', uploads: '📤', purchases: '🛍️', bookings: '📅', messages: '💬', earnings: '💰', sessions: '🎓', admin: '⚙️' };
           const label = `${icons[t] || ''} ${t.charAt(0).toUpperCase() + t.slice(1)}`;
-          return (
-            <button key={t} onClick={() => setTab(t)} style={s.tab(tab === t)}>
-              {label}
-            </button>
-          );
+          <Button
+            key={t}
+            variant={tab === t ? 'primary' : 'secondary'}
+            onClick={() => setTab(t)}
+            style={{
+              width: 'auto',
+              height: '40px',
+              padding: '0 1.25rem',
+              borderRadius: '100px',
+              fontSize: '0.85rem',
+              ...(tab !== t ? {
+                background: 'var(--surface-variant)',
+                color: 'var(--on-surface-variant)',
+                border: '1px solid var(--outline-variant)'
+              } : {})
+            }}
+          >
+            {label}
+          </Button>
         })}
       </div>
 
@@ -541,10 +536,13 @@ export default function DashboardPage() {
                         </div>
                         <div style={{ color: '#7A9E7E', fontSize: '0.85rem' }}>Paid ₦{p.amount_paid} on {new Date(p.created_at).toLocaleDateString()}</div>
                       </div>
-                      <button style={{ background: '#00C853', color: '#000', border: 'none', borderRadius: '100px', padding: '0.6rem 1.5rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'transform 0.2s' }} onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
+                      <Button
+                        onClick={() => {/* download logic */ }}
+                        style={{ width: 'auto', height: '36px', padding: '0 1.25rem', fontSize: '0.85rem', borderRadius: '100px' }}
+                      >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>
                         Download
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>
@@ -597,20 +595,27 @@ export default function DashboardPage() {
                           </button>
                         )}
                         {b.status === 'completed' && (
-                          <button onClick={() => {
-                            const rating = window.prompt(`Rate ${b.tutor?.profile?.full_name} from 1 to 5 stars:`);
-                            if (rating && !isNaN(rating) && rating >= 1 && rating <= 5) {
-                              const review = window.prompt("Optional: Leave a short review for this tutor:");
-                              submitTutorReview(b.tutor_id, user.id, b.id, parseInt(rating), review || '').then(({ error }) => {
-                                if (error) alert("Failed to submit review: " + error.message);
-                                else alert("Thank you! Your review has been submitted.");
-                              });
-                            } else if (rating) {
-                              alert("Please enter a valid number between 1 and 5.");
-                            }
-                          }} style={{ background: 'rgba(255,214,0,0.1)', color: '#FFD600', border: '1px solid rgba(255,214,0,0.3)', borderRadius: '100px', padding: '0.5rem 1.1rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,214,0,0.2)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,214,0,0.1)'}>
+                          <Button
+                            variant="secondary"
+                            onClick={() => {
+                              const rating = window.prompt(`Rate ${b.tutor?.profile?.full_name} from 1 to 5 stars:`);
+                              if (rating && !isNaN(rating) && rating >= 1 && rating <= 5) {
+                                const review = window.prompt("Optional: Leave a short review for this tutor:");
+                                submitTutorReview(b.tutor_id, user.id, b.id, parseInt(rating), review || '').then(({ error }) => {
+                                  if (error) alert("Failed to submit review: " + error.message);
+                                  else alert("Thank you! Your review has been submitted.");
+                                });
+                              } else if (rating) {
+                                alert("Please enter a valid number between 1 and 5.");
+                              }
+                            }}
+                            style={{
+                              width: 'auto', height: '36px', padding: '0 1rem', fontSize: '0.8rem',
+                              background: 'rgba(255,214,0,0.1)', color: '#FFD600', border: '1px solid rgba(255,214,0,0.3)', borderRadius: '100px'
+                            }}
+                          >
                             ⭐ Rate Tutor
-                          </button>
+                          </Button>
                         )}
                         <button onClick={() => handleDeleteBooking(b.id, false)} title="Delete Session" style={{ background: 'transparent', color: '#ff5252', border: '1px solid rgba(255,82,82,0.3)', borderRadius: '100px', padding: '0.5rem 0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,82,82,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                           🗑️
@@ -933,9 +938,13 @@ export default function DashboardPage() {
                       </div>
                       <div style={{ color: '#7A9E7E', fontSize: '1rem', lineHeight: 1.5 }}>You are now visible in the tutor directory. Keep your profile updated and monitor your bookings tab for new sessions.</div>
                     </div>
-                    <button onClick={handleDeleteTutorProfile} style={{ background: 'transparent', color: '#ff5252', border: '1px solid rgba(255,82,82,0.3)', borderRadius: '100px', padding: '0.75rem 1.5rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,82,82,0.1)'; e.currentTarget.style.borderColor = '#ff5252'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,82,82,0.3)'; }}>
+                    <Button
+                      variant="danger"
+                      onClick={handleDeleteTutorProfile}
+                      style={{ width: 'auto', padding: '0 1.5rem', height: '40px', fontSize: '0.85rem', whiteSpace: 'nowrap' }}
+                    >
                       Deactivate Profile
-                    </button>
+                    </Button>
                   </div>
 
                   {/* ─── Tutor Withdrawal Component ─── */}
@@ -949,9 +958,12 @@ export default function DashboardPage() {
                     </div>
                     <div style={{ color: '#7A9E7E', fontSize: '1rem', lineHeight: 1.5 }}>Help other students from your university and earn up to <strong>₦5,000/hr</strong>. Join our elite mentor network today.</div>
                   </div>
-                  <button onClick={() => navigate('/become-a-tutor')} style={{ background: 'var(--on-surface)', color: 'var(--surface)', border: 'none', borderRadius: '100px', padding: '1rem 2rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }} onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
+                  <Button
+                    onClick={() => navigate('/become-a-tutor')}
+                    style={{ width: 'auto', padding: '0 2rem', borderRadius: '100px' }}
+                  >
                     Apply to Tutor
-                  </button>
+                  </Button>
                 </div>
               )}
 
@@ -963,9 +975,19 @@ export default function DashboardPage() {
                     </div>
                     <div style={{ color: '#7A9E7E', fontSize: '1rem', lineHeight: 1.5 }}>Access all premium study materials, get unlimited downloads, and stand out in the tutors directory. All for just <strong>₦500/month</strong>.</div>
                   </div>
-                  <button onClick={handleUpgradePro} style={{ background: 'linear-gradient(135deg, #FFEA00 0%, #FFD600 100%)', color: '#000', border: 'none', borderRadius: '100px', padding: '1rem 2rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1rem', whiteSpace: 'nowrap', transition: 'all 0.2s', boxShadow: '0 8px 20px rgba(255,214,0,0.3)' }} onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
+                  <Button
+                    onClick={handleUpgradePro}
+                    style={{
+                      width: 'auto',
+                      padding: '0 2rem',
+                      borderRadius: '100px',
+                      background: 'linear-gradient(135deg, #FFEA00 0%, #FFD600 100%)',
+                      color: '#000',
+                      boxShadow: '0 8px 20px rgba(255,214,0,0.3)'
+                    }}
+                  >
                     Upgrade Now
-                  </button>
+                  </Button>
                 </div>
               )}
 

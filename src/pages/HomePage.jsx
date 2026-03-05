@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../App';
 import { getResources, getTutors, getCategories } from '../lib/supabase';
 import PageLoader from '../components/PageLoader';
-import { WhatsAppButton } from '../components/SharedUI';
+import { WhatsAppButton, Button } from '../components/SharedUI';
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -85,43 +85,21 @@ export default function HomePage() {
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap-reverse' }}>
             {user ? (
               <Link to="/dashboard">
-                <button style={{
-                  background: 'var(--on-surface)', color: 'var(--surface)', border: 'none',
-                  borderRadius: '100px', padding: '1rem 2.5rem', fontSize: '1rem',
-                  fontFamily: 'var(--font-header)', fontWeight: 800, cursor: 'pointer',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}
-                  onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                  onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-                >Go to Dashboard</button>
+                <Button style={{ width: 'auto', padding: '0 2.5rem', borderRadius: '100px' }}>
+                  Go to Dashboard
+                </Button>
               </Link>
             ) : (
               <Link to="/resources">
-                <button style={{
-                  background: 'var(--on-surface)', color: 'var(--surface)', border: 'none',
-                  borderRadius: '100px', padding: '1rem 2.5rem', fontSize: '1rem',
-                  fontFamily: 'var(--font-header)', fontWeight: 800, cursor: 'pointer',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}
-                  onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                  onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-                >Get Started</button>
+                <Button style={{ width: 'auto', padding: '0 2.5rem', borderRadius: '100px' }}>
+                  Get Started
+                </Button>
               </Link>
             )}
             <Link to="/tutors">
-              <button style={{
-                background: 'var(--surface-variant)', color: 'var(--on-surface)',
-                border: '1px solid var(--outline-variant)', borderRadius: '100px',
-                padding: '1rem 2.25rem', fontSize: '1rem',
-                fontFamily: 'var(--font-header)', fontWeight: 700,
-                cursor: 'pointer', backdropFilter: 'blur(8px)',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-                onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-              >Find a Tutor</button>
+              <Button variant="secondary" style={{ width: 'auto', padding: '0 2.25rem', borderRadius: '100px' }}>
+                Find a Tutor
+              </Button>
             </Link>
           </div>
         </div>
@@ -255,11 +233,10 @@ export default function HomePage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontWeight: 800, color: 'var(--on-surface)' }}>₦{tutor.hourly_rate}<small style={{ opacity: 0.6 }}>/hr</small></span>
                       <Link to={`/book/${tutor.id}`}>
-                        <button style={{
-                          background: 'var(--on-surface)', color: 'var(--surface)', border: 'none',
-                          borderRadius: '100px', padding: '0.7rem 1.5rem', fontSize: '0.85rem',
-                          fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s'
-                        }}>Reserve Session</button>
+                        <Button style={{
+                          height: '40px', padding: '0 1.25rem', fontSize: '0.85rem',
+                          borderRadius: '100px'
+                        }}>Reserve Session</Button>
                       </Link>
                     </div>
                   </div>
