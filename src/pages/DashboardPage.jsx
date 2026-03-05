@@ -20,14 +20,15 @@ function WithdrawalUI({ profile, refreshProfile }) {
   const [success, setSuccess] = useState(null);
   const [history, setHistory] = useState([]);
 
-  useEffect(() => {
-    if (profile?.id) loadHistory();
-  }, [profile?.id, profile?.balance]);
-
   const loadHistory = async () => {
-    const { data } = await getWithdrawals(profile.id);
+    const { data } = await getWithdrawals(profile?.id);
     if (data) setHistory(data);
   };
+
+  useEffect(() => {
+    if (profile?.id) loadHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id, profile?.balance]);
 
   const handleWithdraw = async (e) => {
     e.preventDefault();
