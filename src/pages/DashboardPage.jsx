@@ -1,7 +1,7 @@
 // src/pages/DashboardPage.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../App';
-import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteTutorProfile, deleteBooking, requestWithdrawal, getWithdrawals, getPendingWithdrawals, processWithdrawal } from '../lib/supabase';
+import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteTutorProfile, deleteBooking, requestWithdrawal, getWithdrawals, getPendingWithdrawals, processWithdrawal, submitTutorReview } from '../lib/supabase';
 import { payForProSubscription } from '../lib/paystack';
 import { useNavigate } from 'react-router-dom';
 import PageLoader from '../components/PageLoader';
@@ -594,6 +594,22 @@ export default function DashboardPage() {
                         {b.status === 'confirmed' && (
                           <button onClick={() => handleCompleteBooking(b.id, b.tutor_id, b.amount_paid)} style={{ background: 'var(--primary-container)', color: 'var(--primary)', border: '1px solid var(--primary)', borderRadius: '100px', padding: '0.5rem 1.1rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
                             ✅ Mark Completed
+                          </button>
+                        )}
+                        {b.status === 'completed' && (
+                          <button onClick={() => {
+                            const rating = window.prompt(`Rate ${b.tutor?.profile?.full_name} from 1 to 5 stars:`);
+                            if (rating && !isNaN(rating) && rating >= 1 && rating <= 5) {
+                              const review = window.prompt("Optional: Leave a short review for this tutor:");
+                              submitTutorReview(b.tutor_id, user.id, b.id, parseInt(rating), review || '').then(({ error }) => {
+                                if (error) alert("Failed to submit review: " + error.message);
+                                else alert("Thank you! Your review has been submitted.");
+                              });
+                            } else if (rating) {
+                              alert("Please enter a valid number between 1 and 5.");
+                            }
+                          }} style={{ background: 'rgba(255,214,0,0.1)', color: '#FFD600', border: '1px solid rgba(255,214,0,0.3)', borderRadius: '100px', padding: '0.5rem 1.1rem', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,214,0,0.2)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,214,0,0.1)'}>
+                            ⭐ Rate Tutor
                           </button>
                         )}
                         <button onClick={() => handleDeleteBooking(b.id, false)} title="Delete Session" style={{ background: 'transparent', color: '#ff5252', border: '1px solid rgba(255,82,82,0.3)', borderRadius: '100px', padding: '0.5rem 0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,82,82,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>

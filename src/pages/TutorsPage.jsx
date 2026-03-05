@@ -1,13 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getTutors } from '../lib/supabase';
+import { getTutors, getTutorReviews, reportReview } from '../lib/supabase';
 import PageLoader from '../components/PageLoader';
 import { Input, Button } from '../components/SharedUI';
+
+function ReviewSection({ tutorId }) {
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        getTutorReviews(tutorId).then(({ data }) => {
+            setReviews(data || []);
+            setLoading(false);
+        });
+    }, [tutorId]);
+
+    const handleReport = async (reviewId) => {
+        const reason = window.prompt("Why are you reporting this review?");
+        if (!reason) return;
+        const { error } = await reportReview(reviewId, reason);
+        if (error) alert("Failed to report: " + error.message);
+        else {
+            alert("Review reported. It will be hidden from the public.");
+            setReviews(reviews.filter(r => r.id !== reviewId));
+        }
+    };
+
+    if (loading) return <div style={{ fontSize: '0.8rem', opacity: 0.5, padding: '1rem 0' }}>Loading reviews...</div>;
+
+    return (
+        <div style={{ padding: '1rem 0' }}>
+            <h4 style={{ margin: '0 0 1rem 0', fontSize: '1rem', color: 'var(--primary)' }}>What students say</h4>
+            {reviews.length === 0 ? (
+                <div style={{ fontSize: '0.85rem', color: 'var(--on-surface-variant)', fontStyle: 'italic' }}>No reviews yet.</div>
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {reviews.map(r => (
+                        <div key={r.id} style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#444', backgroundImage: `url(${r.profiles?.avatar_url})`, backgroundSize: 'cover' }}></div>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{r.profiles?.full_name || r.profiles?.username}</span>
+                                    <span style={{ fontSize: '0.85rem', color: '#FFD600' }}>{'★'.repeat(r.rating)}</span>
+                                </div>
+                                <button onClick={() => handleReport(r.id)} style={{ background: 'transparent', border: 'none', color: '#ff5252', fontSize: '0.75rem', cursor: 'pointer', opacity: 0.6 }} title="Report Review">🚩 Report</button>
+                            </div>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--on-surface-variant)', lineHeight: 1.4 }}>"{r.review_text}"</p>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default function TutorsPage() {
     const [tutors, setTutors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [expandedTutor, setExpandedTutor] = useState(null);
 
     useEffect(() => {
         let mounted = true;
@@ -88,7 +139,7 @@ export default function TutorsPage() {
                                         {tutor.profile?.university} • {tutor.profile?.department} {tutor.profile?.level}
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                                        <span style={{ color: '#FFD600' }}>★</span> {tutor.rating_avg} ({tutor.total_sessions} sessions)
+                                        <span style={{ color: '#FFD600' }}>★</span> {tutor.rating_avg} ({tutor.total_reviews} reviews)
                                     </div>
                                 </div>
                             </div>
@@ -105,6 +156,13 @@ export default function TutorsPage() {
                                         }}>{sub}</span>
                                     ))}
                                 </div>
+                                <button
+                                    onClick={() => setExpandedTutor(expandedTutor === tutor.id ? null : tutor.id)}
+                                    style={{ background: 'transparent', color: 'var(--primary)', border: 'none', padding: 0, fontSize: '0.9rem', cursor: 'pointer', fontWeight: 600, marginBottom: '1rem' }}
+                                >
+                                    {expandedTutor === tutor.id ? 'Hide Reviews' : `Show Reviews (${tutor.total_reviews})`}
+                                </button>
+                                {expandedTutor === tutor.id && <ReviewSection tutorId={tutor.id} />}
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>

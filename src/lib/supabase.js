@@ -328,7 +328,7 @@ export const getCategories = async () => {
 
 // ─── TUTORS ──────────────────────────────────────────
 
-export const getTutors = async ({ subject, limit = 20 } = {}) => {
+export const getTutors = async ({ subject, limit = 50 } = {}) => {
   let query = supabase
     .from('tutor_profiles')
     .select(`
@@ -662,6 +662,7 @@ export const getPendingWithdrawals = async () => {
 };
 
 /**
+/**
  * [ADMIN] Mark a withdrawal as success or failed
  */
 export const processWithdrawal = async (withdrawalId, newStatus) => {
@@ -669,6 +670,56 @@ export const processWithdrawal = async (withdrawalId, newStatus) => {
     .from('withdrawals')
     .update({ status: newStatus })
     .eq('id', withdrawalId);
+};
+
+// ─── TUTOR REVIEWS ───────────────────────────────────
+
+/**
+ * Submit a review for a tutor
+ */
+export const submitTutorReview = async (tutorId, studentId, bookingId, rating, reviewText = '') => {
+  // We use upsert to handle cases where a student updates their review for a booking
+  return supabase
+    .from('tutor_reviews')
+    .upsert({
+      tutor_id: tutorId,
+      student_id: studentId,
+      booking_id: bookingId,
+      rating,
+      review_text: reviewText
+    }, { onConflict: 'student_id, booking_id' });
+};
+
+/**
+ * Get all reviews for a tutor
+ */
+export const getTutorReviews = async (tutorId) => {
+  return supabase
+    .from('tutor_reviews')
+    .select(`
+      id,
+      rating,
+      review_text,
+      created_at,
+      profiles!student_id ( full_name, username, avatar_url ),
+      is_reported
+    `)
+    .eq('tutor_id', tutorId)
+    .eq('is_reported', false) // Only show non-reported reviews by default
+    .order('created_at', { ascending: false });
+};
+
+/**
+ * Report a review for moderation
+ */
+export const reportReview = async (reviewId, reason) => {
+  return supabase
+    .from('tutor_reviews')
+    .update({
+      is_reported: true,
+      report_reason: reason
+    })
+    .eq('id', reviewId);
 };
 
 /**
