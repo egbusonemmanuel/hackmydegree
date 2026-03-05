@@ -97,31 +97,30 @@ export const Button = ({ children, variant = 'primary', loading = false, ...prop
             disabled={loading}
             style={{
                 width: '100%',
-                height: '48px',
-                padding: '0 1.5rem',
+                padding: '1.2rem',
                 background: loading ? 'var(--outline-variant)' : background,
                 color: loading ? 'var(--outline)' : color,
                 border: border,
-                borderRadius: '12px',
+                borderRadius: '16px',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                fontFamily: 'var(--font-body)',
-                fontWeight: 600,
-                fontSize: '0.95rem',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: isPrimary && !loading ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem'
+                fontFamily: 'var(--font-header)',
+                fontWeight: 800,
+                fontSize: '1rem',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: isPrimary && !loading ? '0 8px 30px rgba(0,0,0,0.15)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem'
             }}
             onMouseOver={(e) => {
                 if (!loading) {
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                    if (isPrimary) e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    if (isPrimary) e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.2)';
                     if (isDanger) e.currentTarget.style.background = 'rgba(255, 82, 82, 0.15)';
                 }
             }}
             onMouseOut={(e) => {
                 if (!loading) {
                     e.currentTarget.style.transform = 'translateY(0)';
-                    if (isPrimary) e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                    if (isPrimary) e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.15)';
                     if (isDanger) e.currentTarget.style.background = 'rgba(255, 82, 82, 0.1)';
                 }
             }}
@@ -129,8 +128,8 @@ export const Button = ({ children, variant = 'primary', loading = false, ...prop
         >
             {loading ? (
                 <div style={{
-                    width: 18, height: 18, border: '2px solid rgba(255,255,255,0.3)',
-                    borderTopColor: 'currentColor', borderRadius: '50%', animation: 'spin 0.8s linear infinite'
+                    width: 20, height: 20, border: '2px solid rgba(255,255,255,0.3)',
+                    borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite'
                 }} />
             ) : children}
         </button>
@@ -149,27 +148,26 @@ export const WhatsAppButton = ({ text, url = window.location.origin, ...props })
             <button
                 style={{
                     width: '100%',
-                    height: '52px',
-                    padding: '0 2rem',
+                    padding: '1.2rem 2rem',
                     background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
                     color: '#fff',
                     border: 'none', borderRadius: '100px',
-                    fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.9rem',
+                    fontFamily: 'var(--font-header)', fontWeight: 800, fontSize: '1rem',
                     cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-                    boxShadow: '0 6px 16px rgba(37, 211, 102, 0.2)',
+                    boxShadow: '0 8px 30px rgba(37, 211, 102, 0.3)',
                 }}
                 onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.01)';
-                    e.currentTarget.style.boxShadow = '0 10px 25px rgba(37, 211, 102, 0.35)';
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(37, 211, 102, 0.45)';
                 }}
                 onMouseOut={(e) => {
                     e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(37, 211, 102, 0.2)';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(37, 211, 102, 0.3)';
                 }}
                 {...props}
             >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766h.001c.001-3.18-2.587-5.765-5.765-5.765zm3.333 8.164c-.145.412-.729.742-1.012.787-.247.039-.569.062-1.603-.362-1.325-.544-2.18-1.879-2.247-1.968-.066-.09-.536-.713-.536-1.37s.344-.981.467-1.114c.123-.132.27-.165.361-.165.091 0 .181.001.258.006.082.003.193-.031.302.235.112.274.385.938.419 1.005.035.068.058.146.013.235-.045.09-.068.146-.135.225-.068.079-.142.176-.203.236-.068.067-.139.139-.06.276.08.136.353.582.757.941.52.462.96.605 1.096.669.136.064.215.053.294-.038.08-.09.339-.395.429-.529.09-.136.181-.113.306-.067.124.045.789.373.924.441.136.067.226.101.259.157.034.057.034.331-.111.743zM12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z" />
                 </svg>
                 Share on WhatsApp
