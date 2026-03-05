@@ -71,7 +71,9 @@ const CSS = `
   @media (max-width: 768px) {
     .auth-split { flex-direction: column !important; }
     .auth-left  { display: none !important; }
-    .auth-right { width: 100% !important; min-height: 100vh; }
+    .auth-right { width: 100% !important; min-width: 100% !important; min-height: 100vh; padding: 1.5rem !important; border-left: none !important; }
+    .auth-card { max-width: 100% !important; width: 100% !important; }
+    .auth-grid { grid-template-columns: 1fr !important; }
   }
 `;
 
@@ -370,7 +372,7 @@ export default function AuthPage({ mode = 'login' }) {
               {/* ── Form ── */}
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {!isLogin && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+                  <div className="auth-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
                     <Field label="Full Name" lit={lit}>
                       <Input type="text" placeholder="e.g. Ebuka Ibe" value={form.fullName} onChange={set('fullName')} required />
                     </Field>
