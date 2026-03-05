@@ -648,6 +648,30 @@ export const getWithdrawals = async (userId) => {
 };
 
 /**
+ * [ADMIN] Get all pending withdrawals with user profile info
+ */
+export const getPendingWithdrawals = async () => {
+  return supabase
+    .from('withdrawals')
+    .select(`
+      *,
+      profiles:user_id ( full_name, username, email )
+    `)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: true });
+};
+
+/**
+ * [ADMIN] Mark a withdrawal as success or failed
+ */
+export const processWithdrawal = async (withdrawalId, newStatus) => {
+  return supabase
+    .from('withdrawals')
+    .update({ status: newStatus })
+    .eq('id', withdrawalId);
+};
+
+/**
  * Subscribe to new messages in a booking thread via Supabase Realtime.
  * Returns the channel so the caller can call .unsubscribe() on cleanup.
  *

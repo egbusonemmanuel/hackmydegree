@@ -1,7 +1,7 @@
 // src/pages/DashboardPage.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../App';
-import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteTutorProfile, deleteBooking, requestWithdrawal, getWithdrawals } from '../lib/supabase';
+import { supabase, getMyPurchases, getMyBookings, getTutorBookings, getPendingTutors, getPendingResources, confirmBooking, approveTutor, approveResource, deleteResource, completeBooking, deleteTutorProfile, deleteBooking, requestWithdrawal, getWithdrawals, getPendingWithdrawals, processWithdrawal } from '../lib/supabase';
 import { payForProSubscription } from '../lib/paystack';
 import { useNavigate } from 'react-router-dom';
 import PageLoader from '../components/PageLoader';
@@ -186,6 +186,7 @@ export default function DashboardPage() {
   const [tutorSessions, setTutorSessions] = useState([]);
   const [pendingTutors, setPendingTutors] = useState([]);
   const [pendingResources, setPendingResources] = useState([]);
+  const [pendingWithdrawals, setPendingWithdrawals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [upgradingPro, setUpgradingPro] = useState(false);
@@ -222,12 +223,14 @@ export default function DashboardPage() {
         if (profile?.is_admin) {
           promises.push(getPendingTutors());
           promises.push(getPendingResources());
+          promises.push(getPendingWithdrawals());
         } else {
+          promises.push(Promise.resolve({ data: [] }));
           promises.push(Promise.resolve({ data: [] }));
           promises.push(Promise.resolve({ data: [] }));
         }
 
-        const [up, pur, book, tutSess, pendTut, pendRes] = await Promise.all(promises);
+        const [up, pur, book, tutSess, pendTut, pendRes, pendWith] = await Promise.all(promises);
 
         if (!mounted) return;
         setUploads(up.data || []);
@@ -236,6 +239,7 @@ export default function DashboardPage() {
         setTutorSessions(tutSess.data || []);
         setPendingTutors(pendTut.data || []);
         setPendingResources(pendRes.data || []);
+        setPendingWithdrawals(pendWith?.data || []);
       } catch (err) {
         console.error('[Dashboard] Data load error:', err);
         if (mounted) setError('Failed to synchronize data. Some information may be unavailable.');
@@ -840,6 +844,57 @@ export default function DashboardPage() {
                           Approve
                         </Button>
                         <Button variant="secondary" onClick={() => handleRejectResource(r.id)} style={{ width: 'auto', padding: '0.5rem 1.25rem', borderColor: '#ff5252', color: '#ff5252' }}>
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {/* WITHDRAWALS MODERATION */}
+              <h3 style={{ fontFamily: 'Syne, sans-serif', color: '#fff', fontSize: '1.5rem', margin: '3rem 0 1.5rem' }}>
+                Pending Withdrawals <span style={{ color: 'var(--primary)' }}>({pendingWithdrawals.length})</span>
+              </h3>
+              {pendingWithdrawals.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '4rem 2rem', background: '#050705', borderRadius: 16, border: '1px dashed rgba(188,149,92,0.2)' }}>
+                  <p style={{ color: 'var(--on-surface-variant)' }}>No pending withdrawals. All payouts handled!</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {pendingWithdrawals.map(w => (
+                    <div key={w.id} style={{ background: '#050705', borderRadius: 16, padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', border: '1px solid rgba(255,255,255,0.03)' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#E8F5E9', fontSize: '1.2rem', marginBottom: '0.2rem' }}>
+                          Withdraw ₦{w.amount.toLocaleString()}
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, marginLeft: '0.5rem', background: 'rgba(212,160,32,0.1)', color: 'var(--primary)', padding: '0.2rem 0.5rem', borderRadius: '100px' }}>PENDING</span>
+                        </div>
+                        <div style={{ color: '#7A9E7E', fontSize: '0.9rem', marginBottom: '0.2rem' }}>
+                          Tutor: {w.profiles?.full_name} (@{w.profiles?.username}) · {w.profiles?.email}
+                        </div>
+                        <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem' }}>
+                          <strong>Bank Details:</strong> {w.bank_name} • {w.account_number} • {w.account_name}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.4rem' }}>
+                          Requested at: {new Date(w.created_at).toLocaleString()}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.75rem' }}>
+                        <Button onClick={async () => {
+                          if (window.confirm(`Mark ₦${w.amount.toLocaleString()} as paid to ${w.profiles?.full_name}?`)) {
+                            await processWithdrawal(w.id, 'success');
+                            setPendingWithdrawals(prev => prev.filter(p => p.id !== w.id));
+                            alert('Marked as paid!');
+                          }
+                        }} style={{ width: 'auto', padding: '0.5rem 1.25rem', background: 'var(--primary-container)', color: 'var(--primary)' }}>
+                          Mark Paid
+                        </Button>
+                        <Button variant="secondary" onClick={async () => {
+                          if (window.confirm('Reject this withdrawal? It will be marked as failed.')) {
+                            await processWithdrawal(w.id, 'failed');
+                            setPendingWithdrawals(prev => prev.filter(p => p.id !== w.id));
+                            alert('Withdrawal rejected.');
+                          }
+                        }} style={{ width: 'auto', padding: '0.5rem 1.25rem', borderColor: '#ff5252', color: '#ff5252' }}>
                           Reject
                         </Button>
                       </div>
