@@ -48,10 +48,11 @@ export const signIn = async ({ email, password }) => {
 };
 
 export const signInWithGoogle = async () => {
+  const siteUrl = process.env.REACT_APP_SITE_URL || window.location.origin;
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/dashboard`,
+      redirectTo: `${siteUrl}/dashboard`,
       queryParams: { access_type: 'offline', prompt: 'consent' }
     }
   });
