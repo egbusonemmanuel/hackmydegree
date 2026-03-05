@@ -72,7 +72,14 @@ const Navbar = () => {
                             <Link to="/dashboard" style={{ color: 'var(--on-surface)', textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem' }}>
                                 {profile?.username || user.email?.split('@')[0]}
                             </Link>
-                            <Button variant="secondary" onClick={handleSignOut} style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>Sign Out</Button>
+                            <Button variant="danger" onClick={handleSignOut} style={{ width: 'auto', padding: '0.6rem 1.25rem', fontSize: '0.85rem', gap: '0.5rem' }}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                Sign Out
+                            </Button>
                         </div>
                     ) : (
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -123,7 +130,14 @@ const Navbar = () => {
                                 </Link>
                             </>
                         ) : (
-                            <Button onClick={handleSignOut} variant="secondary" style={{ height: 56, width: '100%' }}>Sign Out</Button>
+                            <Button onClick={handleSignOut} variant="danger" style={{ height: 56, width: '100%', gap: '0.75rem' }}>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                Sign Out
+                            </Button>
                         )}
 
                         <div style={{ marginTop: '1rem' }}>
