@@ -6,11 +6,13 @@ import { payForResource } from '../lib/paystack';
 import { useAuth } from '../App';
 import PageLoader from '../components/PageLoader';
 import { Button } from '../components/SharedUI';
+import { useToast } from '../contexts/ToastContext';
 
 export default function ResourceDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user, profile } = useAuth();
+    const { showToast } = useToast();
 
     const [resource, setResource] = useState(null);
     const [reviews, setReviews] = useState([]);
@@ -67,7 +69,7 @@ export default function ResourceDetailPage() {
         if (url) {
             window.open(url, '_blank');
         } else {
-            alert(error?.message || 'Failed to get download link');
+            showToast(error?.message || 'Failed to get download link', 'error');
         }
     };
 
@@ -80,7 +82,7 @@ export default function ResourceDetailPage() {
             resource,
             user,
             onSuccess: () => {
-                alert('Payment successful! You can now download the resource.');
+                showToast('Payment successful! You can now download the resource.', 'success');
                 // Small delay to ensure DB sync before first download attempt
                 setTimeout(() => {
                     setPurchased(true);

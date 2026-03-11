@@ -36,9 +36,9 @@ export default function TutorsPage() {
     );
 
     return (
-        <div style={{ color: 'var(--on-surface)', fontFamily: 'var(--font-body)', maxWidth: '1200px', margin: '0 auto', padding: '4rem 2rem' }}>
-            <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
-                <h1 style={{ fontFamily: 'var(--font-header)', fontSize: '3.5rem', marginBottom: '1.25rem', fontWeight: 900, letterSpacing: '-0.06em' }}>
+        <div style={{ color: 'var(--on-surface)', fontFamily: 'var(--font-body)', maxWidth: '1200px', margin: '0 auto', padding: 'clamp(2rem, 8vw, 4rem) clamp(1rem, 5vw, 2rem)' }}>
+            <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 10vw, 5rem)' }}>
+                <h1 style={{ fontFamily: 'var(--font-header)', fontSize: 'clamp(2.2rem, 10vw, 3.5rem)', marginBottom: '1.25rem', fontWeight: 900, letterSpacing: '-0.06em', lineHeight: 1.1 }}>
                     Elite Tutors 👨‍🏫
                 </h1>
                 <p style={{ color: 'var(--on-surface-variant)', fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', maxWidth: '700px', margin: '0 auto 2.5rem', fontWeight: 500, lineHeight: 1.6 }}>
@@ -53,7 +53,7 @@ export default function TutorsPage() {
                 </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(2.5rem, 10vw, 5rem)' }}>
                 <div style={{ width: '100%', maxWidth: '700px' }}>
                     <Input
                         placeholder="Search by name, subject (e.g. MTH101), or university..."
@@ -71,20 +71,20 @@ export default function TutorsPage() {
                     No tutors found matching your search.
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(280px, 100%, 350px), 1fr))', gap: '1.5rem' }}>
                     {filteredTutors.map(tutor => (
                         <div key={tutor.id} style={{
                             background: 'rgba(255,255,255,0.02)', borderRadius: '16px', padding: '2rem',
                             border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column'
                         }}>
-                            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                            <div style={{ display: 'flex', gap: 'clamp(1rem, 4vw, 1.5rem)', marginBottom: '1.5rem', alignItems: 'center' }}>
                                 <div style={{
-                                    width: 80, height: 80, borderRadius: '50%', background: '#333',
+                                    width: 'clamp(60px, 18vw, 80px)', height: 'clamp(60px, 18vw, 80px)', borderRadius: '50%', background: '#333', flexShrink: 0,
                                     backgroundImage: `url(${tutor.profile?.avatar_url})`, backgroundSize: 'cover'
                                 }}></div>
                                 <div>
-                                    <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.25rem', fontWeight: 800, fontFamily: 'var(--font-header)' }}>{tutor.profile?.full_name || tutor.profile?.username}</h3>
-                                    <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem', marginBottom: '0.5rem', fontWeight: 500 }}>
+                                    <h3 style={{ margin: '0 0 0.25rem 0', fontSize: 'clamp(1.1rem, 4vw, 1.25rem)', fontWeight: 800, fontFamily: 'var(--font-header)', lineHeight: 1.2 }}>{tutor.profile?.full_name || tutor.profile?.username}</h3>
+                                    <div style={{ color: 'var(--on-surface-variant)', fontSize: 'clamp(0.75rem, 3vw, 0.85rem)', marginBottom: '0.5rem', fontWeight: 500, lineHeight: 1.3 }}>
                                         {tutor.profile?.university} • {tutor.profile?.department} {tutor.profile?.level}
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
@@ -112,8 +112,8 @@ export default function TutorsPage() {
                                     <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>₦{tutor.hourly_rate}</div>
                                     <div style={{ color: '#7A9E7E', fontSize: '0.8rem' }}>per hour</div>
                                 </div>
-                                <Link to={`/book/${tutor.id}`} style={{ width: 'auto' }}>
-                                    <Button style={{ padding: '0.8rem 2rem', fontSize: '0.95rem', width: 'auto' }}>
+                                <Link to={`/book/${tutor.id}`} style={{ width: 'auto', display: 'block' }}>
+                                    <Button style={{ padding: '0.8rem 1.5rem', fontSize: '0.95rem', width: 'auto', whiteSpace: 'nowrap' }}>
                                         Book Session
                                     </Button>
                                 </Link>

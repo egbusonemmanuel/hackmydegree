@@ -46,7 +46,6 @@ const Navbar = () => {
 
                     <WhatsAppButton
                         text="Check out HackMyDegree — The ultimate resource platform for Nigerian students! 🚀"
-                        style={{ width: 'auto', padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}
                     />
 
                     <button

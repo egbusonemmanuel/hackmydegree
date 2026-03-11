@@ -19,6 +19,7 @@ import TutorsPage from './pages/TutorsPage';
 import LegalPage from './pages/LegalPage';
 import TutorRegistrationPage from './pages/TutorRegistrationPage';
 import ChatPage from './pages/ChatPage';
+import { ToastProvider } from './contexts/ToastContext';
 
 // Component imports
 import Navbar from './components/Navbar';
@@ -145,11 +146,13 @@ export const ThemeProvider = ({ children }) => {
 export default function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <AppInner />
-        </AuthProvider>
-      </BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <AppInner />
+          </AuthProvider>
+        </BrowserRouter>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

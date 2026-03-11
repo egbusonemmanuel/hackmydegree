@@ -6,6 +6,7 @@ import { payForProSubscription } from '../lib/paystack';
 import { useNavigate } from 'react-router-dom';
 import PageLoader from '../components/PageLoader';
 import { Button, Banner, Field, Input } from '../components/SharedUI';
+import { useToast } from '../contexts/ToastContext';
 
 const TAB = { OVERVIEW: 'overview', UPLOADS: 'uploads', PURCHASES: 'purchases', BOOKINGS: 'bookings', MESSAGES: 'messages', EARNINGS: 'earnings', SESSIONS: 'sessions', ADMIN: 'admin' };
 
@@ -132,7 +133,7 @@ function WithdrawalUI({ profile, refreshProfile }) {
                   e.currentTarget.style.boxShadow = '0 8px 24px rgba(212, 160, 32, 0.25), inset 0 2px 0 rgba(255,255,255,0.2)';
                 }}
               >
-                {loading ? <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }}>⌛</span> : '💸'}
+                {loading ? <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }}>⏳</span> : '💸'}
                 {loading ? 'Processing...' : 'Request Withdrawal'}
               </button>
             </form>
@@ -179,6 +180,7 @@ function WithdrawalUI({ profile, refreshProfile }) {
 export default function DashboardPage() {
   const { user, profile, refreshProfile, session } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [tab, setTab] = useState(TAB.OVERVIEW);
   const [uploads, setUploads] = useState([]);
   const [purchases, setPurchases] = useState([]);
@@ -255,7 +257,7 @@ export default function DashboardPage() {
     const { error } = await approveTutor(id, session?.access_token);
     if (!error) {
       setPendingTutors(prev => prev.filter(t => t.id !== id));
-      alert('Tutor approved and activated!');
+      showToast('Tutor approved and activated!', 'success');
     }
   };
 
@@ -265,7 +267,7 @@ export default function DashboardPage() {
     const { error } = await confirmBooking(id, link);
     if (!error) {
       setTutorSessions(prev => prev.map(s => s.id === id ? { ...s, status: 'confirmed', meet_link: link } : s));
-      alert('Booking confirmed and link shared!');
+      showToast('Booking confirmed and link shared!', 'success');
     }
   };
 
@@ -278,17 +280,17 @@ export default function DashboardPage() {
     const tutorUserId = booking?.tutor?.user_id;
 
     if (!tutorUserId) {
-      alert('Error finding tutor user ID');
+      showToast('Error finding tutor user ID', 'error');
       return;
     }
 
     const { error } = await completeBooking(id, tutorUserId, amount);
     if (!error) {
       setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'completed' } : b));
-      alert('Session marked as completed! Payment released to tutor.');
+      showToast('Session marked as completed! Payment released to tutor.', 'success');
     } else {
       console.error(error);
-      alert('Error completing booking.');
+      showToast('Error completing booking.', 'error');
     }
   };
 
@@ -305,7 +307,7 @@ export default function DashboardPage() {
         setBookings(prev => prev.filter(b => b.id !== id));
       }
     } else {
-      alert('Failed to delete session.');
+      showToast('Failed to delete session.', 'error');
       console.error(error);
     }
   };
@@ -320,7 +322,7 @@ export default function DashboardPage() {
     const { error } = await deleteTutorProfile(user.id);
     if (error) {
       setLoading(false);
-      alert('Failed to deactivate tutor profile.');
+      showToast('Failed to deactivate tutor profile.', 'error');
       console.error(error);
     } else {
       // Refresh the page to load standard user view
@@ -332,7 +334,7 @@ export default function DashboardPage() {
     const { error } = await approveResource(id, session?.access_token);
     if (!error) {
       setPendingResources(prev => prev.filter(r => r.id !== id));
-      alert('Resource approved and published!');
+      showToast('Resource approved and published!', 'success');
     }
   };
 
@@ -341,7 +343,7 @@ export default function DashboardPage() {
     const { error } = await deleteResource(id, session?.access_token);
     if (!error) {
       setPendingResources(prev => prev.filter(r => r.id !== id));
-      alert('Resource rejected and removed.');
+      showToast('Resource rejected and removed.', 'success');
     }
   };
 
@@ -640,7 +642,7 @@ export default function DashboardPage() {
                         <Input placeholder="0123456789" maxLength={10} />
                       </Field>
                     </div>
-                    <Button onClick={() => alert('Withdrawal requested!')}>
+                    <Button onClick={() => showToast('Withdrawal requested!', 'success')}>
                       Request Withdrawal of ₦{availableBalance.toLocaleString()}
                     </Button>
                     <p style={{ fontSize: '0.9rem', color: 'var(--on-surface-variant)', marginTop: '1.5rem', textAlign: 'center', fontWeight: 500 }}>

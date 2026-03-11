@@ -4,6 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
 import { supabase, getBookingForChat, getBookingMessages, sendBookingMessage, subscribeToMessages } from '../lib/supabase';
 import PageLoader from '../components/PageLoader';
+import { useToast } from '../contexts/ToastContext';
 
 // ── Tiny helper: auto-linkify URLs inside message text ─────────────
 function Linkified({ text }) {
@@ -27,6 +28,7 @@ export default function ChatPage() {
     const { bookingId } = useParams();
     const { user } = useAuth();
     const navigate = useNavigate();
+    const { showToast } = useToast();
 
     const [booking, setBooking] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -122,7 +124,7 @@ export default function ChatPage() {
             // Roll back on error
             setMessages(prev => prev.filter(m => m.id !== optimisticMsg.id));
             setText(trimmed);
-            alert('Failed to send message. Please try again.');
+            showToast('Failed to send message. Please try again.', 'error');
         }
 
         setSending(false);
