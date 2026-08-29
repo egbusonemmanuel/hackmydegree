@@ -17,6 +17,13 @@ export default function AIAssistantPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [activeProvider, setActiveProvider] = useState('DegreeAI Core');
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const [messages, setMessages] = useState(() => {
         try {
@@ -590,23 +597,46 @@ I am specially trained to assist students across Nigerian universities with:
     return (
         <div style={{
             display: 'flex',
-            height: 'calc(100vh - 72px)',
+            height: isMobile ? 'calc(100dvh - 64px)' : 'calc(100vh - 72px)',
             background: 'var(--background)',
             overflow: 'hidden',
-            fontFamily: 'var(--font-body)'
+            fontFamily: 'var(--font-body)',
+            position: 'relative'
         }}>
+            {/* Mobile Backdrop Overlay */}
+            {isMobile && mobileSidebarOpen && (
+                <div
+                    onClick={() => setMobileSidebarOpen(false)}
+                    style={{
+                        position: 'fixed',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0, 0, 0, 0.75)',
+                        backdropFilter: 'blur(4px)',
+                        zIndex: 998,
+                        animation: 'fadeIn 0.2s ease forwards'
+                    }}
+                />
+            )}
+
             {/* ─── LEFT SIDEBAR: STUDY MODES & TOOLS ─── */}
             <aside style={{
-                width: '320px',
+                width: isMobile ? '85%' : '320px',
+                maxWidth: '320px',
+                position: isMobile ? 'fixed' : 'relative',
+                top: isMobile ? 0 : 'auto',
+                left: isMobile ? 0 : 'auto',
+                bottom: isMobile ? 0 : 'auto',
+                height: isMobile ? '100vh' : 'auto',
                 borderRight: '1px solid var(--outline-variant)',
                 background: 'var(--surface)',
-                display: mobileSidebarOpen || (typeof window !== 'undefined' && window.innerWidth > 768) ? 'flex' : 'none',
+                display: (!isMobile || mobileSidebarOpen) ? 'flex' : 'none',
                 flexDirection: 'column',
                 overflowY: 'auto',
                 flexShrink: 0,
-                padding: '1.25rem',
+                padding: isMobile ? '1rem' : '1.25rem',
                 boxSizing: 'border-box',
-                zIndex: 10
+                zIndex: isMobile ? 999 : 10,
+                boxShadow: isMobile ? '4px 0 25px rgba(0,0,0,0.5)' : 'none'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
@@ -628,6 +658,27 @@ I am specially trained to assist students across Nigerian universities with:
                             </div>
                         </div>
                     </div>
+                    {isMobile && (
+                        <button
+                            onClick={() => setMobileSidebarOpen(false)}
+                            style={{
+                                background: 'var(--surface-variant)',
+                                border: '1px solid var(--outline-variant)',
+                                color: 'var(--on-surface)',
+                                borderRadius: '8px',
+                                width: '32px',
+                                height: '32px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.1rem',
+                                cursor: 'pointer',
+                                fontWeight: 700
+                            }}
+                        >
+                            ✕
+                        </button>
+                    )}
                 </div>
 
                 {/* Level & Course Code Filters */}
@@ -705,7 +756,10 @@ I am specially trained to assist students across Nigerian universities with:
                             return (
                                 <button
                                     key={mode.id}
-                                    onClick={() => setSelectedMode(mode.id)}
+                                    onClick={() => {
+                                        setSelectedMode(mode.id);
+                                        if (isMobile) setMobileSidebarOpen(false);
+                                    }}
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
@@ -756,6 +810,7 @@ I am specially trained to assist students across Nigerian universities with:
                                 onClick={() => {
                                     setSelectedMode(chip.mode);
                                     handleSend(chip.prompt, chip.mode);
+                                    if (isMobile) setMobileSidebarOpen(false);
                                 }}
                                 style={{
                                     padding: '0.5rem 0.7rem',
@@ -878,10 +933,10 @@ I am specially trained to assist students across Nigerian universities with:
                 <div style={{
                     flex: 1,
                     overflowY: 'auto',
-                    padding: '1.5rem',
+                    padding: isMobile ? '0.75rem 0.85rem' : '1.5rem',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '1.25rem'
+                    gap: isMobile ? '0.85rem' : '1.25rem'
                 }}>
                     {messages.map((msg) => {
                         const isUser = msg.role === 'user';
@@ -891,11 +946,11 @@ I am specially trained to assist students across Nigerian universities with:
                                 style={{
                                     display: 'flex',
                                     justifyContent: isUser ? 'flex-end' : 'flex-start',
-                                    gap: '0.75rem',
+                                    gap: isMobile ? '0.4rem' : '0.75rem',
                                     maxWidth: '100%'
                                 }}
                             >
-                                {!isUser && (
+                                {!isUser && !isMobile && (
                                     <div style={{
                                         width: '36px', height: '36px', borderRadius: '10px',
                                         background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
@@ -908,10 +963,10 @@ I am specially trained to assist students across Nigerian universities with:
                                 )}
 
                                 <div style={{
-                                    maxWidth: isUser ? '75%' : '85%',
+                                    maxWidth: isUser ? (isMobile ? '88%' : '75%') : (isMobile ? '96%' : '85%'),
                                     background: isUser ? 'var(--primary)' : 'var(--surface)',
                                     color: isUser ? '#000' : 'var(--on-surface)',
-                                    padding: '1.1rem 1.4rem',
+                                    padding: isMobile ? '0.85rem 1rem' : '1.1rem 1.4rem',
                                     borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
                                     border: isUser ? 'none' : '1px solid var(--outline-variant)',
                                     boxShadow: isUser ? '0 4px 15px rgba(212, 160, 32, 0.25)' : '0 2px 10px rgba(0,0,0,0.05)',
@@ -1144,7 +1199,7 @@ I am specially trained to assist students across Nigerian universities with:
 
                 {/* Input Form Bar */}
                 <div style={{
-                    padding: '0.85rem 1.5rem 1rem',
+                    padding: isMobile ? '0.5rem 0.75rem 0.75rem' : '0.85rem 1.5rem 1rem',
                     background: 'var(--surface)',
                     borderTop: '1px solid var(--outline-variant)'
                 }}>

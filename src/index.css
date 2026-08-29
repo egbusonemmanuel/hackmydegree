@@ -235,3 +235,37 @@ button {
   border-bottom: 1px solid var(--outline-variant);
   font-family: var(--font-header);
 }
+
+/* ── Mobile Layout & Touch Enhancements ── */
+@media (max-width: 768px) {
+  /* Prevent horizontal page overflow on mobile devices */
+  body, #root {
+    overflow-x: hidden;
+  }
+
+  /* Responsive code blocks and tables */
+  pre, code, table {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+  }
+
+  /* Touch hit target improvements */
+  button, input, select, textarea {
+    font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
+  }
+
+  /* Mobile scrollbar hiding for horizontal chip bars */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
