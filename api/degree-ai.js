@@ -57,15 +57,22 @@ async function handler(request, response) {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 24000);
       
-      const upstream = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      const payload = {
+        contents,
+        generationConfig: { temperature: 0.4, maxOutputTokens: 1500 }
+      };
+
+      if (systemInstruction && String(systemInstruction).trim()) {
+        payload.systemInstruction = {
+          parts: [{ text: String(systemInstruction).trim().slice(0, 12000) }]
+        };
+      }
+
+      const upstream = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey.trim()}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey.trim() },
+        headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: String(systemInstruction || '').slice(0, 12000) }] },
-          contents,
-          generationConfig: { temperature: 0.4, maxOutputTokens: 1500 }
-        }),
+        body: JSON.stringify(payload),
       });
       clearTimeout(timeout);
 
