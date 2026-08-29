@@ -277,57 +277,28 @@ $$\\sum F = m \\cdot a, \\quad \\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\vare
 - *“Discuss three real-world limitations encountered in engineering practice.”* (5 Marks)`;
   }
 
-  // Default Academic Tutor / Exam Prep response
-  return `### 🎓 DegreeAI Academic Breakdown
+// Intelligent conversational & academic helper
+export function generateFallbackAcademicResponse(prompt, modeId = 'tutor') {
+  const clean = String(prompt || '').trim().toLowerCase();
+  
+  // Natural responses for conversational greetings
+  if (/^(hi|hello|hey|good\s*(morning|afternoon|evening)|yo|greetings|how\s*are\s*you)/i.test(clean)) {
+    return `Hello! 👋 I'm **DegreeAI**, your academic study partner.
 
-**Topic:** ${cleanPrompt}  
-**Mode:** ${mode.name}
+How can I assist your studies today? You can:
+- 📖 Ask me to explain any difficult concept or theory
+- 📝 Paste a past exam question for a step-by-step solution
+- ⚡ Paste your lecture notes to get a high-yield revision summary
+- 🎯 Ask for a practice mock quiz on any topic`;
+  }
 
----
+  // Clear, honest connection notice if live AI is temporarily unreachable
+  return `⚠️ **DegreeAI Connectivity Notice**
 
-#### 1. Overview & Conceptual Foundation
-In Nigerian University and West African academic curricula (NUC standard benchmark), understanding this topic requires mastering both the qualitative theory and quantitative derivations.
+I am currently experiencing high academic traffic on the live neural gateway for *"**${String(prompt).slice(0, 80)}**"*.
 
-At its core, this subject addresses how physical, mathematical, or social systems transition between states under defined constraints.
-
----
-
-#### 2. Step-by-Step Derivation & Principles
-
-Let us analyze the problem systematically:
-
-1. **Step 1: Identify Given Variables & Standard Units**
-   - Let the primary state function be denoted by $\\Psi(x, t)$
-   - Ensure all parameters are converted to SI standard base units (kg, m, s, A, K).
-
-2. **Step 2: Apply the Governing Fundamental Equation**
-   $$\\mathcal{L} = \\int_{t_1}^{t_2} (T - V) \\, dt$$
-   Substitute the boundary parameters into the general equilibrium condition:
-   $$f(x) = a_0 + \\sum_{n=1}^{\\infty} \\left( a_n \\cos\\frac{n\\pi x}{L} + b_n \\sin\\frac{n\\pi x}{L} \\right)$$
-
-3. **Step 3: Solve for the Unknowns**
-   Differentiating with respect to the independent variable and setting $\\frac{\\partial f}{\\partial x} = 0$ yields the steady-state maximum.
-
----
-
-#### 3. Standard University Marking Scheme Points
-When answering this in an examination, guarantee maximum marks by structuring your answer as:
-- [x] **Clear Definition:** 2 Marks for stating the formal definition verbatim.
-- [x] **Labeled Diagram / Schematic:** 3 Marks for drawing clean axes with units.
-- [x] **Mathematical Steps:** 4 Marks for showing formula substitution without skipping intermediate lines.
-- [x] **Final Statement with Units:** 1 Mark for highlighting the final answer in a neat box.
-
----
-
-#### 4. Need Further Practice?
-Ask DegreeAI to:
-- *"Give me 3 practice calculation problems with solutions for this"*
-- *"Explain this in Pidgin / simpler words"*
-- *"Generate a 5-question mock test"*`;
+**Please try again in 5 seconds**, or click one of the quick study chips below to continue!`;
 }
-
-// Main AI Completion function
-export async function legacySendAIMessage({ prompt, mode = 'tutor', conversationHistory = [] }) {
   const selectedMode = AI_MODES.find(m => m.id === mode) || AI_MODES[0];
   const apiKey = typeof process !== 'undefined' ? process.env?.REACT_APP_GEMINI_API_KEY : '';
 
