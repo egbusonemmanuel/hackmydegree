@@ -1,8 +1,8 @@
 const MODELS_TO_TRY = [
   process.env.GEMINI_MODEL,
-  'gemini-2.5-flash',
   'gemini-3.6-flash',
-  'gemini-flash-latest'
+  'gemini-1.5-flash',
+  'gemini-1.5-pro'
 ].filter(Boolean);
 
 const RATE_LIMIT_WINDOW_MS = 60_000;

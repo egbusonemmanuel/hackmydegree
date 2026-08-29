@@ -481,7 +481,7 @@ export async function sendAIMessage({ prompt, mode = 'tutor', conversationHistor
   const apiKey = typeof process !== 'undefined' ? (process.env?.REACT_APP_GEMINI_API_KEY || process.env?.GEMINI_API_KEY) : '';
   
   if (apiKey && apiKey.trim().length > 10) {
-    const modelsToTry = ['gemini-2.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest'];
+    const modelsToTry = ['gemini-3.6-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
     const validHistory = [];
     let expectingUser = true;
 
