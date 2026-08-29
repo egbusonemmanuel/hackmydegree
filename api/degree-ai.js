@@ -64,7 +64,7 @@ async function handler(request, response) {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: String(systemInstruction || '').slice(0, 12000) }] },
           contents,
-          generationConfig: { temperature: 0.65, maxOutputTokens: 2500 }
+          generationConfig: { temperature: 0.4, maxOutputTokens: 1500 }
         }),
       });
       clearTimeout(timeout);
