@@ -34,9 +34,22 @@ async function handler(request, response) {
   const { prompt, systemInstruction, history } = request.body || {};
   if (typeof prompt !== 'string' || !prompt.trim()) return response.status(400).json({ error: 'A study question is required.' });
   
-  const turns = Array.isArray(history) ? history.slice(-8).filter((turn) => turn && ['user', 'model'].includes(turn.role) && typeof turn.content === 'string' && turn.content.trim()).map((turn) => ({ role: turn.role, parts: [{ text: turn.content.trim().slice(0, 4000) }] })) : [];
-  const contents = turns.filter((turn, index) => index === 0 || turn.role !== turns[index - 1].role);
-  contents.push({ role: 'user', parts: [{ text: prompt.trim().slice(0, 16000) }] });
+  const validHistory = [];
+  let expectedRole = 'user';
+  if (Array.isArray(history)) {
+    for (const turn of history.slice(-8)) {
+      if (!turn || typeof turn.content !== 'string' || !turn.content.trim()) continue;
+      const role = (turn.role === 'model' || turn.role === 'assistant') ? 'model' : 'user';
+      if (role === expectedRole) {
+        validHistory.push({ role, parts: [{ text: turn.content.trim().slice(0, 4000) }] });
+        expectedRole = role === 'user' ? 'model' : 'user';
+      }
+    }
+  }
+  if (validHistory.length > 0 && validHistory[validHistory.length - 1].role === 'user') {
+    validHistory.pop();
+  }
+  const contents = [...validHistory, { role: 'user', parts: [{ text: prompt.trim().slice(0, 16000) }] }];
 
   // Dual-Server / Multi-Model Redundancy: Attempt primary, if busy or rate-limited, auto-failover to backup
   for (const model of MODELS_TO_TRY) {
