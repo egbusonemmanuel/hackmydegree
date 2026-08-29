@@ -27,7 +27,8 @@ const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function handler(request, response) {
   if (request.method !== 'POST') { response.setHeader('Allow', 'POST'); return response.status(405).json({ error: 'Method not allowed.' }); }
-  const apiKey = process.env.GEMINI_API_KEY || process.env.REACT_APP_GEMINI_API_KEY;
+  const rawKey = process.env.GEMINI_API_KEY || process.env.REACT_APP_GEMINI_API_KEY || '';
+  const apiKey = String(rawKey).replace(/['"\r\n\s]/g, '').trim();
   if (!apiKey) return response.status(503).json({ error: 'DegreeAI is initializing. Please try again shortly.' });
   if (isRateLimited(getClientId(request))) return response.status(429).json({ error: 'DegreeAI rate limit reached. Please wait a minute and try again.' });
   
@@ -68,7 +69,7 @@ async function handler(request, response) {
         };
       }
 
-      const upstream = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey.trim()}`, {
+      const upstream = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
@@ -86,6 +87,9 @@ async function handler(request, response) {
             status: 'success'
           });
         }
+      } else {
+        const errText = await upstream.text().catch(() => '');
+        console.warn(`[DegreeAI Server] Model ${model} returned HTTP ${upstream.status}:`, errText);
       }
     } catch (err) {
       console.warn(`[DegreeAI Server] Failover from ${model}:`, err?.message);
