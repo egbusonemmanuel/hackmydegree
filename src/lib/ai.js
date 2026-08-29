@@ -145,7 +145,7 @@ export const PRESET_PROMPT_CHIPS = [
 ];
 
 // Fallback academic response generator if no API key is provided
-function generateFallbackAcademicResponse(prompt, modeId) {
+export function generateFallbackAcademicResponse(prompt, modeId) {
   const cleanPrompt = prompt.trim();
   const mode = AI_MODES.find(m => m.id === modeId) || AI_MODES[0];
 
