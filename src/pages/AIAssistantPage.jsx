@@ -1199,116 +1199,133 @@ I am specially trained to assist students across Nigerian universities with:
 
                 {/* Input Form Bar */}
                 <div style={{
-                    padding: isMobile ? '0.5rem 0.75rem 0.75rem' : '0.85rem 1.5rem 1rem',
+                    padding: isMobile ? '0.6rem 0.75rem 0.85rem' : '0.85rem 1.5rem 1.2rem',
                     background: 'var(--surface)',
-                    borderTop: '1px solid var(--outline-variant)'
+                    borderTop: '1px solid var(--outline-variant)',
+                    boxSizing: 'border-box'
                 }}>
-                    {attachedFileName && (
+                    <div style={{
+                        maxWidth: '900px',
+                        margin: '0 auto',
+                        width: '100%'
+                    }}>
+                        {attachedFileName && (
+                            <div style={{
+                                display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                                padding: '0.3rem 0.75rem', background: 'rgba(212, 160, 32, 0.15)',
+                                border: '1px solid var(--primary)', borderRadius: '20px',
+                                fontSize: '0.75rem', color: 'var(--primary)', marginBottom: '0.6rem', fontWeight: 700
+                            }}>
+                                <span>📎 {attachedFileName}</span>
+                                <button
+                                    onClick={() => setAttachedFileName(null)}
+                                    style={{ background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 900, marginLeft: '0.2rem' }}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        )}
+
                         <div style={{
-                            display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-                            padding: '0.25rem 0.6rem', background: 'rgba(212, 160, 32, 0.15)',
-                            border: '1px solid var(--primary)', borderRadius: '6px',
-                            fontSize: '0.75rem', color: 'var(--primary)', marginBottom: '0.5rem', fontWeight: 700
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            background: 'var(--surface-variant)',
+                            border: '1.5px solid var(--outline-variant)',
+                            borderRadius: '24px',
+                            padding: isMobile ? '0.4rem 0.5rem 0.4rem 0.75rem' : '0.55rem 0.75rem 0.55rem 1rem',
+                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                            transition: 'border-color 0.2s ease',
                         }}>
-                            <span>📎 Notes Attached: {attachedFileName}</span>
+                            {/* Hidden file input for uploading notes */}
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileUpload}
+                                accept=".txt,.md,.doc,.docx,.pdf,.json"
+                                style={{ display: 'none' }}
+                            />
+
                             <button
-                                onClick={() => setAttachedFileName(null)}
-                                style={{ background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 900 }}
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                title="Attach Lecture Notes or Handout (.txt, .md, .doc)"
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--on-surface-variant)',
+                                    cursor: 'pointer',
+                                    padding: '0.3rem',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '1.15rem',
+                                    flexShrink: 0
+                                }}
                             >
-                                ✕
+                                📎
+                            </button>
+
+                            <textarea
+                                ref={textareaRef}
+                                value={inputPrompt}
+                                onChange={(e) => {
+                                    setInputPrompt(e.target.value);
+                                    e.target.style.height = 'auto';
+                                    e.target.style.height = `${Math.min(e.target.scrollHeight, 140)}px`;
+                                }}
+                                onKeyDown={handleKeyDown}
+                                placeholder={isMobile ? "Ask DegreeAI a question..." : `Ask DegreeAI anything (${courseCode ? courseCode.toUpperCase() : 'paste notes, past questions, formulas...'})`}
+                                rows={1}
+                                style={{
+                                    flex: 1,
+                                    background: 'transparent',
+                                    border: 'none',
+                                    outline: 'none',
+                                    resize: 'none',
+                                    color: 'var(--on-surface)',
+                                    fontSize: '0.92rem',
+                                    fontFamily: 'inherit',
+                                    lineHeight: 1.4,
+                                    maxHeight: '140px',
+                                    padding: '0.3rem 0'
+                                }}
+                            />
+
+                            <button
+                                onClick={() => handleSend()}
+                                disabled={!inputPrompt.trim() || isLoading}
+                                title="Send Question"
+                                style={{
+                                    background: inputPrompt.trim() && !isLoading ? 'var(--primary)' : 'var(--outline-variant)',
+                                    color: inputPrompt.trim() && !isLoading ? '#000' : 'var(--on-surface-variant)',
+                                    border: 'none',
+                                    borderRadius: isMobile ? '50%' : '14px',
+                                    width: isMobile ? '38px' : 'auto',
+                                    height: isMobile ? '38px' : 'auto',
+                                    padding: isMobile ? 0 : '0.55rem 1.1rem',
+                                    fontWeight: 800,
+                                    fontSize: '0.88rem',
+                                    cursor: inputPrompt.trim() && !isLoading ? 'pointer' : 'not-allowed',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.35rem',
+                                    transition: 'all 0.2s ease',
+                                    flexShrink: 0
+                                }}
+                            >
+                                {isMobile ? (
+                                    <span style={{ fontSize: '1rem', fontWeight: 900 }}>➔</span>
+                                ) : (
+                                    <>
+                                        <span>Send</span>
+                                        <span>🚀</span>
+                                    </>
+                                )}
                             </button>
                         </div>
-                    )}
-
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'flex-end',
-                        gap: '0.6rem',
-                        background: 'var(--surface-variant)',
-                        border: '1px solid var(--outline-variant)',
-                        borderRadius: '16px',
-                        padding: '0.6rem 0.8rem',
-                        boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
-                    }}>
-                        {/* Hidden file input for uploading notes */}
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileUpload}
-                            accept=".txt,.md,.doc,.docx,.pdf,.json"
-                            style={{ display: 'none' }}
-                        />
-
-                        <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            title="Attach Lecture Notes or Handout (.txt, .md, .doc)"
-                            style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: 'var(--on-surface-variant)',
-                                cursor: 'pointer',
-                                padding: '0.4rem',
-                                borderRadius: '8px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1.15rem',
-                                transition: 'all 0.15s'
-                            }}
-                            onMouseOver={e => e.currentTarget.style.color = 'var(--primary)'}
-                            onMouseOut={e => e.currentTarget.style.color = 'var(--on-surface-variant)'}
-                        >
-                            📎
-                        </button>
-
-                        <textarea
-                            ref={textareaRef}
-                            value={inputPrompt}
-                            onChange={(e) => {
-                                setInputPrompt(e.target.value);
-                                e.target.style.height = 'auto';
-                                e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
-                            }}
-                            onKeyDown={handleKeyDown}
-                            placeholder={`Ask DegreeAI anything (${courseCode ? courseCode.toUpperCase() : 'Paste notes, ask for past questions, generate quiz, or solve equations...'})`}
-                            rows={1}
-                            style={{
-                                flex: 1,
-                                background: 'transparent',
-                                border: 'none',
-                                outline: 'none',
-                                resize: 'none',
-                                color: 'var(--on-surface)',
-                                fontSize: '0.92rem',
-                                fontFamily: 'inherit',
-                                lineHeight: 1.4,
-                                maxHeight: '150px'
-                            }}
-                        />
-
-                        <button
-                            onClick={() => handleSend()}
-                            disabled={!inputPrompt.trim() || isLoading}
-                            style={{
-                                background: inputPrompt.trim() && !isLoading ? 'var(--primary)' : 'var(--outline-variant)',
-                                color: inputPrompt.trim() && !isLoading ? '#000' : 'var(--on-surface-variant)',
-                                border: 'none',
-                                borderRadius: '12px',
-                                padding: '0.6rem 1.2rem',
-                                fontWeight: 800,
-                                fontSize: '0.9rem',
-                                cursor: inputPrompt.trim() && !isLoading ? 'pointer' : 'not-allowed',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.4rem',
-                                transition: 'all 0.2s ease',
-                                flexShrink: 0
-                            }}
-                        >
-                            <span>Send</span>
-                            <span>🚀</span>
-                        </button>
                     </div>
 
                     <div style={{
