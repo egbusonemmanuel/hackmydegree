@@ -62,7 +62,7 @@ export default function AICopilotWidget() {
         }}>
             {/* Pop-up Quick AI Assistant Box */}
             {isOpen && (
-                <div style={{
+                <div className="copilot-widget-box" style={{
                     position: 'absolute',
                     bottom: '68px',
                     right: 0,

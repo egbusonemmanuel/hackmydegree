@@ -135,16 +135,16 @@ export default function UploadPage() {
 
   return (
     <div className="page-container" style={{ maxWidth: '850px' }}>
-      <div style={{ textAlign: 'center', marginBottom: '6rem' }}>
-        <h1 className="gradient-text" style={{ fontSize: 'max(3.5rem, 5vw)', marginBottom: '1rem', fontWeight: 900, letterSpacing: '-0.06em' }}>Content Creator</h1>
-        <p style={{ color: 'var(--on-surface-variant)', fontSize: '1.25rem', fontWeight: 500 }}>
+      <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 6vw, 6rem)' }}>
+        <h1 className="gradient-text" style={{ fontSize: 'clamp(2.2rem, 7vw, 4rem)', marginBottom: '1rem', fontWeight: 900, letterSpacing: '-0.06em' }}>Content Creator</h1>
+        <p style={{ color: 'var(--on-surface-variant)', fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', fontWeight: 500 }}>
           Share your academic materials and earn premium royalties.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
         {/* Step 1: File Selection */}
-        <section className="glass" style={{ borderRadius: '32px', padding: '3rem', marginBottom: '3rem' }}>
+        <section className="glass" style={{ borderRadius: '32px', padding: 'clamp(1.5rem, 5vw, 3rem)', marginBottom: 'clamp(1.5rem, 4vw, 3rem)' }}>
           <label style={labelStyle}>File Asset</label>
           <div
             onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -152,7 +152,7 @@ export default function UploadPage() {
             onDrop={(e) => { e.preventDefault(); setDragging(false); setFile(e.dataTransfer.files[0]); }}
             onClick={() => document.getElementById('fileInput').click()}
             style={{
-              padding: '4rem 2rem', textAlign: 'center', borderRadius: '24px', cursor: 'pointer',
+              padding: 'clamp(2rem, 5vw, 4rem) 1.5rem', textAlign: 'center', borderRadius: '24px', cursor: 'pointer',
               border: `2px dashed ${file ? 'var(--primary)' : 'var(--outline-variant)'}`,
               background: dragging ? 'var(--primary-container)' : 'rgba(255, 255, 255, 0.02)',
               transition: 'var(--transition-standard)'
@@ -165,7 +165,7 @@ export default function UploadPage() {
         </section>
 
         {/* Step 2: Details */}
-        <section className="glass" style={{ borderRadius: '32px', padding: '3.5rem', marginBottom: '3rem' }}>
+        <section className="glass" style={{ borderRadius: '32px', padding: 'clamp(1.5rem, 5vw, 3.5rem)', marginBottom: 'clamp(1.5rem, 4vw, 3rem)' }}>
           <Field label="Title">
             <Input required placeholder="e.g. Physics 101: Complete Lecture Notes" value={form.title} onChange={set('title')} />
           </Field>
@@ -179,7 +179,7 @@ export default function UploadPage() {
             }} placeholder="What makes this resource valuable?" value={form.description} onChange={set('description')} />
           </Field>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(1rem, 3vw, 2rem)' }}>
             <Field label="Category">
               <select required className="glass" style={{
                 width: '100%', padding: '1.1rem 1.25rem', borderRadius: '14px',
@@ -198,12 +198,12 @@ export default function UploadPage() {
         </section>
 
         {/* Step 3: Monetization */}
-        <section className="glass" style={{ borderRadius: '32px', padding: '3.5rem', marginBottom: '4rem' }}>
+        <section className="glass" style={{ borderRadius: '32px', padding: 'clamp(1.5rem, 5vw, 3.5rem)', marginBottom: 'clamp(2rem, 5vw, 4rem)' }}>
           <label style={labelStyle}>Monetization Engine</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 'clamp(1rem, 3vw, 2rem)', marginBottom: '2.5rem' }}>
             {['free', 'premium'].map(type => (
               <div key={type} onClick={() => setForm(f => ({ ...f, resource_type: type }))} style={{
-                padding: '2.5rem', borderRadius: '24px', cursor: 'pointer', textAlign: 'center',
+                padding: 'clamp(1.5rem, 4vw, 2.5rem)', borderRadius: '24px', cursor: 'pointer', textAlign: 'center',
                 border: `2px solid ${form.resource_type === type ? 'var(--primary)' : 'var(--outline-variant)'}`,
                 background: form.resource_type === type ? 'var(--primary-container)' : 'var(--surface-variant)',
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'

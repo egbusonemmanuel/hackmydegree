@@ -189,7 +189,10 @@ export async function sendAIMessage({ prompt, mode = 'tutor', conversationHistor
       history
     });
 
-    const response = await fetch('/api/degree-ai', {
+    const baseUrl = (typeof process !== 'undefined' && (process.env?.REACT_APP_API_URL || process.env?.REACT_APP_BACKEND_URL)) || '';
+    const endpoint = baseUrl ? `${baseUrl.replace(/\/+$/, '')}/api/degree-ai` : '/api/degree-ai';
+
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal: controller.signal,

@@ -73,7 +73,7 @@ function WithdrawalUI({ profile, refreshProfile }) {
       <div style={{ background: '#050705', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: 'clamp(1.5rem, 4vw, 2.5rem)', marginTop: '2rem' }}>
         <h3 style={{ fontFamily: 'Syne, sans-serif', color: '#fff', fontSize: '1.4rem', margin: '0 0 1.5rem' }}>Withdraw Earnings</h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 1.5fr)', gap: '3rem', alignItems: 'start' }}>
+        <div className="responsive-grid-2" style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr) minmax(280px, 1.5fr)', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'start' }}>
           {/* Left: Form */}
           <div>
             <div style={{ background: 'rgba(212, 160, 32, 0.05)', border: '1px dashed var(--primary)', borderRadius: 16, padding: '1.5rem', marginBottom: '2rem' }}>
@@ -435,7 +435,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '2rem' }}>
+      <div className="responsive-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '2rem' }}>
         {[
           { label: 'Uploads', value: uploads.length, icon: '📤' },
           { label: 'Total Downloads', value: totalDownloads.toLocaleString(), icon: '📥' },
@@ -453,14 +453,14 @@ export default function DashboardPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+      <div className="responsive-tabs" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         {Object.values(TAB).map(t => {
           if (t === TAB.SESSIONS && !profile?.is_tutor) return null;
           if (t === TAB.ADMIN && !profile?.is_admin) return null;
           const icons = { overview: '🏠', uploads: '📤', purchases: '🛍️', bookings: '📅', messages: '💬', earnings: '💰', sessions: '🎓', admin: '⚙️' };
           const label = `${icons[t] || ''} ${t.charAt(0).toUpperCase() + t.slice(1)}`;
           return (
-            <button key={t} onClick={() => setTab(t)} style={s.tab(tab === t)}>
+            <button key={t} onClick={() => setTab(t)} style={{ ...s.tab(tab === t), whiteSpace: 'nowrap', flexShrink: 0 }}>
               {label}
             </button>
           );

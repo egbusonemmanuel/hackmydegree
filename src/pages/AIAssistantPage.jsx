@@ -494,11 +494,12 @@ I am specially trained to assist students across Nigerian universities with:
                             return (
                                 <h3 key={lIdx} style={{
                                     color: 'var(--primary)',
-                                    fontSize: '1.2rem',
+                                    fontSize: 'clamp(1rem, 4.5vw, 1.2rem)',
                                     fontWeight: 800,
                                     margin: '1.2rem 0 0.5rem',
                                     borderBottom: '1px solid var(--outline-variant)',
-                                    paddingBottom: '0.3rem'
+                                    paddingBottom: '0.3rem',
+                                    wordBreak: 'break-word'
                                 }}>
                                     {parseInlineStyles(trimmed.replace('### ', ''))}
                                 </h3>
@@ -508,9 +509,10 @@ I am specially trained to assist students across Nigerian universities with:
                             return (
                                 <h4 key={lIdx} style={{
                                     color: 'var(--on-surface)',
-                                    fontSize: '1.05rem',
+                                    fontSize: 'clamp(0.9rem, 3.5vw, 1.05rem)',
                                     fontWeight: 700,
-                                    margin: '1rem 0 0.4rem'
+                                    margin: '1rem 0 0.4rem',
+                                    wordBreak: 'break-word'
                                 }}>
                                     {parseInlineStyles(trimmed.replace('#### ', ''))}
                                 </h4>
@@ -525,7 +527,8 @@ I am specially trained to assist students across Nigerian universities with:
                                     background: 'var(--surface-variant)',
                                     borderRadius: '0 8px 8px 0',
                                     fontStyle: 'italic',
-                                    color: 'var(--on-surface)'
+                                    color: 'var(--on-surface)',
+                                    wordBreak: 'break-word'
                                 }}>
                                     {trimmed.replace('> ', '')}
                                 </blockquote>
@@ -533,18 +536,18 @@ I am specially trained to assist students across Nigerian universities with:
                         }
                         if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
                             return (
-                                <div key={lIdx} style={{ display: 'flex', gap: '0.5rem', margin: '0.3rem 0', paddingLeft: '0.5rem' }}>
-                                    <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>•</span>
-                                    <span>{parseInlineStyles(trimmed.slice(2))}</span>
+                                <div key={lIdx} style={{ display: 'flex', gap: '0.4rem', margin: '0.3rem 0', paddingLeft: '0.2rem', minWidth: 0 }}>
+                                    <span style={{ color: 'var(--primary)', fontWeight: 'bold', flexShrink: 0 }}>•</span>
+                                    <span style={{ flex: 1, minWidth: 0, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{parseInlineStyles(trimmed.slice(2))}</span>
                                 </div>
                             );
                         }
                         if (/^\d+\.\s+/.test(trimmed)) {
                             const [, number, content] = trimmed.match(/^(\d+)\.\s+([\s\S]*)$/);
                             return (
-                                <div key={lIdx} style={{ display: 'flex', gap: '0.55rem', margin: '0.35rem 0', paddingLeft: '0.35rem' }}>
-                                    <span style={{ color: 'var(--primary)', fontWeight: 800 }}>{number}.</span>
-                                    <span>{parseInlineStyles(content)}</span>
+                                <div key={lIdx} style={{ display: 'flex', gap: '0.45rem', margin: '0.35rem 0', paddingLeft: '0.2rem', minWidth: 0 }}>
+                                    <span style={{ color: 'var(--primary)', fontWeight: 800, flexShrink: 0 }}>{number}.</span>
+                                    <span style={{ flex: 1, minWidth: 0, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{parseInlineStyles(content)}</span>
                                 </div>
                             );
                         }
@@ -555,7 +558,7 @@ I am specially trained to assist students across Nigerian universities with:
                             return <div key={lIdx} style={{ height: '0.5rem' }} />;
                         }
                         return (
-                            <p key={lIdx} style={{ margin: '0.35rem 0' }}>
+                            <p key={lIdx} style={{ margin: '0.35rem 0', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                                 {parseInlineStyles(line)}
                             </p>
                         );
@@ -601,7 +604,10 @@ I am specially trained to assist students across Nigerian universities with:
             background: 'var(--background)',
             overflow: 'hidden',
             fontFamily: 'var(--font-body)',
-            position: 'relative'
+            position: 'relative',
+            width: '100%',
+            maxWidth: '100vw',
+            boxSizing: 'border-box'
         }}>
             {/* Mobile Backdrop Overlay */}
             {isMobile && mobileSidebarOpen && (
@@ -863,21 +869,28 @@ I am specially trained to assist students across Nigerian universities with:
             {/* ─── MAIN CHAT AREA ─── */}
             <main style={{
                 flex: 1,
+                minWidth: 0,
+                width: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 background: 'var(--background)',
-                position: 'relative'
+                position: 'relative',
+                overflow: 'hidden'
             }}>
                 {/* Chat Header Bar */}
                 <div style={{
-                    padding: '0.85rem 1.5rem',
+                    padding: isMobile ? '0.65rem 0.85rem' : '0.85rem 1.5rem',
                     borderBottom: '1px solid var(--outline-variant)',
                     background: 'var(--surface)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    gap: '0.5rem',
+                    minWidth: 0,
+                    width: '100%',
+                    boxSizing: 'border-box'
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minWidth: 0, flex: 1 }}>
                         <button
                             onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
                             title="Toggle Study Modes"
@@ -889,41 +902,43 @@ I am specially trained to assist students across Nigerian universities with:
                                 border: '1px solid var(--outline-variant)',
                                 color: 'var(--on-surface)',
                                 borderRadius: '8px',
-                                padding: '0.4rem 0.6rem',
-                                fontSize: '0.85rem',
+                                padding: '0.35rem 0.55rem',
+                                fontSize: '0.8rem',
                                 cursor: 'pointer',
-                                fontWeight: 700
+                                fontWeight: 700,
+                                flexShrink: 0
                             }}
                         >
-                            ☰ <span style={{ marginLeft: '0.35rem', fontSize: '0.75rem' }}>Modes</span>
+                            ☰ <span style={{ marginLeft: '0.3rem', fontSize: '0.72rem' }}>Modes</span>
                         </button>
-                        <span style={{ fontSize: '1.25rem' }}>
+                        <span style={{ fontSize: '1.15rem', flexShrink: 0 }}>
                             {AI_MODES.find(m => m.id === selectedMode)?.icon}
                         </span>
-                        <div>
-                            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--on-surface)' }}>
+                        <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--on-surface)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {AI_MODES.find(m => m.id === selectedMode)?.name}
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--on-surface-variant)' }}>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--on-surface-variant)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {AI_MODES.find(m => m.id === selectedMode)?.description}
                             </div>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
                         <span style={{
-                            fontSize: '0.7rem',
+                            fontSize: '0.68rem',
                             fontWeight: 700,
-                            padding: '0.25rem 0.6rem',
+                            padding: '0.2rem 0.5rem',
                             borderRadius: '100px',
                             background: 'rgba(34, 197, 94, 0.1)',
                             color: '#22c55e',
                             border: '1px solid rgba(34, 197, 94, 0.3)',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.35rem'
+                            gap: '0.3rem',
+                            whiteSpace: 'nowrap'
                         }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', animation: 'pulse 2s infinite' }} />
+                            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', animation: 'pulse 2s infinite' }} />
                             {activeProvider}
                         </span>
                     </div>
@@ -933,10 +948,13 @@ I am specially trained to assist students across Nigerian universities with:
                 <div style={{
                     flex: 1,
                     overflowY: 'auto',
-                    padding: isMobile ? '0.75rem 0.85rem' : '1.5rem',
+                    overflowX: 'hidden',
+                    padding: isMobile ? '0.75rem 0.75rem' : '1.5rem',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: isMobile ? '0.85rem' : '1.25rem'
+                    gap: isMobile ? '0.75rem' : '1.25rem',
+                    width: '100%',
+                    boxSizing: 'border-box'
                 }}>
                     {messages.map((msg) => {
                         const isUser = msg.role === 'user';
@@ -946,8 +964,9 @@ I am specially trained to assist students across Nigerian universities with:
                                 style={{
                                     display: 'flex',
                                     justifyContent: isUser ? 'flex-end' : 'flex-start',
-                                    gap: isMobile ? '0.4rem' : '0.75rem',
-                                    maxWidth: '100%'
+                                    gap: isMobile ? '0.35rem' : '0.75rem',
+                                    width: '100%',
+                                    boxSizing: 'border-box'
                                 }}
                             >
                                 {!isUser && !isMobile && (
@@ -963,14 +982,18 @@ I am specially trained to assist students across Nigerian universities with:
                                 )}
 
                                 <div style={{
-                                    maxWidth: isUser ? (isMobile ? '88%' : '75%') : (isMobile ? '96%' : '85%'),
+                                    maxWidth: isUser ? (isMobile ? '88%' : '75%') : '100%',
+                                    width: isUser ? 'auto' : '100%',
                                     background: isUser ? 'var(--primary)' : 'var(--surface)',
                                     color: isUser ? '#000' : 'var(--on-surface)',
-                                    padding: isMobile ? '0.85rem 1rem' : '1.1rem 1.4rem',
+                                    padding: isMobile ? '0.85rem 0.9rem' : '1.1rem 1.4rem',
                                     borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
                                     border: isUser ? 'none' : '1px solid var(--outline-variant)',
                                     boxShadow: isUser ? '0 4px 15px rgba(212, 160, 32, 0.25)' : '0 2px 10px rgba(0,0,0,0.05)',
-                                    position: 'relative'
+                                    position: 'relative',
+                                    boxSizing: 'border-box',
+                                    wordBreak: 'break-word',
+                                    overflowWrap: 'break-word'
                                 }}>
                                     {/* Message Meta Info */}
                                     <div style={{
@@ -1018,12 +1041,14 @@ I am specially trained to assist students across Nigerian universities with:
                                         <div style={{
                                             display: 'flex',
                                             alignItems: 'center',
-                                            gap: '0.6rem',
-                                            marginTop: '1rem',
-                                            paddingTop: '0.75rem',
+                                            gap: '0.4rem',
+                                            marginTop: '0.85rem',
+                                            paddingTop: '0.65rem',
                                             borderTop: '1px solid var(--outline-variant)',
-                                            fontSize: '0.78rem',
-                                            flexWrap: 'wrap'
+                                            fontSize: '0.75rem',
+                                            flexWrap: 'wrap',
+                                            width: '100%',
+                                            boxSizing: 'border-box'
                                         }}>
                                             <button
                                                 onClick={() => copyToClipboard(msg.content)}
@@ -1031,12 +1056,12 @@ I am specially trained to assist students across Nigerian universities with:
                                                     background: 'var(--surface-variant)',
                                                     border: '1px solid var(--outline-variant)',
                                                     borderRadius: '6px',
-                                                    padding: '0.25rem 0.6rem',
+                                                    padding: '0.25rem 0.55rem',
                                                     cursor: 'pointer',
                                                     color: 'var(--on-surface)',
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    gap: '0.3rem'
+                                                    gap: '0.25rem'
                                                 }}
                                             >
                                                 📋 Copy Notes
@@ -1048,12 +1073,12 @@ I am specially trained to assist students across Nigerian universities with:
                                                     background: 'var(--surface-variant)',
                                                     border: '1px solid var(--outline-variant)',
                                                     borderRadius: '6px',
-                                                    padding: '0.25rem 0.6rem',
+                                                    padding: '0.25rem 0.55rem',
                                                     cursor: 'pointer',
                                                     color: 'var(--on-surface)',
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    gap: '0.3rem'
+                                                    gap: '0.25rem'
                                                 }}
                                             >
                                                 📥 Export PDF
@@ -1064,7 +1089,7 @@ I am specially trained to assist students across Nigerian universities with:
                                                     background: 'var(--surface-variant)',
                                                     border: '1px solid var(--outline-variant)',
                                                     borderRadius: '6px',
-                                                    padding: '0.25rem 0.6rem',
+                                                    padding: '0.25rem 0.55rem',
                                                     cursor: 'pointer',
                                                     color: 'var(--on-surface)'
                                                 }}
@@ -1077,7 +1102,7 @@ I am specially trained to assist students across Nigerian universities with:
                                                     background: 'var(--surface-variant)',
                                                     border: '1px solid var(--outline-variant)',
                                                     borderRadius: '6px',
-                                                    padding: '0.25rem 0.6rem',
+                                                    padding: '0.25rem 0.55rem',
                                                     cursor: 'pointer',
                                                     color: 'var(--on-surface)'
                                                 }}
@@ -1122,14 +1147,16 @@ I am specially trained to assist students across Nigerian universities with:
                 </div>
 
                 {/* Quick Action Study Bar */}
-                <div style={{
-                    padding: '0.4rem 1.5rem',
+                <div className="no-scrollbar" style={{
+                    padding: isMobile ? '0.4rem 0.65rem' : '0.4rem 1.5rem',
                     background: 'var(--surface)',
                     borderTop: '1px solid var(--outline-variant)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
+                    gap: '0.4rem',
                     overflowX: 'auto',
+                    width: '100%',
+                    boxSizing: 'border-box',
                     scrollbarWidth: 'none'
                 }}>
                     <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--primary)', flexShrink: 0 }}>

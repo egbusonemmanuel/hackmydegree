@@ -70,8 +70,8 @@ export default function ResourcesPage() {
                 High-quality past questions, lecture notes, and study guides from across Nigeria.
             </p>
 
-            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '4rem', alignItems: 'center' }}>
-                <div style={{ flex: '1 1 400px' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: 'clamp(2rem, 5vw, 4rem)', alignItems: 'center' }}>
+                <div style={{ flex: '1 1 280px', width: '100%' }}>
                     <Input
                         placeholder="Search resources, topics, or schools..."
                         value={search}
@@ -79,15 +79,15 @@ export default function ResourcesPage() {
                         icon={<span>🔍</span>}
                     />
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                <div className="responsive-tabs" style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', width: '100%' }}>
                     <button
                         onClick={() => updateFilters(null, search)}
                         style={{
                             background: activeCategory === null ? 'var(--on-surface)' : 'var(--surface-variant)',
                             color: activeCategory === null ? 'var(--surface)' : 'var(--on-surface-variant)',
-                            border: '1px solid var(--outline-variant)', padding: '0.8rem 2rem', borderRadius: '100px',
+                            border: '1px solid var(--outline-variant)', padding: '0.75rem 1.5rem', borderRadius: '100px',
                             cursor: 'pointer', fontFamily: 'var(--font-header)', fontWeight: 800, whiteSpace: 'nowrap',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontSize: '0.95rem'
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontSize: '0.9rem', flexShrink: 0
                         }}>All</button>
                     {categories.map(cat => (
                         <button key={cat.id}
@@ -95,9 +95,9 @@ export default function ResourcesPage() {
                             style={{
                                 background: activeCategory === cat.slug ? 'var(--on-surface)' : 'var(--surface-variant)',
                                 color: activeCategory === cat.slug ? 'var(--surface)' : 'var(--on-surface-variant)',
-                                border: '1px solid var(--outline-variant)', padding: '0.8rem 2rem', borderRadius: '100px',
+                                border: '1px solid var(--outline-variant)', padding: '0.75rem 1.5rem', borderRadius: '100px',
                                 cursor: 'pointer', fontFamily: 'var(--font-header)', fontWeight: 800, whiteSpace: 'nowrap',
-                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontSize: '0.95rem'
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontSize: '0.9rem', flexShrink: 0
                             }}>
                             {cat.icon} {cat.name}
                         </button>

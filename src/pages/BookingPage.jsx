@@ -128,7 +128,7 @@ export default function BookingPage() {
           <Input placeholder="e.g. MTH 101 — Integration by parts" value={form.subject} onChange={set('subject')} required />
         </Field>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'clamp(1rem, 5vw, 2rem)', marginBottom: '1.5rem' }}>
+        <div className="responsive-grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(1rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>
           <Field label="Preferred Date *">
             <Input type="date" min={new Date().toISOString().split('T')[0]} value={form.date} onChange={set('date')} required />
           </Field>

@@ -31,34 +31,34 @@ export default function LegalPage() {
 
     return (
         <div className="page-container" style={{ maxWidth: '1000px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '6rem' }}>
-                <h1 className="gradient-text" style={{ fontSize: 'max(3.5rem, 5vw)', marginBottom: '1.25rem', fontWeight: 900, letterSpacing: '-0.06em' }}>Legal Center</h1>
-                <p style={{ color: 'var(--on-surface-variant)', fontSize: '1.25rem', fontWeight: 500 }}>
+            <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 6vw, 6rem)' }}>
+                <h1 className="gradient-text" style={{ fontSize: 'clamp(2.2rem, 7vw, 4rem)', marginBottom: '1.25rem', fontWeight: 900, letterSpacing: '-0.06em' }}>Legal Center</h1>
+                <p style={{ color: 'var(--on-surface-variant)', fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', fontWeight: 500 }}>
                     Our commitment to transparency, security, and academic excellence.
                 </p>
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '4rem', overflowX: 'auto', paddingBottom: '1rem' }}>
+            <div className="responsive-tabs" style={{ display: 'flex', gap: '0.75rem', marginBottom: 'clamp(2rem, 5vw, 4rem)', overflowX: 'auto', paddingBottom: '0.5rem' }}>
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         style={{
-                            flex: 1, minWidth: '220px', padding: '1.75rem', borderRadius: '24px',
+                            flex: '1 1 auto', minWidth: '160px', padding: 'clamp(1rem, 3vw, 1.5rem) 1.25rem', borderRadius: '20px',
                             background: activeTab === tab.id ? 'var(--on-surface)' : 'var(--surface-variant)',
                             border: `1px solid var(--outline-variant)`,
                             color: activeTab === tab.id ? 'var(--surface)' : 'var(--on-surface-variant)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
                             cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                            fontFamily: 'var(--font-header)', fontWeight: 800
+                            fontFamily: 'var(--font-header)', fontWeight: 800, whiteSpace: 'nowrap'
                         }}>
-                        <span style={{ fontSize: '1.5rem' }}>{tab.icon}</span>
+                        <span style={{ fontSize: '1.3rem' }}>{tab.icon}</span>
                         <span>{tab.label}</span>
                     </button>
                 ))}
             </div>
 
-            <div className="glass" style={{ borderRadius: '40px', padding: '4.5rem', border: '1px solid var(--outline-variant)' }}>
+            <div className="glass" style={{ borderRadius: '32px', padding: 'clamp(1.5rem, 5vw, 4rem)', border: '1px solid var(--outline-variant)' }}>
                 {activeTab === 'terms' && (
                     <div className="animate-fade-in">
                         <Section title="1. Acceptance of Terms">

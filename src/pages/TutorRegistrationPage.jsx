@@ -73,11 +73,11 @@ export default function TutorRegistrationPage() {
                 </p>
             </div>
 
-            <div style={{ background: 'var(--surface)', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: '2.5rem' }}>
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--outline-variant)', borderRadius: 24, padding: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
                 {error && <Banner type="error" msg={error} />}
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                    <div className="responsive-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                         <Field label="Hourly Rate (₦)" helper="Set your preferred rate per hour">
                             <Input
                                 type="number"

@@ -129,7 +129,9 @@ export default function OnboardingModal() {
                     transform: closing
                         ? 'translate(-50%, -50%) scale(0.92)'
                         : 'translate(-50%, -50%) scale(1)',
-                    width: '90%', maxWidth: '520px',
+                    width: '92%', maxWidth: '520px',
+                    maxHeight: '90vh',
+                    overflowY: 'auto',
                     background: 'var(--surface)',
                     border: '1px solid var(--outline-variant)',
                     borderRadius: '24px',
@@ -137,7 +139,6 @@ export default function OnboardingModal() {
                     zIndex: 9001,
                     opacity: closing ? 0 : 1,
                     transition: 'opacity 0.35s ease, transform 0.35s cubic-bezier(0.175,0.885,0.32,1.275)',
-                    overflow: 'hidden',
                     fontFamily: 'var(--font-body)',
                 }}
             >
@@ -154,7 +155,7 @@ export default function OnboardingModal() {
                     />
                 </div>
 
-                <div style={{ padding: '2rem 2rem 1.5rem' }}>
+                <div style={{ padding: 'clamp(1.25rem, 4vw, 2rem) clamp(1rem, 4vw, 2rem) 1.25rem' }}>
                     {/* Close */}
                     <button
                         onClick={dismiss}
@@ -181,7 +182,7 @@ export default function OnboardingModal() {
                         style={{
                             background: slide.gradient,
                             borderRadius: '18px',
-                            padding: '2rem',
+                            padding: 'clamp(1.25rem, 4vw, 2rem)',
                             textAlign: 'center',
                             marginBottom: '1.5rem',
                             animation: 'onboardSlideIn 0.38s cubic-bezier(0.175,0.885,0.32,1.275) forwards',

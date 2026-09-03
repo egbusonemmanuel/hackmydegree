@@ -155,7 +155,7 @@ export default function HomePage() {
       {loading ? (
         <PageLoader />
       ) : (
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '4rem 2rem' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem)' }}>
 
           {/* DegreeAI Showcase Section */}
           <section style={{
@@ -216,7 +216,7 @@ export default function HomePage() {
               </div>
 
               {/* Interactive feature highlights grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="responsive-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 {[
                   { icon: '📝', title: 'Exam Prep & Marking Schemes', desc: 'Step-by-step past question solutions tailored for max marks.' },
                   { icon: '💡', title: 'Explain Like I\'m 100L', desc: 'Simple real-world analogies to understand dense jargon.' },
@@ -240,15 +240,15 @@ export default function HomePage() {
           </section>
 
           {/* Categories Grid */}
-          <section style={{ marginBottom: '8rem' }}>
-            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <section style={{ marginBottom: 'clamp(4rem, 10vw, 8rem)' }}>
+            <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 5vw, 4rem)' }}>
               <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.75rem' }}>Browse</span>
               <h2 style={{ fontSize: 'clamp(1.5rem, 6vw, 2.2rem)', marginTop: '0.5rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Core Categories</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
               {categories.map(cat => (
                 <Link to={`/resources?category=${cat.id}`} key={cat.id} className="glass" style={{
-                  borderRadius: '24px', padding: '3rem 2rem', textAlign: 'center',
+                  borderRadius: '24px', padding: 'clamp(2rem, 5vw, 3rem) 1.5rem', textAlign: 'center',
                   transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', display: 'block',
                   border: '1px solid var(--outline-variant)',
                   background: 'var(--surface-variant)',
@@ -273,8 +273,8 @@ export default function HomePage() {
           </section>
 
           {/* Featured Resources */}
-          <section style={{ marginBottom: '8rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
+          <section style={{ marginBottom: 'clamp(4rem, 10vw, 8rem)' }}>
+            <div className="responsive-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem' }}>
               <div>
                 <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.8rem' }}>Hot</span>
                 <h2 style={{ fontSize: 'clamp(1.8rem, 7vw, 2.5rem)', marginTop: '0.5rem' }}>Latest Resources</h2>
@@ -282,7 +282,7 @@ export default function HomePage() {
               <Link to="/resources" style={{
                 color: 'var(--primary)', padding: '0.75rem 1.75rem', borderRadius: '100px',
                 background: 'var(--primary-container)', fontWeight: 800, fontSize: '0.9rem',
-                border: '1px solid rgba(188, 149, 92, 0.2)'
+                border: '1px solid rgba(188, 149, 92, 0.2)', display: 'inline-block'
               }}>View Repository →</Link>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>

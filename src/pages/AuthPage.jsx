@@ -68,10 +68,10 @@ const CSS = `
   .auth-page { min-height: 100vh; font-family: var(--font-body); overflow: hidden; position: relative; }
   .auth-card  { animation: fadeSlideUp 0.7s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .auth-split { flex-direction: column !important; }
     .auth-left  { display: none !important; }
-    .auth-right { width: 100% !important; min-width: 100% !important; min-height: 100vh; padding: 1.5rem !important; border-left: none !important; }
+    .auth-right { width: 100% !important; min-width: 0 !important; min-height: 100vh; padding: 1.5rem !important; border-left: none !important; }
     .auth-card { max-width: 100% !important; width: 100% !important; }
     .auth-grid { grid-template-columns: 1fr !important; }
   }
@@ -335,8 +335,8 @@ export default function AuthPage({ mode = 'login' }) {
 
           {/* ══ RIGHT PANEL ══ */}
           <div className="auth-right" style={{
-            width: '44%', minWidth: 440, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '2rem', position: 'relative',
+            width: '44%', minWidth: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 'clamp(1.5rem, 4vw, 2.5rem)', position: 'relative',
             background: bg,
             borderLeft: `1px solid ${borderCol}`,
             transition: 'all 1s ease',

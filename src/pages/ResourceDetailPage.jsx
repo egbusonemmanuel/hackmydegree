@@ -108,21 +108,21 @@ export default function ResourceDetailPage() {
                 <span>←</span> Back to Repository
             </Link>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'start' }}>
+            <div className="responsive-grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'start' }}>
                 {/* Left Column: Details */}
                 <div>
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
                         <span style={{ background: 'var(--primary-container)', color: 'var(--primary)', padding: '0.4rem 1rem', borderRadius: '100px', fontSize: '0.8rem', fontWeight: 800 }}>
                             {resource.category?.name}
                         </span>
                         <span style={{ color: 'var(--on-surface-variant)', fontSize: '0.95rem', fontWeight: 500 }}>• {resource.school} {resource.subject && `• ${resource.subject}`}</span>
                     </div>
 
-                    <h1 style={{ fontSize: 'clamp(2rem, 8vw, 3rem)', marginBottom: '1.25rem', marginTop: 0, fontWeight: 900, letterSpacing: '-0.04em' }}>
+                    <h1 style={{ fontSize: 'clamp(1.8rem, 6vw, 3rem)', marginBottom: '1.25rem', marginTop: 0, fontWeight: 900, letterSpacing: '-0.04em' }}>
                         {resource.title}
                     </h1>
 
-                    <div style={{ display: 'flex', gap: '2.5rem', marginBottom: '2.5rem', color: 'var(--on-surface-variant)', fontSize: '0.95rem', fontWeight: 600 }}>
+                    <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', marginBottom: '2rem', color: 'var(--on-surface-variant)', fontSize: '0.9rem', fontWeight: 600 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <span style={{ color: '#FFD600', fontSize: '1.2rem' }}>★</span> {resource.rating_avg} <span style={{ opacity: 0.6 }}>({resource.rating_count} reviews)</span>
                         </div>
@@ -158,7 +158,7 @@ export default function ResourceDetailPage() {
                 </div>
 
                 {/* Right Column: Sticky Action Card */}
-                <div className="glass" style={{ position: 'sticky', top: '100px', borderRadius: '24px', padding: 'clamp(1.5rem, 5vw, 2.5rem)', border: '1px solid var(--outline-variant)' }}>
+                <div className="glass responsive-sticky-card" style={{ position: 'sticky', top: '100px', borderRadius: '24px', padding: 'clamp(1.25rem, 5vw, 2.5rem)', border: '1px solid var(--outline-variant)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--on-surface-variant)' }}>Access Price</span>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
