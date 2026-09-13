@@ -144,7 +144,7 @@ const Navbar = () => {
 
                 {/* Mobile Hamburger */}
                 <div className="mobile-only" style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-                    {/* Dashboard quick-access icon for logged-in users */}
+                    {/* 🏠 Dashboard shortcut for logged-in users */}
                     {user && (
                         <Link
                             to="/dashboard"
@@ -160,6 +160,28 @@ const Navbar = () => {
                             🏠
                         </Link>
                     )}
+
+                    {/* 🔑 Login shortcut — one tap for logged-out users, no hamburger needed */}
+                    {!user && (
+                        <Link to="/login" style={{ textDecoration: 'none' }}>
+                            <button style={{
+                                background: 'var(--primary)',
+                                color: '#000',
+                                border: 'none',
+                                borderRadius: '100px',
+                                padding: '0.5rem 1.15rem',
+                                fontFamily: 'var(--font-header)',
+                                fontWeight: 800,
+                                fontSize: '0.9rem',
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                letterSpacing: '0.01em'
+                            }}>
+                                Login
+                            </button>
+                        </Link>
+                    )}
+
                     <button
                         onClick={toggleTheme}
                         aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
@@ -206,6 +228,19 @@ const Navbar = () => {
                             </span>
                         </Link>
                     )}
+
+                    {/* Sign in / join — at the top for logged-out users */}
+                    {!user && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                            <Link to="/login" onClick={toggleMenu} style={{ display: 'block', width: '100%' }}>
+                                <Button style={{ height: 56, width: '100%', fontSize: '1.1rem' }}>Log In →</Button>
+                            </Link>
+                            <Link to="/signup" onClick={toggleMenu} style={{ display: 'block', width: '100%' }}>
+                                <Button variant="secondary" style={{ height: 56, width: '100%', fontSize: '1rem' }}>Create Free Account</Button>
+                            </Link>
+                        </div>
+                    )}
+
                     <Link to="/resources" className="mobile-nav-link" onClick={toggleMenu}>Explore Resources</Link>
                     <Link to="/skills" className="mobile-nav-link" onClick={toggleMenu} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span>🚀 Digital Skills Hub</span>
