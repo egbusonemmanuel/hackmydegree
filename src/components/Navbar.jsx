@@ -143,7 +143,23 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Hamburger */}
-                <div className="mobile-only" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div className="mobile-only" style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                    {/* Dashboard quick-access icon for logged-in users */}
+                    {user && (
+                        <Link
+                            to="/dashboard"
+                            aria-label="Go to My Dashboard"
+                            style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                width: 36, height: 36, borderRadius: '8px',
+                                background: 'var(--primary-container)',
+                                border: '1px solid var(--primary)',
+                                fontSize: '1rem', textDecoration: 'none'
+                            }}
+                        >
+                            🏠
+                        </Link>
+                    )}
                     <button
                         onClick={toggleTheme}
                         aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
@@ -168,6 +184,28 @@ const Navbar = () => {
                         <button onClick={toggleMenu} style={{ background: 'none', border: 'none', color: 'var(--on-surface)', fontSize: '2rem' }}>✕</button>
                     </div>
 
+                    {/* Dashboard — top of list for logged-in users */}
+                    {user && (
+                        <Link
+                            to="/dashboard"
+                            className="mobile-nav-link"
+                            onClick={toggleMenu}
+                            style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                color: 'var(--primary)', fontWeight: 900,
+                                background: 'var(--primary-container)',
+                                padding: '1.25rem 1rem',
+                                borderRadius: '12px',
+                                border: '1px solid rgba(188,149,92,0.3)',
+                                marginBottom: '0.5rem'
+                            }}
+                        >
+                            <span>🏠 My Dashboard</span>
+                            <span style={{ fontSize: '0.75rem', background: 'var(--primary)', color: '#000', padding: '0.15rem 0.5rem', borderRadius: '100px', fontWeight: 800 }}>
+                                {profile?.username || user.email?.split('@')[0]}
+                            </span>
+                        </Link>
+                    )}
                     <Link to="/resources" className="mobile-nav-link" onClick={toggleMenu}>Explore Resources</Link>
                     <Link to="/skills" className="mobile-nav-link" onClick={toggleMenu} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span>🚀 Digital Skills Hub</span>
@@ -179,7 +217,6 @@ const Navbar = () => {
                         <span style={{ background: 'var(--primary)', color: '#000', fontSize: '0.65rem', padding: '0.1rem 0.45rem', borderRadius: '100px' }}>NEW</span>
                     </Link>
                     {user && <Link to="/upload" className="mobile-nav-link" onClick={toggleMenu}>Upload Study Material</Link>}
-                    {user && <Link to="/dashboard" className="mobile-nav-link" onClick={toggleMenu}>My Dashboard</Link>}
 
                     <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {!user ? (
