@@ -3,22 +3,24 @@ import { createServer } from 'node:http';
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
-const require = createRequire(import.meta.url);
-const apiHandler = require('./api/degree-ai.js');
-const PORT = Number(process.env.PORT || process.env.DEGREE_AI_API_PORT || 10000);
-
 function loadLocalEnv() {
   const envPath = new URL('./.env', import.meta.url);
   if (!existsSync(envPath)) return;
   for (const line of readFileSync(envPath, 'utf8').split(/\r?\n/)) {
     const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
-    if (!match || process.env[match[1]] !== undefined) continue;
-    const value = match[2].replace(/^(['"])(.*)\1$/, '$2');
-    process.env[match[1]] = value;
+    if (!match) continue;
+    const value = match[2].replace(/^(['"])(.*)\1$/, '$2').trim();
+    if (!process.env[match[1]] || process.env[match[1]].trim() === '') {
+      process.env[match[1]] = value;
+    }
   }
 }
 
 loadLocalEnv();
+
+const require = createRequire(import.meta.url);
+const apiHandler = require('./api/degree-ai.js');
+const PORT = Number(process.env.PORT || process.env.DEGREE_AI_API_PORT || 10000);
 
 function setCorsHeaders(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
