@@ -41,6 +41,9 @@ const Navbar = () => {
                 {/* Desktop Nav Items */}
                 <div className="desktop-only" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
                     <Link to="/resources" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600 }}>Resources</Link>
+                    <Link to="/skills" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        <span>Skills Hub</span>
+                    </Link>
                     <Link to="/tutors" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600 }}>Tutors</Link>
                     <Link to="/ai-assistant" style={{
                         color: 'var(--primary)',
@@ -166,6 +169,10 @@ const Navbar = () => {
                     </div>
 
                     <Link to="/resources" className="mobile-nav-link" onClick={toggleMenu}>Explore Resources</Link>
+                    <Link to="/skills" className="mobile-nav-link" onClick={toggleMenu} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span>🚀 Digital Skills Hub</span>
+                        <span style={{ background: 'var(--primary-container)', color: 'var(--primary)', fontSize: '0.65rem', padding: '0.1rem 0.45rem', borderRadius: '100px', fontWeight: 800 }}>SELAR</span>
+                    </Link>
                     <Link to="/tutors" className="mobile-nav-link" onClick={toggleMenu}>Find a Tutor</Link>
                     <Link to="/ai-assistant" className="mobile-nav-link" onClick={toggleMenu} style={{ color: 'var(--primary)', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span>⚡ DegreeAI Copilot</span>

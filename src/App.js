@@ -20,6 +20,7 @@ import LegalPage from './pages/LegalPage';
 import TutorRegistrationPage from './pages/TutorRegistrationPage';
 import ChatPage from './pages/ChatPage';
 import AIAssistantPage from './pages/AIAssistantPage';
+import DigitalSkillsPage from './pages/DigitalSkillsPage';
 import { ToastProvider } from './contexts/ToastContext';
 
 // Component imports
@@ -186,6 +187,8 @@ const AppInner = () => {
           <Route path="/signup" element={!session ? <AuthPage mode="signup" /> : <Navigate to="/dashboard" />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/resources/:id" element={<ResourceDetailPage />} />
+          <Route path="/skills" element={<DigitalSkillsPage />} />
+          <Route path="/digital-skills" element={<DigitalSkillsPage />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/tutors" element={<TutorsPage />} />
           <Route path="/legal" element={<LegalPage />} />

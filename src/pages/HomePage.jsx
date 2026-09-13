@@ -375,6 +375,102 @@ export default function HomePage() {
             </div>
           </section>
 
+          {/* Digital Skills & Online Income Hub (Digital Oluwaseun × Selar) */}
+          <section style={{
+            marginTop: 'clamp(5rem, 12vh, 8rem)',
+            background: 'linear-gradient(135deg, rgba(188, 149, 92, 0.12) 0%, rgba(37, 211, 102, 0.06) 50%, var(--surface-variant) 100%)',
+            border: '1.5px solid var(--primary)',
+            borderRadius: '32px',
+            padding: 'clamp(2rem, 6vw, 4rem)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div className="responsive-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexWrap: 'wrap', gap: '1.5rem' }}>
+              <div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--primary)', color: '#000', padding: '0.35rem 0.9rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 900, marginBottom: '1rem', letterSpacing: '0.5px' }}>
+                  <span>🚀 DIGITAL OLUWASEUN × SELAR</span>
+                </div>
+                <h2 style={{ fontSize: 'clamp(1.8rem, 6vw, 2.8rem)', fontWeight: 900, margin: 0, letterSpacing: '-0.04em', lineHeight: 1.15 }}>
+                  Earn While You Learn: <br />
+                  <span style={{ color: 'var(--primary)' }}>High-Income Digital Skills.</span>
+                </h2>
+                <p style={{ color: 'var(--on-surface-variant)', fontSize: '1.05rem', maxWidth: '650px', marginTop: '0.75rem', lineHeight: 1.5 }}>
+                  Master in-demand digital skills like **Affiliate Marketing**, **AI Video Creation**, and **YouTube Automation** to build passive online revenue alongside your degree.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <Link to="/skills">
+                  <button style={{
+                    background: 'var(--primary)', color: '#000', border: 'none',
+                    borderRadius: '100px', padding: '0.85rem 1.75rem', fontWeight: 900,
+                    fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
+                    boxShadow: '0 6px 20px rgba(212, 160, 32, 0.35)'
+                  }}>
+                    Explore All Skills →
+                  </button>
+                </Link>
+                <a href="https://selar.com/m/chiadikobi-rejoice1?affiliate=1v3l31j354" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                  <button style={{
+                    background: 'var(--surface)', color: 'var(--on-surface)', border: '1px solid var(--outline-variant)',
+                    borderRadius: '100px', padding: '0.85rem 1.75rem', fontWeight: 800,
+                    fontSize: '0.95rem', cursor: 'pointer'
+                  }}>
+                    Selar Store ↗
+                  </button>
+                </a>
+              </div>
+            </div>
+
+            {/* 4 Feature Skill Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.25rem' }}>
+              {[
+                {
+                  icon: '📈', title: 'Affiliate Marketing', badge: '50%-60% Payout',
+                  desc: 'Earn steady commissions promoting high-demand digital courses on Selar with high-converting WhatsApp & social media funnels.'
+                },
+                {
+                  icon: '🤖', title: 'AI Video Creation', badge: 'No Camera Needed',
+                  desc: 'Produce viral TikToks, Reels, and cinematic videos using ChatGPT, Midjourney, and AI voiceovers without showing your face.'
+                },
+                {
+                  icon: '📹', title: 'YouTube Automation', badge: 'Passive Revenue',
+                  desc: 'Build and monetize faceless YouTube channels with automated scripts, B-roll curation, and high-RPM niche selection.'
+                },
+                {
+                  icon: '🌐', title: 'Remote Freelancing', badge: 'Digital Services',
+                  desc: 'Package your skills into high-ticket freelance offers and close remote clients across Nigeria and globally.'
+                }
+              ].map((item, idx) => (
+                <div key={idx} className="glass" style={{
+                  background: 'var(--surface)',
+                  borderRadius: '20px',
+                  padding: '1.5rem',
+                  border: '1px solid var(--outline-variant)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '2rem' }}>{item.icon}</span>
+                      <span style={{ background: 'var(--primary-container)', color: 'var(--primary)', fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '100px' }}>
+                        {item.badge}
+                      </span>
+                    </div>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--on-surface)' }}>{item.title}</h3>
+                    <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem', lineHeight: 1.45, marginBottom: '1.25rem' }}>{item.desc}</p>
+                  </div>
+                  <a href="https://selar.com/m/chiadikobi-rejoice1?affiliate=1v3l31j354" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                    <span style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                      Enroll on Selar →
+                    </span>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* Share Section */}
           <section className="animate-fade-in" style={{
             marginTop: 'clamp(4rem, 10vh, 8rem)', padding: 'clamp(3rem, 8vw, 6rem) 1.5rem', borderRadius: '32px',
