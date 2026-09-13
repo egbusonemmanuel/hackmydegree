@@ -1,6 +1,5 @@
 // src/pages/DigitalSkillsPage.jsx
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 const SELAR_STORE_URL = 'https://selar.com/m/chiadikobi-rejoice1?affiliate=1v3l31j354';
 const WHATSAPP_CONTACT = 'https://wa.me/2348143064008?text=Hello%20Digital%20Oluwaseun,%20I%20am%20interested%20in%20learning%20more%20about%20your%20digital%20skills%20and%20online%20income%20courses!';
@@ -93,7 +92,6 @@ const FAQS = [
 ];
 
 export default function DigitalSkillsPage() {
-  const [activeTab, setActiveTab] = useState('all');
   const [openFaq, setOpenFaq] = useState(null);
 
   return (
