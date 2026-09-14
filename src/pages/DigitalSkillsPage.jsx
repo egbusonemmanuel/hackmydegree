@@ -6,8 +6,7 @@ import {
   TrendingUpIcon, 
   VideoCameraIcon, 
   GlobeAltIcon, 
-  CheckBadgeIcon, 
-  StarIcon 
+  CheckBadgeIcon 
 } from '../components/SharedUI';
 
 const SELAR_STORE_URL = 'https://selar.com/m/chiadikobi-rejoice1?affiliate=1v3l31j354';
