@@ -329,7 +329,7 @@ export default function HomePage() {
                   e.currentTarget.style.background = 'var(--surface-variant)';
                   e.currentTarget.style.boxShadow = 'none';
                 }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1.25rem', filter: 'drop-shadow(0 0 10px var(--primary-container))' }}>{cat.icon || '📚'}</div>
+                  <div style={{ fontSize: '3rem', marginBottom: '1.25rem', filter: 'drop-shadow(0 0 10px var(--primary-container))' }}>{cat.icon || '🎓'}</div>
                   <h3 style={{ fontSize: '1.15rem', color: 'var(--on-surface)', fontWeight: 800, fontFamily: 'var(--font-header)' }}>{cat.name}</h3>
                   <div style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem', marginTop: '0.4rem', fontWeight: 500 }}>{cat.description || 'View all materials'}</div>
                 </Link>
@@ -361,8 +361,9 @@ export default function HomePage() {
                     {res.thumbnail_url ? (
                       <img src={res.thumbnail_url} alt={res.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '4rem', opacity: 0.5 }}>📖</span>
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '0.5rem' }}>
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--outline)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--outline)', fontWeight: 600 }}>No Preview</span>
                       </div>
                     )}
                     <div style={{
@@ -614,7 +615,7 @@ export default function HomePage() {
       {/* Footer / Legal Links */}
       <footer style={{
         borderTop: '1px solid var(--outline-variant)',
-        padding: '6rem 2rem',
+        padding: '3.5rem 2rem',
         textAlign: 'center',
         background: 'var(--surface-variant)',
         fontFamily: 'var(--font-body)'
