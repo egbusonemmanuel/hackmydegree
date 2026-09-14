@@ -482,6 +482,92 @@ export default function DigitalSkillsPage() {
         </section>
       )}
 
+      {/* ── Student Testimonials ── */}
+      <section style={{ maxWidth: '1200px', margin: '0 auto 6rem', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '3px', fontSize: '0.8rem' }}>
+            REAL RESULTS
+          </span>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 6vw, 2.6rem)', marginTop: '0.5rem', fontWeight: 900, letterSpacing: '-0.04em' }}>
+            What Our Students Are Saying
+          </h2>
+          <p style={{ color: 'var(--on-surface-variant)', fontSize: '1.05rem', maxWidth: '560px', margin: '0.5rem auto 0' }}>
+            Real screenshots from real students — their wins speak for themselves.
+          </p>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
+          gap: '1.25rem'
+        }}>
+          {[
+            { src: '/testimonials/testimony1.jpeg', alt: 'Student testimony 1' },
+            { src: '/testimonials/testimony2.jpeg', alt: 'Student testimony 2' },
+            { src: '/testimonials/testimony3.jpeg', alt: 'Student testimony 3' },
+            { src: '/testimonials/testimony4.jpeg', alt: 'Student testimony 4' },
+          ].map((img, idx) => (
+            <div
+              key={idx}
+              style={{
+                borderRadius: '16px',
+                overflow: 'hidden',
+                border: '1px solid var(--outline-variant)',
+                background: 'var(--surface-variant)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                cursor: 'zoom-in'
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.transform = 'translateY(-4px) scale(1.01)';
+                e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+                e.currentTarget.style.borderColor = 'var(--primary)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = 'var(--outline-variant)';
+              }}
+              onClick={() => window.open(img.src, '_blank')}
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading="lazy"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  objectFit: 'cover'
+                }}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Social proof line */}
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.95rem', fontWeight: 600 }}>
+            Join hundreds of students already earning with Digital Oluwaseun 🚀
+          </p>
+          <a href={WHATSAPP_CONTACT} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+            <button style={{
+              marginTop: '1rem',
+              background: 'rgba(37, 211, 102, 0.12)',
+              color: '#25D366',
+              border: '1px solid rgba(37, 211, 102, 0.35)',
+              borderRadius: '100px',
+              padding: '0.85rem 2rem',
+              fontFamily: 'var(--font-header)',
+              fontWeight: 800,
+              fontSize: '1rem',
+              cursor: 'pointer'
+            }}>
+              💬 I Want Results Like These
+            </button>
+          </a>
+        </div>
+      </section>
+
       {/* FAQs */}
       <section style={{ maxWidth: '850px', margin: '0 auto 6rem', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
