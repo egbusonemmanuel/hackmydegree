@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../App';
 import { useTheme } from '../App';
-import { WhatsAppButton, Button } from './SharedUI';
+import { WhatsAppButton, Button, SparklesIcon } from './SharedUI';
 
 const Navbar = () => {
     const { user, profile, signOut } = useAuth();
@@ -48,26 +48,19 @@ const Navbar = () => {
                     <Link to="/ai-assistant" style={{
                         color: 'var(--primary)',
                         textDecoration: 'none',
-                        fontSize: '1rem',
-                        fontWeight: 800,
+                        fontSize: '0.92rem',
+                        fontWeight: 700,
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '0.4rem',
-                        padding: '0.35rem 0.75rem',
+                        gap: '0.45rem',
+                        padding: '0.38rem 0.85rem',
                         borderRadius: '100px',
-                        background: 'rgba(212, 160, 32, 0.1)',
-                        border: '1px solid rgba(212, 160, 32, 0.3)'
+                        background: 'var(--primary-container)',
+                        border: '1px solid rgba(188, 149, 92, 0.25)',
+                        transition: 'var(--transition-standard)'
                     }}>
-                        <span>⚡</span>
+                        <SparklesIcon size={15} color="var(--primary)" />
                         <span>DegreeAI</span>
-                        <span style={{
-                            background: 'var(--primary)',
-                            color: '#000',
-                            fontSize: '0.62rem',
-                            fontWeight: 900,
-                            padding: '0.1rem 0.4rem',
-                            borderRadius: '100px'
-                        }}>NEW</span>
                     </Link>
                     {user && <Link to="/upload" style={{ color: 'var(--on-surface-variant)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600 }}>Upload</Link>}
 
@@ -241,15 +234,17 @@ const Navbar = () => {
                         </div>
                     )}
 
-                    <Link to="/resources" className="mobile-nav-link" onClick={toggleMenu}>Explore Resources</Link>
+                    <Link to="/resources" className="mobile-nav-link" onClick={toggleMenu}>Academic Resources</Link>
                     <Link to="/skills" className="mobile-nav-link" onClick={toggleMenu} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span>🚀 Digital Skills Hub</span>
-                        <span style={{ background: 'var(--primary-container)', color: 'var(--primary)', fontSize: '0.65rem', padding: '0.1rem 0.45rem', borderRadius: '100px', fontWeight: 800 }}>SELAR</span>
+                        <span>Digital Skills Hub</span>
+                        <span style={{ background: 'var(--primary-container)', color: 'var(--primary)', fontSize: '0.65rem', padding: '0.15rem 0.5rem', borderRadius: '100px', fontWeight: 700 }}>CURRICULUM</span>
                     </Link>
-                    <Link to="/tutors" className="mobile-nav-link" onClick={toggleMenu}>Find a Tutor</Link>
-                    <Link to="/ai-assistant" className="mobile-nav-link" onClick={toggleMenu} style={{ color: 'var(--primary)', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span>⚡ DegreeAI Copilot</span>
-                        <span style={{ background: 'var(--primary)', color: '#000', fontSize: '0.65rem', padding: '0.1rem 0.45rem', borderRadius: '100px' }}>NEW</span>
+                    <Link to="/tutors" className="mobile-nav-link" onClick={toggleMenu}>Verified Tutors</Link>
+                    <Link to="/ai-assistant" className="mobile-nav-link" onClick={toggleMenu} style={{ color: 'var(--primary)', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <SparklesIcon size={16} color="var(--primary)" />
+                            DegreeAI Workspace
+                        </span>
                     </Link>
                     {user && <Link to="/upload" className="mobile-nav-link" onClick={toggleMenu}>Upload Study Material</Link>}
 

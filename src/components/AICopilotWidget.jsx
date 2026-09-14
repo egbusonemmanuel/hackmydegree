@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { sendAIMessage, AI_MODES } from '../lib/ai';
+import { SparklesIcon } from './SharedUI';
 
 export default function AICopilotWidget() {
     const location = useLocation();
@@ -81,24 +82,24 @@ export default function AICopilotWidget() {
                     {/* Header */}
                     <div style={{
                         padding: '0.85rem 1rem',
-                        background: 'linear-gradient(135deg, rgba(212, 160, 32, 0.15), rgba(99, 102, 241, 0.1))',
+                        background: 'var(--surface-variant)',
                         borderBottom: '1px solid var(--outline-variant)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between'
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{
+                            <div style={{
                                 width: '28px', height: '28px', borderRadius: '8px',
-                                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: '#000', fontWeight: 900, fontSize: '0.9rem'
+                                background: 'var(--primary-container)',
+                                border: '1px solid rgba(188, 149, 92, 0.25)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}>
-                                ⚡
-                            </span>
+                                <SparklesIcon size={15} color="var(--primary)" />
+                            </div>
                             <div>
-                                <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--on-surface)' }}>
-                                    Degree<span style={{ color: 'var(--primary)' }}>AI</span> Quick Copilot
+                                <span style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--on-surface)' }}>
+                                    Degree<span style={{ color: 'var(--primary)' }}>AI</span> Copilot
                                 </span>
                             </div>
                         </div>
@@ -256,38 +257,27 @@ export default function AICopilotWidget() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 style={{
-                    background: 'linear-gradient(135deg, #d4a020 0%, #ff8c00 100%)',
+                    background: 'var(--primary)',
                     color: '#000',
                     border: 'none',
                     borderRadius: '100px',
                     padding: '0.75rem 1.35rem',
-                    fontWeight: 900,
-                    fontSize: '0.92rem',
+                    fontWeight: 800,
+                    fontSize: '0.9rem',
                     fontFamily: 'var(--font-header)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    boxShadow: '0 8px 24px rgba(212, 160, 32, 0.45)',
-                    transition: 'all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                    transform: isOpen ? 'scale(0.95)' : 'scale(1)'
+                    boxShadow: '0 6px 20px rgba(188, 149, 92, 0.35)',
+                    transition: 'all 0.25s ease',
+                    transform: isOpen ? 'scale(0.96)' : 'scale(1)'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                onMouseOut={(e) => e.currentTarget.style.transform = isOpen ? 'scale(0.95)' : 'scale(1)'}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = isOpen ? 'scale(0.96)' : 'translateY(0)'}
             >
-                <span style={{ fontSize: '1.1rem' }}>⚡</span>
-                <span>DegreeAI</span>
-                <span style={{
-                    background: 'rgba(0,0,0,0.85)',
-                    color: '#fff',
-                    fontSize: '0.65rem',
-                    fontWeight: 800,
-                    padding: '0.15rem 0.45rem',
-                    borderRadius: '100px',
-                    letterSpacing: '0.04em'
-                }}>
-                    NEW
-                </span>
+                <SparklesIcon size={16} color="#000" />
+                <span>DegreeAI Copilot</span>
             </button>
         </div>
     );

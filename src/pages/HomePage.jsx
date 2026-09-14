@@ -3,7 +3,16 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../App';
 import { getResources, getTutors, getCategories } from '../lib/supabase';
 import PageLoader from '../components/PageLoader';
-import { WhatsAppButton } from '../components/SharedUI';
+import { 
+  WhatsAppButton, 
+  SparklesIcon, 
+  BookOpenIcon, 
+  AcademicCapIcon, 
+  TrendingUpIcon, 
+  VideoCameraIcon, 
+  GlobeAltIcon, 
+  CheckBadgeIcon 
+} from '../components/SharedUI';
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -15,7 +24,6 @@ export default function HomePage() {
   useEffect(() => {
     let mounted = true;
 
-    // Safety timeout: dismiss loader after 7 seconds regardless of network
     const safetyTimeout = setTimeout(() => {
       if (mounted) setLoading(false);
     }, 7000);
@@ -51,71 +59,95 @@ export default function HomePage() {
     <div style={{ background: 'var(--surface)' }}>
       {/* Hero Section */}
       <section style={{
-        padding: 'clamp(6rem, 15vh, 10rem) 1.5rem clamp(4rem, 10vh, 8rem)',
+        padding: 'clamp(5.5rem, 13vh, 8.5rem) 1.5rem clamp(3.5rem, 8vh, 6.5rem)',
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden',
-        background: 'radial-gradient(circle at 50% 100%, var(--primary-container) 0%, var(--surface) 100%)'
+        borderBottom: '1px solid var(--outline-variant)'
       }}>
-        {/* Animated Background Blobs */}
-        <div style={{
-          position: 'absolute', top: '-10%', left: '20%', width: '30%', height: '40%',
-          background: 'var(--primary)', filter: 'blur(120px)', opacity: 0.1, borderRadius: '50%'
-        }} />
-        <div style={{
-          position: 'absolute', top: '10%', right: '10%', width: '20%', height: '30%',
-          background: 'var(--primary)', filter: 'blur(100px)', opacity: 0.15, borderRadius: '50%'
-        }} />
+        <div style={{ maxWidth: '880px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            background: 'var(--primary-container)',
+            color: 'var(--primary)',
+            padding: '0.4rem 1.1rem',
+            borderRadius: '100px',
+            fontSize: '0.82rem',
+            fontWeight: 700,
+            marginBottom: '1.75rem',
+            border: '1px solid rgba(188, 149, 92, 0.25)',
+            letterSpacing: '0.3px'
+          }}>
+            <SparklesIcon size={14} color="var(--primary)" />
+            <span>ACADEMIC INTELLIGENCE & STUDY VAULT</span>
+          </div>
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 className="gradient-text" style={{
-            fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', lineHeight: 1, marginBottom: '1.5rem',
-            fontFamily: 'var(--font-header)', fontWeight: 900, letterSpacing: '-0.06em'
+          <h1 style={{
+            fontSize: 'clamp(2.4rem, 7vw, 4.4rem)',
+            lineHeight: 1.06,
+            marginBottom: '1.5rem',
+            fontFamily: 'var(--font-header)',
+            fontWeight: 900,
+            letterSpacing: '-0.04em',
+            color: 'var(--on-surface)'
           }}>
-            Ace Your Degree.<br />
-            Zero Stress.
+            The Standard for <br />
+            <span className="gradient-text">Academic Excellence.</span>
           </h1>
+
           <p style={{
-            color: 'var(--on-surface-variant)', fontSize: 'clamp(1rem, 2vw, 1.15rem)', maxWidth: '600px',
-            margin: '0 auto 3.5rem', fontFamily: 'var(--font-body)', fontWeight: 500, lineHeight: 1.6
+            color: 'var(--on-surface-variant)',
+            fontSize: 'clamp(1.05rem, 2vw, 1.2rem)',
+            maxWidth: '640px',
+            margin: '0 auto 3rem',
+            fontFamily: 'var(--font-body)',
+            fontWeight: 400,
+            lineHeight: 1.6
           }}>
-            The ultimate resource platform for Nigerian students. Download past questions,
-            lecture notes, and book top-rated tutors in minutes.
+            Access verified past questions, departmental lecture notes, vetted 1-on-1 peer tutors, and DegreeAI revision intelligence across Nigerian universities.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap-reverse', alignItems: 'center' }}>
+
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
             <Link to="/ai-assistant">
               <button style={{
-                background: 'linear-gradient(135deg, #d4a020 0%, #ff8c00 100%)',
+                background: 'var(--primary)',
                 color: '#000',
                 border: 'none',
                 borderRadius: '100px',
-                padding: '1rem 2.25rem',
-                fontSize: '1rem',
+                padding: '0.95rem 2.2rem',
+                fontSize: '0.98rem',
                 fontFamily: 'var(--font-header)',
-                fontWeight: 900,
+                fontWeight: 800,
                 cursor: 'pointer',
-                boxShadow: '0 8px 30px rgba(212, 160, 32, 0.4)',
+                boxShadow: '0 6px 24px rgba(188, 149, 92, 0.35)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.6rem',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                gap: '0.55rem',
+                transition: 'all 0.25s ease'
               }}
                 onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                 onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
               >
-                <span>⚡</span>
-                <span>Try DegreeAI Copilot</span>
-                <span style={{ background: 'rgba(0,0,0,0.85)', color: '#fff', fontSize: '0.65rem', padding: '0.15rem 0.45rem', borderRadius: '100px' }}>NEW</span>
+                <SparklesIcon size={16} color="#000" />
+                <span>Launch DegreeAI</span>
               </button>
             </Link>
+
             {user ? (
               <Link to="/dashboard">
                 <button style={{
-                  background: 'var(--on-surface)', color: 'var(--surface)', border: 'none',
-                  borderRadius: '100px', padding: '1rem 2.5rem', fontSize: '1rem',
-                  fontFamily: 'var(--font-header)', fontWeight: 800, cursor: 'pointer',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  background: 'var(--surface-variant)',
+                  color: 'var(--on-surface)',
+                  border: '1px solid var(--outline-variant)',
+                  borderRadius: '100px',
+                  padding: '0.95rem 2.2rem',
+                  fontSize: '0.98rem',
+                  fontFamily: 'var(--font-header)',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease'
                 }}
                   onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                   onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
@@ -124,28 +156,44 @@ export default function HomePage() {
             ) : (
               <Link to="/resources">
                 <button style={{
-                  background: 'var(--on-surface)', color: 'var(--surface)', border: 'none',
-                  borderRadius: '100px', padding: '1rem 2.5rem', fontSize: '1rem',
-                  fontFamily: 'var(--font-header)', fontWeight: 800, cursor: 'pointer',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  background: 'var(--surface-variant)',
+                  color: 'var(--on-surface)',
+                  border: '1px solid var(--outline-variant)',
+                  borderRadius: '100px',
+                  padding: '0.95rem 2.2rem',
+                  fontSize: '0.98rem',
+                  fontFamily: 'var(--font-header)',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease'
                 }}
                   onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                   onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-                >Browse Vault</button>
+                >Explore Vault</button>
               </Link>
             )}
+
             <Link to="/tutors">
               <button style={{
-                background: 'var(--surface-variant)', color: 'var(--on-surface)',
-                border: '1px solid var(--outline-variant)', borderRadius: '100px',
-                padding: '1rem 2.25rem', fontSize: '1rem',
-                fontFamily: 'var(--font-header)', fontWeight: 700,
-                cursor: 'pointer', backdropFilter: 'blur(8px)',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                background: 'transparent',
+                color: 'var(--on-surface-variant)',
+                border: '1px solid var(--outline-variant)',
+                borderRadius: '100px',
+                padding: '0.95rem 2rem',
+                fontSize: '0.98rem',
+                fontFamily: 'var(--font-header)',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.25s ease'
               }}
-                onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+                onMouseOver={e => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.color = 'var(--on-surface)';
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.color = 'var(--on-surface-variant)';
+                }}
               >Find a Tutor</button>
             </Link>
           </div>
@@ -155,46 +203,59 @@ export default function HomePage() {
       {loading ? (
         <PageLoader />
       ) : (
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem)' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: 'clamp(2.5rem, 5vw, 4.5rem) clamp(1rem, 4vw, 2rem)' }}>
 
           {/* DegreeAI Showcase Section */}
           <section style={{
-            marginBottom: '8rem',
-            background: 'linear-gradient(135deg, rgba(212, 160, 32, 0.12) 0%, rgba(99, 102, 241, 0.08) 50%, var(--surface-variant) 100%)',
-            border: '1.5px solid var(--primary)',
-            borderRadius: '32px',
-            padding: 'clamp(2rem, 6vw, 4rem)',
+            marginBottom: '6.5rem',
+            background: 'var(--surface-variant)',
+            border: '1px solid var(--outline-variant)',
+            borderRadius: '28px',
+            padding: 'clamp(2rem, 5vw, 3.5rem)',
             position: 'relative',
             overflow: 'hidden'
           }}>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '3rem',
+              gap: '2.5rem',
               alignItems: 'center'
             }}>
               <div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--primary)', color: '#000', padding: '0.35rem 0.9rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 900, marginBottom: '1.25rem', letterSpacing: '0.5px' }}>
-                  <span>⚡ INTRODUCING DEGREEAI</span>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  background: 'var(--primary-container)',
+                  color: 'var(--primary)',
+                  padding: '0.35rem 0.85rem',
+                  borderRadius: '100px',
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  marginBottom: '1.25rem',
+                  letterSpacing: '0.5px'
+                }}>
+                  <SparklesIcon size={14} color="var(--primary)" />
+                  <span>DEGREEAI ENGINE</span>
                 </div>
                 <h2 style={{
-                  fontSize: 'clamp(2rem, 5vw, 3rem)',
+                  fontSize: 'clamp(1.8rem, 4.5vw, 2.7rem)',
                   fontFamily: 'var(--font-header)',
                   fontWeight: 900,
-                  letterSpacing: '-0.04em',
+                  letterSpacing: '-0.03em',
                   margin: '0 0 1rem 0',
                   lineHeight: 1.15
                 }}>
-                  Your Personal 24/7 <br />
-                  <span style={{ color: 'var(--primary)' }}>Academic Super-Tutor.</span>
+                  Your On-Demand <br />
+                  <span style={{ color: 'var(--primary)' }}>Academic Assistant.</span>
                 </h2>
                 <p style={{
                   color: 'var(--on-surface-variant)',
-                  fontSize: '1.05rem',
+                  fontSize: '1rem',
                   lineHeight: 1.6,
                   marginBottom: '2rem'
                 }}>
-                  Stuck on a tricky past question, complex theorem, or 60-page lecture note at 2:00 AM? DegreeAI gives you instant step-by-step solutions, exam prep marking schemes, and 5-minute revision summaries.
+                  Stuck on complex past questions, proofs, or 60-slide lecture decks? DegreeAI delivers step-by-step marking scheme solutions and concise revision summaries in seconds.
                 </p>
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                   <Link to="/ai-assistant">
@@ -203,13 +264,17 @@ export default function HomePage() {
                       color: '#000',
                       border: 'none',
                       borderRadius: '100px',
-                      padding: '0.9rem 2rem',
-                      fontWeight: 900,
-                      fontSize: '0.95rem',
+                      padding: '0.85rem 1.85rem',
+                      fontWeight: 800,
+                      fontSize: '0.92rem',
                       cursor: 'pointer',
-                      boxShadow: '0 6px 20px rgba(212, 160, 32, 0.35)'
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      boxShadow: '0 4px 16px rgba(188, 149, 92, 0.3)'
                     }}>
-                      Open DegreeAI Workspace →
+                      <SparklesIcon size={16} color="#000" />
+                      <span>Open DegreeAI Workspace →</span>
                     </button>
                   </Link>
                 </div>
@@ -218,21 +283,21 @@ export default function HomePage() {
               {/* Interactive feature highlights grid */}
               <div className="responsive-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 {[
-                  { icon: '📝', title: 'Exam Prep & Marking Schemes', desc: 'Step-by-step past question solutions tailored for max marks.' },
-                  { icon: '💡', title: 'Explain Like I\'m 100L', desc: 'Simple real-world analogies to understand dense jargon.' },
-                  { icon: '⚡', title: '5-Min Revision Sheets', desc: 'Condense 50 slides into key points and must-memorize formulas.' },
-                  { icon: '🎯', title: 'Mock Quiz Generator', desc: 'Test yourself with auto-generated exam-standard MCQs.' }
+                  { icon: <BookOpenIcon size={20} color="var(--primary)" />, title: 'Past Question Marking Scheme', desc: 'Structured, step-by-step exam answers mapped to syllabus criteria.' },
+                  { icon: <SparklesIcon size={20} color="var(--primary)" />, title: 'Concept Clarification', desc: 'Break down complex academic theories with intuitive analogies.' },
+                  { icon: <CheckBadgeIcon size={20} color="var(--primary)" />, title: '5-Min Revision Sheets', desc: 'Condense large course modules into core formulas and definitions.' },
+                  { icon: <AcademicCapIcon size={20} color="var(--primary)" />, title: 'Mock Exam Generator', desc: 'Simulate university exam-style questions to test mastery.' }
                 ].map((feat, idx) => (
                   <div key={idx} style={{
                     background: 'var(--surface)',
                     border: '1px solid var(--outline-variant)',
-                    borderRadius: '20px',
+                    borderRadius: '16px',
                     padding: '1.25rem',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
+                    transition: 'var(--transition-standard)'
                   }}>
-                    <div style={{ fontSize: '1.8rem', marginBottom: '0.6rem' }}>{feat.icon}</div>
-                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--on-surface)', marginBottom: '0.35rem' }}>{feat.title}</div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--on-surface-variant)', lineHeight: 1.4 }}>{feat.desc}</div>
+                    <div style={{ marginBottom: '0.75rem' }}>{feat.icon}</div>
+                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--on-surface)', marginBottom: '0.35rem' }}>{feat.title}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--on-surface-variant)', lineHeight: 1.45 }}>{feat.desc}</div>
                   </div>
                 ))}
               </div>
@@ -375,48 +440,74 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Digital Skills & Online Income Hub (Digital Oluwaseun × Selar) */}
+          {/* Digital Skills & Online Income Hub */}
           <section style={{
-            marginTop: 'clamp(5rem, 12vh, 8rem)',
-            background: 'linear-gradient(135deg, rgba(188, 149, 92, 0.12) 0%, rgba(37, 211, 102, 0.06) 50%, var(--surface-variant) 100%)',
-            border: '1.5px solid var(--primary)',
-            borderRadius: '32px',
-            padding: 'clamp(2rem, 6vw, 4rem)',
+            marginTop: 'clamp(4.5rem, 10vh, 7rem)',
+            background: 'var(--surface-variant)',
+            border: '1px solid var(--outline-variant)',
+            borderRadius: '28px',
+            padding: 'clamp(2rem, 5vw, 3.5rem)',
             position: 'relative',
             overflow: 'hidden'
           }}>
-            <div className="responsive-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexWrap: 'wrap', gap: '1.5rem' }}>
+            <div className="responsive-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
               <div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--primary)', color: '#000', padding: '0.35rem 0.9rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 900, marginBottom: '1rem', letterSpacing: '0.5px' }}>
-                  <span>🚀 DIGITAL OLUWASEUN × SELAR</span>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  background: 'var(--primary-container)',
+                  color: 'var(--primary)',
+                  padding: '0.35rem 0.85rem',
+                  borderRadius: '100px',
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  marginBottom: '1rem',
+                  letterSpacing: '0.5px'
+                }}>
+                  <TrendingUpIcon size={14} color="var(--primary)" />
+                  <span>INDUSTRY DIGITAL ACCELERATORS</span>
                 </div>
-                <h2 style={{ fontSize: 'clamp(1.8rem, 6vw, 2.8rem)', fontWeight: 900, margin: 0, letterSpacing: '-0.04em', lineHeight: 1.15 }}>
-                  Earn While You Learn: <br />
-                  <span style={{ color: 'var(--primary)' }}>High-Income Digital Skills.</span>
+                <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.6rem)', fontWeight: 900, margin: 0, letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+                  High-Income Digital Skills <br />
+                  <span style={{ color: 'var(--primary)' }}>For Modern Students.</span>
                 </h2>
-                <p style={{ color: 'var(--on-surface-variant)', fontSize: '1.05rem', maxWidth: '650px', marginTop: '0.75rem', lineHeight: 1.5 }}>
-                  Master in-demand digital skills like **Affiliate Marketing**, **AI Video Creation**, and **YouTube Automation** to build passive online revenue alongside your degree.
+                <p style={{ color: 'var(--on-surface-variant)', fontSize: '1rem', maxWidth: '640px', marginTop: '0.75rem', lineHeight: 1.55 }}>
+                  Practical, cohort-tested curricula in Affiliate Marketing, AI Video Creation, and YouTube Automation to build income alongside your degree.
                 </p>
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                 <Link to="/skills">
                   <button style={{
-                    background: 'var(--primary)', color: '#000', border: 'none',
-                    borderRadius: '100px', padding: '0.85rem 1.75rem', fontWeight: 900,
-                    fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
-                    boxShadow: '0 6px 20px rgba(212, 160, 32, 0.35)'
+                    background: 'var(--primary)',
+                    color: '#000',
+                    border: 'none',
+                    borderRadius: '100px',
+                    padding: '0.85rem 1.75rem',
+                    fontWeight: 800,
+                    fontSize: '0.92rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    boxShadow: '0 4px 16px rgba(188, 149, 92, 0.3)'
                   }}>
-                    Explore All Skills →
+                    Explore All Tracks →
                   </button>
                 </Link>
                 <a href="https://selar.com/m/chiadikobi-rejoice1?affiliate=1v3l31j354" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                   <button style={{
-                    background: 'var(--surface)', color: 'var(--on-surface)', border: '1px solid var(--outline-variant)',
-                    borderRadius: '100px', padding: '0.85rem 1.75rem', fontWeight: 800,
-                    fontSize: '0.95rem', cursor: 'pointer'
+                    background: 'var(--surface)',
+                    color: 'var(--on-surface)',
+                    border: '1px solid var(--outline-variant)',
+                    borderRadius: '100px',
+                    padding: '0.85rem 1.75rem',
+                    fontWeight: 700,
+                    fontSize: '0.92rem',
+                    cursor: 'pointer'
                   }}>
-                    Selar Store ↗
+                    Selar Academy ↗
                   </button>
                 </a>
               </div>
@@ -426,44 +517,71 @@ export default function HomePage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.25rem' }}>
               {[
                 {
-                  icon: '📈', title: 'Affiliate Marketing', badge: '50%-60% Payout',
-                  desc: 'Earn steady commissions promoting high-demand digital courses on Selar with high-converting WhatsApp & social media funnels.'
+                  icon: <TrendingUpIcon size={24} color="var(--primary)" />,
+                  title: 'Affiliate Marketing',
+                  badge: '50%-60% Commission',
+                  desc: 'High-converting sales funnels, student copywriting, and weekly direct payouts via Selar.'
                 },
                 {
-                  icon: '🤖', title: 'AI Video Creation', badge: 'No Camera Needed',
-                  desc: 'Produce viral TikToks, Reels, and cinematic videos using ChatGPT, Midjourney, and AI voiceovers without showing your face.'
+                  icon: <VideoCameraIcon size={24} color="var(--primary)" />,
+                  title: 'AI Video Production',
+                  badge: 'No Studio Needed',
+                  desc: 'Produce high-converting commercial reels and faceless video assets using generative AI tools.'
                 },
                 {
-                  icon: '📹', title: 'YouTube Automation', badge: 'Passive Revenue',
-                  desc: 'Build and monetize faceless YouTube channels with automated scripts, B-roll curation, and high-RPM niche selection.'
+                  icon: <SparklesIcon size={24} color="var(--primary)" />,
+                  title: 'YouTube Automation',
+                  badge: 'Passive Revenue',
+                  desc: 'Launch and scale faceless channels with automated research, scriptwriting, and high-RPM niche targeting.'
                 },
                 {
-                  icon: '🌐', title: 'Remote Freelancing', badge: 'Digital Services',
-                  desc: 'Package your skills into high-ticket freelance offers and close remote clients across Nigeria and globally.'
+                  icon: <GlobeAltIcon size={24} color="var(--primary)" />,
+                  title: 'Remote Freelancing',
+                  badge: 'High-Ticket Clients',
+                  desc: 'Package portfolio assets and close international clients for remote digital work.'
                 }
               ].map((item, idx) => (
                 <div key={idx} className="glass" style={{
                   background: 'var(--surface)',
-                  borderRadius: '20px',
+                  borderRadius: '18px',
                   padding: '1.5rem',
                   border: '1px solid var(--outline-variant)',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  transition: 'var(--transition-standard)'
                 }}>
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '2rem' }}>{item.icon}</span>
-                      <span style={{ background: 'var(--primary-container)', color: 'var(--primary)', fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '100px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <div style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: '12px',
+                        background: 'var(--primary-container)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        {item.icon}
+                      </div>
+                      <span style={{
+                        background: 'var(--surface-variant)',
+                        color: 'var(--on-surface-variant)',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '0.25rem 0.65rem',
+                        borderRadius: '100px',
+                        border: '1px solid var(--outline-variant)'
+                      }}>
                         {item.badge}
                       </span>
                     </div>
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--on-surface)' }}>{item.title}</h3>
-                    <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem', lineHeight: 1.45, marginBottom: '1.25rem' }}>{item.desc}</p>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--on-surface)' }}>{item.title}</h3>
+                    <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '1.25rem' }}>{item.desc}</p>
                   </div>
                   <a href="https://selar.com/m/chiadikobi-rejoice1?affiliate=1v3l31j354" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                    <span style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                      Enroll on Selar →
+                    <span style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                      View Curriculum →
                     </span>
                   </a>
                 </div>
@@ -473,15 +591,20 @@ export default function HomePage() {
 
           {/* Share Section */}
           <section className="animate-fade-in" style={{
-            marginTop: 'clamp(4rem, 10vh, 8rem)', padding: 'clamp(3rem, 8vw, 6rem) 1.5rem', borderRadius: '32px',
-            background: 'var(--on-surface)', color: 'var(--surface)', textAlign: 'center'
+            marginTop: 'clamp(4rem, 10vh, 7rem)',
+            padding: 'clamp(3rem, 7vw, 5rem) 1.5rem',
+            borderRadius: '28px',
+            background: 'var(--surface-variant)',
+            border: '1px solid var(--outline-variant)',
+            color: 'var(--on-surface)',
+            textAlign: 'center'
           }}>
-            <h2 style={{ fontSize: 'clamp(2rem, 6vw, 3rem)', fontWeight: 900, marginBottom: '1.5rem', letterSpacing: '-0.06em' }}>Empower Your Circle</h2>
-            <p style={{ fontSize: '1.2rem', opacity: 0.8, maxWidth: '600px', margin: '0 auto 3rem', fontWeight: 500 }}>
-              Sharing is the fastest way to build a stronger academic community. Send HackMyDegree to your course groups and help your classmates ace their exams.
+            <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.6rem)', fontWeight: 900, marginBottom: '1rem', letterSpacing: '-0.04em' }}>Empower Your Course Mates</h2>
+            <p style={{ fontSize: '1.05rem', color: 'var(--on-surface-variant)', maxWidth: '580px', margin: '0 auto 2.5rem', fontWeight: 400, lineHeight: 1.6 }}>
+              Share HackMyDegree with your university department and study groups to help your classmates prepare for exams with confidence.
             </p>
-            <div style={{ maxWidth: '300px', margin: '0 auto' }}>
-              <WhatsAppButton text="Hey! Check out HackMyDegree. It's got all the past questions, notes, and tutors we need for our exams! 🚀" />
+            <div style={{ maxWidth: '280px', margin: '0 auto' }}>
+              <WhatsAppButton text="Hey! Check out HackMyDegree — it has all the past questions, lecture notes, and study resources for our exams: " />
             </div>
           </section>
 
