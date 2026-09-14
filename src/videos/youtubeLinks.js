@@ -1,25 +1,25 @@
 // src/videos/videosList.js
 // ─────────────────────────────────────────────────────────────────
-// Local video files dropped into src/videos/
+// Local video files — AI Video Creation Course
 // ─────────────────────────────────────────────────────────────────
 
 const LOCAL_VIDEOS = [
   {
-    title: 'Digital Skills Introduction',
+    title: 'AI Video Creation — Part 1',
     file: '/videos/WhatsApp Video 2026-09-14 at 00.40.48.mp4',
-    description: 'Get started with Digital Oluwaseun — your guide to earning online.',
-    course: 'general',
+    description: 'Introduction to creating viral AI-powered videos with no camera or expensive gear required.',
+    course: 'ai-video-creation',
   },
   {
-    title: 'Affiliate Marketing Walkthrough',
+    title: 'AI Video Creation — Part 2',
     file: '/videos/WhatsApp Video 2026-09-14 at 00.42.59.mp4',
-    description: 'See exactly how to earn 50–60% commissions promoting products on Selar.',
-    course: 'affiliate-marketing',
+    description: 'Advanced AI video tools — scriptwriting, voiceovers, and automated editing techniques.',
+    course: 'ai-video-creation',
   },
   {
-    title: 'AI Video Creation Demo',
+    title: 'AI Video Creation — Part 3',
     file: '/videos/WhatsApp Video 2026-09-14 at 00.44.50.mp4',
-    description: 'Watch how to create viral videos using AI tools — no camera required.',
+    description: 'Full production walkthrough — from idea to finished viral video using AI tools.',
     course: 'ai-video-creation',
   },
 ];
