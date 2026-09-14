@@ -1,3 +1,2 @@
 # Google AdSense ads.txt for HackMyDegree
-# Replace pub-XXXXXXXXXXXXXXXX with your actual 16-digit publisher ID from your AdSense dashboard
-google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-2921216147231328, DIRECT, f08c47fec0942fa0

@@ -27,7 +27,7 @@ export default function AdBanner({
   const adRef = useRef(null);
   const adInitialized = useRef(false);
 
-  const clientId = process.env.REACT_APP_ADSENSE_CLIENT_ID || 'ca-pub-XXXXXXXXXXXXXXXX';
+  const clientId = process.env.REACT_APP_ADSENSE_CLIENT_ID || 'ca-pub-2921216147231328';
   const isPro = profile?.is_pro;
 
   // Must call hooks unconditionally — hide AFTER hooks are declared
