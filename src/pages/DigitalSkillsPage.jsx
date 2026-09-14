@@ -1,26 +1,7 @@
 // src/pages/DigitalSkillsPage.jsx
 import React, { useState } from 'react';
-import YOUTUBE_VIDEOS from '../videos/youtubeLinks';
+import LOCAL_VIDEOS from '../videos/youtubeLinks';
 
-// Extract YouTube video ID from any YouTube URL format
-function getYouTubeId(url) {
-  if (!url) return null;
-  const patterns = [
-    /youtube\.com\/watch\?v=([^&]+)/,
-    /youtu\.be\/([^?]+)/,
-    /youtube\.com\/embed\/([^?]+)/,
-  ];
-  for (const p of patterns) {
-    const m = url.match(p);
-    if (m) return m[1];
-  }
-  return null;
-}
-
-// Filter out placeholder example videos
-const REAL_VIDEOS = YOUTUBE_VIDEOS.filter(
-  v => !v.url.includes('EXAMPLE')
-);
 
 const SELAR_STORE_URL = 'https://selar.com/m/chiadikobi-rejoice1?affiliate=1v3l31j354';
 const WHATSAPP_CONTACT = 'https://wa.me/2348143064008?text=Hello%20Digital%20Oluwaseun,%20I%20am%20interested%20in%20learning%20more%20about%20your%20digital%20skills%20and%20online%20income%20courses!';
@@ -434,12 +415,12 @@ export default function DigitalSkillsPage() {
         </div>
       </section>
 
-      {/* ── YouTube Video Gallery (only renders when real videos are added) ── */}
-      {REAL_VIDEOS.length > 0 && (
+      {/* ── Local Video Gallery ── */}
+      {LOCAL_VIDEOS.length > 0 && (
         <section style={{ maxWidth: '1200px', margin: '0 auto 6rem', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <span style={{ color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '3px', fontSize: '0.8rem' }}>
-              WATCH & LEARN
+              WATCH &amp; LEARN
             </span>
             <h2 style={{ fontSize: 'clamp(1.8rem, 6vw, 2.6rem)', marginTop: '0.5rem', fontWeight: 900, letterSpacing: '-0.04em' }}>
               See It In Action
@@ -454,60 +435,49 @@ export default function DigitalSkillsPage() {
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
             gap: '1.75rem'
           }}>
-            {REAL_VIDEOS.map((video, idx) => {
-              const videoId = getYouTubeId(video.url);
-              if (!videoId) return null;
-              return (
-                <div
-                  key={idx}
-                  className="glass"
-                  style={{
-                    borderRadius: '20px',
-                    overflow: 'hidden',
-                    border: '1px solid var(--outline-variant)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                  }}
-                  onMouseOver={e => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.25)';
-                    e.currentTarget.style.borderColor = 'var(--primary)';
-                  }}
-                  onMouseOut={e => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.borderColor = 'var(--outline-variant)';
-                  }}
-                >
-                  {/* Responsive 16:9 embed */}
-                  <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-                    <iframe
-                      src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
-                      title={video.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      loading="lazy"
-                      style={{
-                        position: 'absolute', top: 0, left: 0,
-                        width: '100%', height: '100%',
-                        border: 'none'
-                      }}
-                    />
-                  </div>
+            {LOCAL_VIDEOS.map((video, idx) => (
+              <div
+                key={idx}
+                className="glass"
+                style={{
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  border: '1px solid var(--outline-variant)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+                onMouseOver={e => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.25)';
+                  e.currentTarget.style.borderColor = 'var(--primary)';
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.borderColor = 'var(--outline-variant)';
+                }}
+              >
+                {/* Native HTML5 video player — works on all devices */}
+                <video
+                  src={video.file}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  style={{ width: '100%', display: 'block', maxHeight: '280px', objectFit: 'cover', background: '#000' }}
+                />
 
-                  {/* Video info */}
-                  <div style={{ padding: '1.25rem 1.5rem 1.5rem' }}>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.4rem', lineHeight: 1.3 }}>
-                      {video.title}
-                    </h3>
-                    {video.description && (
-                      <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.88rem', lineHeight: 1.5, margin: 0 }}>
-                        {video.description}
-                      </p>
-                    )}
-                  </div>
+                {/* Video info */}
+                <div style={{ padding: '1.25rem 1.5rem 1.5rem' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.4rem', lineHeight: 1.3 }}>
+                    {video.title}
+                  </h3>
+                  {video.description && (
+                    <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.88rem', lineHeight: 1.5, margin: 0 }}>
+                      {video.description}
+                    </p>
+                  )}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </section>
       )}

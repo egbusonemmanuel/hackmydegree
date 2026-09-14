@@ -1,43 +1,27 @@
-// src/videos/youtubeLinks.js
+// src/videos/videosList.js
 // ─────────────────────────────────────────────────────────────────
-// DROP YOUR YOUTUBE LINKS HERE
-// Just paste the full YouTube URL for each video.
-// The site will automatically embed them on the Digital Skills page.
-//
-// HOW TO GET A YOUTUBE LINK:
-//   Go to the YouTube video → copy the URL from the browser bar
-//   e.g.  https://www.youtube.com/watch?v=dQw4w9WgXcQ
-//         https://youtu.be/dQw4w9WgXcQ   (short link also works)
+// Local video files dropped into src/videos/
 // ─────────────────────────────────────────────────────────────────
 
-const YOUTUBE_VIDEOS = [
-
-  // ── PASTE YOUR VIDEOS BELOW ──
-  // Copy this block and repeat for each video:
-
-  // {
-  //   title: 'Video Title Here',
-  //   url: 'https://www.youtube.com/watch?v=PASTE_ID_HERE',
-  //   description: 'Short description of what this video is about (optional)',
-  //   course: 'affiliate-marketing', // which course does this belong to?
-  //               // Options: 'affiliate-marketing' | 'ai-video-creation'
-  //               //          | 'youtube-automation' | 'cyber-networking' | 'general'
-  // },
-
-  // ── EXAMPLE (delete these once you add real videos) ──
+const LOCAL_VIDEOS = [
   {
-    title: 'How to Earn With Affiliate Marketing on Selar',
-    url: 'https://www.youtube.com/watch?v=EXAMPLE1',
-    description: 'Step-by-step guide to earning 50-60% commissions promoting digital products.',
+    title: 'Digital Skills Introduction',
+    file: '/videos/WhatsApp Video 2026-09-14 at 00.40.48.mp4',
+    description: 'Get started with Digital Oluwaseun — your guide to earning online.',
+    course: 'general',
+  },
+  {
+    title: 'Affiliate Marketing Walkthrough',
+    file: '/videos/WhatsApp Video 2026-09-14 at 00.42.59.mp4',
+    description: 'See exactly how to earn 50–60% commissions promoting products on Selar.',
     course: 'affiliate-marketing',
   },
   {
-    title: 'AI Video Creation for Beginners',
-    url: 'https://www.youtube.com/watch?v=EXAMPLE2',
-    description: 'Create viral videos using AI tools without showing your face.',
+    title: 'AI Video Creation Demo',
+    file: '/videos/WhatsApp Video 2026-09-14 at 00.44.50.mp4',
+    description: 'Watch how to create viral videos using AI tools — no camera required.',
     course: 'ai-video-creation',
   },
-
 ];
 
-export default YOUTUBE_VIDEOS;
+export default LOCAL_VIDEOS;
