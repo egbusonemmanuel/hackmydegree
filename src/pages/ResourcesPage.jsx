@@ -1,22 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getResources, getCategories } from '../lib/supabase';
+import { useAuth } from '../App';
 import PageLoader from '../components/PageLoader';
 import { Input } from '../components/SharedUI';
+import { KNOWLEDGE_BANK_COURSES } from '../data/knowledgeBank';
+import KnowledgeReaderModal from '../components/KnowledgeReaderModal';
+
+const LEVEL_OPTIONS = ['All Levels', '100 Level', '200 Level', '300 Level', '400 Level', '500 Level'];
 
 export default function ResourcesPage() {
+    const { user, profile, refreshProfile } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
     const [resources, setResources] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    // Filters
     const [activeCategory, setActiveCategory] = useState(() => searchParams.get('category') || null);
     const [search, setSearch] = useState(() => searchParams.get('q') || '');
+    const [activeLevel, setActiveLevel] = useState('All Levels');
+    const [activeSource, setActiveSource] = useState('all'); // 'all', 'knowledge_bank', 'uploads'
+
+    // Reader Modal
+    const [selectedCourse, setSelectedCourse] = useState(null);
 
     useEffect(() => {
         setActiveCategory(searchParams.get('category') || null);
         setSearch(searchParams.get('q') || '');
-    // Query parameters are the source of truth for links shared from the home page.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
     const updateFilters = (category, query) => {
@@ -56,112 +67,449 @@ export default function ResourcesPage() {
     }, [activeCategory, search]);
 
     const normalizedSearch = search.trim().toLowerCase();
-    const visibleResources = normalizedSearch.length < 3 ? resources.filter((resource) => {
-        const searchable = [resource.title, resource.description, resource.category?.name, resource.uploader?.full_name, resource.uploader?.username].filter(Boolean).join(' ').toLowerCase();
-        return searchable.includes(normalizedSearch);
-    }) : resources;
+
+    // Filter Knowledge Bank courses
+    const filteredKnowledgeBank = useMemo(() => {
+        return KNOWLEDGE_BANK_COURSES.filter(course => {
+            if (activeLevel !== 'All Levels' && course.level !== activeLevel) {
+                return false;
+            }
+            if (!normalizedSearch) return true;
+            const searchTargets = [
+                course.course_code,
+                course.title,
+                course.department,
+                course.faculty,
+                course.level,
+                course.semester,
+                ...(course.topics || []),
+                ...(course.documents || []).map(d => d.title)
+            ].join(' ').toLowerCase();
+            return searchTargets.includes(normalizedSearch);
+        });
+    }, [activeLevel, normalizedSearch]);
+
+    // Filter Supabase community resources
+    const visibleResources = useMemo(() => {
+        if (normalizedSearch.length < 3) {
+            return resources.filter((resource) => {
+                const searchable = [
+                    resource.title, resource.description, resource.category?.name,
+                    resource.uploader?.full_name, resource.uploader?.username, resource.school
+                ].filter(Boolean).join(' ').toLowerCase();
+                return searchable.includes(normalizedSearch);
+            });
+        }
+        return resources;
+    }, [resources, normalizedSearch]);
+
+    const isPro = Boolean(profile?.is_pro);
+    const totalFound = (activeSource !== 'uploads' ? filteredKnowledgeBank.length : 0) +
+                       (activeSource !== 'knowledge_bank' ? visibleResources.length : 0);
 
     return (
-        <div style={{ color: 'var(--on-surface)', fontFamily: 'var(--font-body)', maxWidth: '1200px', margin: '0 auto', padding: 'clamp(2rem, 8vw, 4rem) clamp(1rem, 4vw, 2rem)' }}>
-            <h1 style={{ fontFamily: 'var(--font-header)', fontSize: 'clamp(2rem, 6vw, 3rem)', marginBottom: '1rem', fontWeight: 900, letterSpacing: '-0.05em' }}>
-                Resource Vault 📚
-            </h1>
-            <p style={{ color: 'var(--on-surface-variant)', marginBottom: 'clamp(2rem, 6vw, 3.5rem)', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', fontWeight: 500 }}>
-                High-quality past questions, lecture notes, and study guides from across Nigeria.
-            </p>
+        <div style={{
+            color: 'var(--on-surface)', fontFamily: 'var(--font-body)',
+            maxWidth: '1240px', margin: '0 auto',
+            padding: 'clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem)'
+        }}>
+            {/* Header */}
+            <div style={{ marginBottom: '2.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                    <h1 style={{
+                        fontFamily: 'var(--font-header)', fontSize: 'clamp(2.2rem, 5vw, 3.2rem)',
+                        margin: 0, fontWeight: 900, letterSpacing: '-0.04em'
+                    }}>
+                        Resource Vault 📚
+                    </h1>
+                    <span style={{
+                        background: 'linear-gradient(135deg, rgba(201,150,62,0.2) 0%, rgba(201,150,62,0.05) 100%)',
+                        color: '#C9963E', border: '1px solid rgba(201,150,62,0.3)',
+                        padding: '0.35rem 0.85rem', borderRadius: '100px', fontSize: '0.82rem',
+                        fontWeight: 800, letterSpacing: '0.04em'
+                    }}>
+                        🏛️ 100L–500L KNOWLEDGE BANK
+                    </span>
+                </div>
+                <p style={{
+                    color: 'var(--on-surface-variant)', margin: 0,
+                    fontSize: 'clamp(1rem, 2vw, 1.15rem)', fontWeight: 450, maxWidth: '750px', lineHeight: 1.5
+                }}>
+                    Verified lecture notes, past questions, and academic repositories across Nigerian universities. Read securely on-site.
+                </p>
+            </div>
 
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: 'clamp(2rem, 5vw, 4rem)', alignItems: 'center' }}>
-                <div style={{ flex: '1 1 280px', width: '100%' }}>
+            {/* Knowledge Bank Spotlight Hero Banner */}
+            <div style={{
+                background: 'linear-gradient(135deg, #15161A 0%, #101114 100%)',
+                border: '1px solid rgba(201, 150, 62, 0.3)',
+                borderRadius: '20px', padding: 'clamp(1.5rem, 3vw, 2.25rem)',
+                marginBottom: '2.5rem', position: 'relative', overflow: 'hidden',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.4)'
+            }}>
+                <div style={{
+                    position: 'absolute', top: '-50px', right: '-50px', width: '220px', height: '220px',
+                    background: 'radial-gradient(circle, rgba(201,150,62,0.15) 0%, rgba(0,0,0,0) 70%)',
+                    borderRadius: '50%', pointerEvents: 'none'
+                }}></div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
+                    <div style={{ maxWidth: '720px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
+                            <span style={{ fontSize: '1.4rem' }}>🏛️</span>
+                            <span style={{ color: '#C9963E', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                ChongPQ Verified Knowledge Bank
+                            </span>
+                            {isPro ? (
+                                <span style={{
+                                    background: 'rgba(0, 200, 83, 0.15)', color: '#00E676',
+                                    padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.72rem',
+                                    fontWeight: 800, border: '1px solid rgba(0, 230, 118, 0.3)'
+                                }}>
+                                    ✓ PRO ACTIVE
+                                </span>
+                            ) : (
+                                <span style={{
+                                    background: 'rgba(201, 150, 62, 0.15)', color: '#E5B158',
+                                    padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.72rem',
+                                    fontWeight: 800, border: '1px solid rgba(201, 150, 62, 0.3)'
+                                }}>
+                                    🔒 PRO EXCLUSIVE
+                                </span>
+                            )}
+                        </div>
+                        <h2 style={{
+                            margin: '0 0 0.6rem 0', fontSize: 'clamp(1.25rem, 2.5vw, 1.7rem)',
+                            fontWeight: 800, letterSpacing: '-0.03em', color: '#FFFFFF'
+                        }}>
+                            Complete 100L – 500L University Study Bank
+                        </h2>
+                        <p style={{
+                            color: '#A8A8A8', margin: 0, fontSize: '0.92rem', lineHeight: 1.55
+                        }}>
+                            Access comprehensive notes in Pharmacy, Nursing, Basic Medical, Engineering & General Studies. Protected for exclusive on-site study on HackMyDegree.
+                        </p>
+                    </div>
+
+                    {/* Level Quick Filter Tabs inside Hero */}
+                    <div>
+                        <span style={{ display: 'block', fontSize: '0.75rem', color: '#888888', fontWeight: 700, marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                            Browse By Academic Level:
+                        </span>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                            {LEVEL_OPTIONS.map(lvl => (
+                                <button
+                                    key={lvl}
+                                    onClick={() => {
+                                        setActiveLevel(lvl);
+                                        setActiveSource('knowledge_bank');
+                                    }}
+                                    style={{
+                                        background: activeLevel === lvl ? '#C9963E' : 'rgba(255,255,255,0.06)',
+                                        color: activeLevel === lvl ? '#000000' : '#CCCCCC',
+                                        border: activeLevel === lvl ? '1px solid #C9963E' : '1px solid rgba(255,255,255,0.08)',
+                                        padding: '0.45rem 0.9rem', borderRadius: '8px', cursor: 'pointer',
+                                        fontSize: '0.8rem', fontWeight: 700, transition: 'all 0.2s', whiteSpace: 'nowrap'
+                                    }}>
+                                    {lvl.replace(' Level', 'L')}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Search & Source Tabs */}
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem', alignItems: 'center' }}>
+                <div style={{ flex: '1 1 320px' }}>
                     <Input
-                        placeholder="Search resources, topics, or schools..."
+                        placeholder="Search courses (e.g. BIO 101, Pharmacy, Nursing, CHM 101)..."
                         value={search}
                         onChange={(e) => updateFilters(activeCategory, e.target.value)}
                         icon={<span>🔍</span>}
                     />
                 </div>
-                <div className="responsive-tabs" style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', width: '100%' }}>
+
+                {/* Source Segmented Control */}
+                <div style={{
+                    display: 'flex', background: 'rgba(255,255,255,0.04)', padding: '0.3rem',
+                    borderRadius: '100px', border: '1px solid rgba(255,255,255,0.08)'
+                }}>
+                    <button
+                        onClick={() => setActiveSource('all')}
+                        style={{
+                            background: activeSource === 'all' ? 'var(--on-surface)' : 'transparent',
+                            color: activeSource === 'all' ? 'var(--surface)' : 'var(--on-surface-variant)',
+                            border: 'none', padding: '0.5rem 1.1rem', borderRadius: '100px',
+                            cursor: 'pointer', fontWeight: 800, fontSize: '0.82rem', transition: 'all 0.2s'
+                        }}>
+                        All ({KNOWLEDGE_BANK_COURSES.length + resources.length})
+                    </button>
+                    <button
+                        onClick={() => setActiveSource('knowledge_bank')}
+                        style={{
+                            background: activeSource === 'knowledge_bank' ? '#C9963E' : 'transparent',
+                            color: activeSource === 'knowledge_bank' ? '#000000' : '#CCCCCC',
+                            border: 'none', padding: '0.5rem 1.1rem', borderRadius: '100px',
+                            cursor: 'pointer', fontWeight: 800, fontSize: '0.82rem', transition: 'all 0.2s'
+                        }}>
+                        🏛️ Knowledge Bank ({filteredKnowledgeBank.length})
+                    </button>
+                    <button
+                        onClick={() => setActiveSource('uploads')}
+                        style={{
+                            background: activeSource === 'uploads' ? 'var(--on-surface)' : 'transparent',
+                            color: activeSource === 'uploads' ? 'var(--surface)' : 'var(--on-surface-variant)',
+                            border: 'none', padding: '0.5rem 1.1rem', borderRadius: '100px',
+                            cursor: 'pointer', fontWeight: 800, fontSize: '0.82rem', transition: 'all 0.2s'
+                        }}>
+                        📂 Community Vault ({visibleResources.length})
+                    </button>
+                </div>
+            </div>
+
+            {/* Category Pills (for uploads) */}
+            {activeSource !== 'knowledge_bank' && (
+                <div className="responsive-tabs" style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.75rem', marginBottom: '2rem' }}>
                     <button
                         onClick={() => updateFilters(null, search)}
                         style={{
                             background: activeCategory === null ? 'var(--on-surface)' : 'var(--surface-variant)',
                             color: activeCategory === null ? 'var(--surface)' : 'var(--on-surface-variant)',
-                            border: '1px solid var(--outline-variant)', padding: '0.75rem 1.5rem', borderRadius: '100px',
+                            border: '1px solid var(--outline-variant)', padding: '0.55rem 1.25rem', borderRadius: '100px',
                             cursor: 'pointer', fontFamily: 'var(--font-header)', fontWeight: 800, whiteSpace: 'nowrap',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontSize: '0.9rem', flexShrink: 0
-                        }}>All</button>
+                            fontSize: '0.85rem', flexShrink: 0
+                        }}>All Categories</button>
                     {categories.map(cat => (
                         <button key={cat.id}
                             onClick={() => updateFilters(cat.slug, search)}
                             style={{
                                 background: activeCategory === cat.slug ? 'var(--on-surface)' : 'var(--surface-variant)',
                                 color: activeCategory === cat.slug ? 'var(--surface)' : 'var(--on-surface-variant)',
-                                border: '1px solid var(--outline-variant)', padding: '0.75rem 1.5rem', borderRadius: '100px',
+                                border: '1px solid var(--outline-variant)', padding: '0.55rem 1.25rem', borderRadius: '100px',
                                 cursor: 'pointer', fontFamily: 'var(--font-header)', fontWeight: 800, whiteSpace: 'nowrap',
-                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontSize: '0.9rem', flexShrink: 0
+                                fontSize: '0.85rem', flexShrink: 0
                             }}>
                             {cat.icon} {cat.name}
                         </button>
                     ))}
                 </div>
-            </div>
+            )}
 
-            {!loading && (activeCategory || search) && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', margin: '-2rem 0 2rem', color: 'var(--on-surface-variant)', fontSize: '0.9rem' }}>
-                    <span>{visibleResources.length} resource{visibleResources.length === 1 ? '' : 's'} found</span>
-                    <button onClick={() => updateFilters(null, '')} style={{ border: 'none', background: 'transparent', color: 'var(--primary)', cursor: 'pointer', fontWeight: 800 }}>Clear filters</button>
+            {/* Results Filter Summary */}
+            {(activeCategory || search || activeLevel !== 'All Levels' || activeSource !== 'all') && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', color: 'var(--on-surface-variant)', fontSize: '0.88rem' }}>
+                    <span>Showing {totalFound} item{totalFound === 1 ? '' : 's'} {activeLevel !== 'All Levels' && `for ${activeLevel}`}</span>
+                    <button
+                        onClick={() => {
+                            updateFilters(null, '');
+                            setActiveLevel('All Levels');
+                            setActiveSource('all');
+                        }}
+                        style={{ border: 'none', background: 'transparent', color: '#C9963E', cursor: 'pointer', fontWeight: 800 }}>
+                        Reset filters
+                    </button>
                 </div>
             )}
 
             {loading ? (
                 <PageLoader />
-            ) : visibleResources.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '4rem', color: '#7A9E7E', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
+            ) : totalFound === 0 ? (
+                <div style={{ textAlign: 'center', padding: '4rem', color: '#A0A0A0', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
                     <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📭</span>
-                    No resources found. Try adjusting your search or category.
+                    No courses or materials found matching your criteria. Try adjusting your search query or level.
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-                    {visibleResources.map(res => (
-                        <Link to={`/resources/${res.id}`} key={res.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.02)', borderRadius: '16px', overflow: 'hidden',
-                                border: '1px solid rgba(255,255,255,0.05)', transition: 'transform 0.2s'
-                            }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'}
-                                onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
-                                {res.thumbnail_url ? (
-                                    <img src={res.thumbnail_url} alt={res.title} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />
-                                ) : (
-                                    <div style={{ width: '100%', height: '180px', background: 'rgba(0,200,83,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <span style={{ fontSize: '3rem' }}>📄</span>
-                                    </div>
-                                )}
-                                <div style={{ padding: '1.5rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                        <span style={{
-                                            background: 'var(--primary-container)', fontSize: '0.75rem', fontWeight: 800,
-                                            padding: '0.3rem 0.75rem', borderRadius: '100px', color: 'var(--primary)'
-                                        }}>{res.category?.name}</span>
-                                        {res.resource_type === 'premium' ?
-                                            <span style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 800 }}>₦{res.price}</span> :
-                                            <span style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 800 }}>FREE</span>}
-                                    </div>
-                                    <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.02em' }}>{res.title}</h3>
-                                    <p style={{ color: 'var(--on-surface-variant)', margin: '0 0 1.25rem 0', fontSize: '0.9rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontWeight: 450, lineHeight: 1.5 }}>
-                                        {res.description}
-                                    </p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <div style={{
-                                            width: 24, height: 24, borderRadius: '50%', background: '#333',
-                                            backgroundImage: `url(${res.uploader?.avatar_url})`, backgroundSize: 'cover'
-                                        }}></div>
-                                        <span style={{ fontSize: '0.8rem', color: '#7A9E7E' }}>{res.uploader?.full_name || res.uploader?.username}</span>
-                                    </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+
+                    {/* ─── KNOWLEDGE BANK GRID ─── */}
+                    {activeSource !== 'uploads' && filteredKnowledgeBank.length > 0 && (
+                        <div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <span style={{ fontSize: '1.2rem' }}>🏛️</span>
+                                    <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#FFFFFF' }}>
+                                        Pro Knowledge Bank Courses
+                                    </h3>
+                                    <span style={{ color: '#888888', fontSize: '0.9rem' }}>({filteredKnowledgeBank.length})</span>
                                 </div>
+                                <span style={{ fontSize: '0.8rem', color: '#C9963E', fontWeight: 700 }}>
+                                    🛡️ On-Site Reader Only
+                                </span>
                             </div>
-                        </Link>
-                    ))}
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
+                                {filteredKnowledgeBank.map(course => (
+                                    <div
+                                        key={course.id}
+                                        onClick={() => setSelectedCourse(course)}
+                                        style={{
+                                            background: '#131417', borderRadius: '16px', overflow: 'hidden',
+                                            border: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer',
+                                            display: 'flex', flexDirection: 'column', transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.transform = 'translateY(-4px)';
+                                            e.currentTarget.style.borderColor = 'rgba(201, 150, 62, 0.4)';
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                                        }}>
+                                        {/* Top Card Header */}
+                                        <div style={{
+                                            padding: '1.25rem 1.25rem 1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.04)',
+                                            background: 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0) 100%)'
+                                        }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                                                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                                    <span style={{
+                                                        background: '#C9963E', color: '#000000', fontWeight: 900,
+                                                        fontSize: '0.72rem', padding: '0.2rem 0.55rem', borderRadius: '6px'
+                                                    }}>
+                                                        {course.course_code}
+                                                    </span>
+                                                    <span style={{
+                                                        background: 'rgba(255,255,255,0.06)', color: '#CCCCCC',
+                                                        fontSize: '0.72rem', fontWeight: 700, padding: '0.2rem 0.55rem', borderRadius: '6px'
+                                                    }}>
+                                                        {course.level}
+                                                    </span>
+                                                </div>
+
+                                                {isPro ? (
+                                                    <span style={{ fontSize: '0.72rem', color: '#00E676', fontWeight: 800 }}>
+                                                        ✓ UNLOCKED
+                                                    </span>
+                                                ) : (
+                                                    <span style={{ fontSize: '0.72rem', color: '#C9963E', fontWeight: 800 }}>
+                                                        🔒 PRO
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            <h4 style={{
+                                                margin: '0 0 0.35rem 0', fontSize: '1.1rem', fontWeight: 800,
+                                                color: '#FFFFFF', letterSpacing: '-0.02em', lineHeight: 1.35
+                                            }}>
+                                                {course.title}
+                                            </h4>
+                                            <span style={{ fontSize: '0.78rem', color: '#888888', display: 'block' }}>
+                                                {course.department}
+                                            </span>
+                                        </div>
+
+                                        {/* Card Topics Teaser */}
+                                        <div style={{ padding: '1rem 1.25rem', flex: 1 }}>
+                                            <div style={{ fontSize: '0.78rem', color: '#A0A0A0', marginBottom: '0.5rem', fontWeight: 600 }}>
+                                                Core Syllabus Highlights:
+                                            </div>
+                                            <ul style={{
+                                                margin: 0, paddingLeft: '1.1rem', color: '#CCCCCC',
+                                                fontSize: '0.82rem', lineHeight: 1.5
+                                            }}>
+                                                {course.topics?.slice(0, 2).map((t, idx) => (
+                                                    <li key={idx} style={{ marginBottom: '0.25rem' }}>{t}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        {/* Card Action Footer */}
+                                        <div style={{
+                                            padding: '0.9rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.04)',
+                                            background: 'rgba(0,0,0,0.2)', display: 'flex', justifyContent: 'space-between',
+                                            alignItems: 'center'
+                                        }}>
+                                            <span style={{ fontSize: '0.78rem', color: '#888888' }}>
+                                                📄 {course.documents?.length || 1} Document{(course.documents?.length || 1) > 1 ? 's' : ''}
+                                            </span>
+
+                                            <button style={{
+                                                background: isPro ? 'rgba(201,150,62,0.15)' : 'rgba(255,255,255,0.06)',
+                                                color: isPro ? '#C9963E' : '#FFFFFF',
+                                                border: isPro ? '1px solid rgba(201,150,62,0.35)' : '1px solid rgba(255,255,255,0.1)',
+                                                padding: '0.4rem 0.85rem', borderRadius: '8px', cursor: 'pointer',
+                                                fontSize: '0.78rem', fontWeight: 800, transition: 'all 0.2s'
+                                            }}>
+                                                {isPro ? 'Read On-Site 📖' : '🔒 Read Notes'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ─── COMMUNITY UPLOADS GRID ─── */}
+                    {activeSource !== 'knowledge_bank' && visibleResources.length > 0 && (
+                        <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
+                                <span style={{ fontSize: '1.2rem' }}>📂</span>
+                                <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+                                    Community Uploads & Past Questions
+                                </h3>
+                                <span style={{ color: 'var(--on-surface-variant)', fontSize: '0.9rem' }}>({visibleResources.length})</span>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                                {visibleResources.map(res => (
+                                    <Link to={`/resources/${res.id}`} key={res.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <div style={{
+                                            background: 'rgba(255,255,255,0.02)', borderRadius: '16px', overflow: 'hidden',
+                                            border: '1px solid rgba(255,255,255,0.05)', transition: 'transform 0.2s'
+                                        }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'}
+                                            onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                                            {res.thumbnail_url ? (
+                                                <img src={res.thumbnail_url} alt={res.title} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
+                                            ) : (
+                                                <div style={{ width: '100%', height: '170px', background: 'rgba(201,150,62,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <span style={{ fontSize: '2.8rem' }}>📄</span>
+                                                </div>
+                                            )}
+                                            <div style={{ padding: '1.25rem' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                                    <span style={{
+                                                        background: 'var(--primary-container)', fontSize: '0.72rem', fontWeight: 800,
+                                                        padding: '0.25rem 0.65rem', borderRadius: '100px', color: 'var(--primary)'
+                                                    }}>{res.category?.name}</span>
+                                                    {res.resource_type === 'premium' ?
+                                                        <span style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 800 }}>₦{res.price}</span> :
+                                                        <span style={{ color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 800 }}>FREE</span>}
+                                                </div>
+                                                <h3 style={{ margin: '0 0 0.4rem 0', fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.02em' }}>{res.title}</h3>
+                                                <p style={{ color: 'var(--on-surface-variant)', margin: '0 0 1rem 0', fontSize: '0.86rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.5 }}>
+                                                    {res.description}
+                                                </p>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                    <div style={{
+                                                        width: 22, height: 22, borderRadius: '50%', background: '#333',
+                                                        backgroundImage: `url(${res.uploader?.avatar_url})`, backgroundSize: 'cover'
+                                                    }}></div>
+                                                    <span style={{ fontSize: '0.78rem', color: 'var(--on-surface-variant)' }}>
+                                                        {res.uploader?.full_name || res.uploader?.username || 'HackMyDegree'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             )}
+
+            {/* Knowledge Bank On-Site Reader & Paywall Modal */}
+            <KnowledgeReaderModal
+                course={selectedCourse}
+                isOpen={Boolean(selectedCourse)}
+                onClose={() => setSelectedCourse(null)}
+                user={user}
+                profile={profile}
+                onProActivated={refreshProfile}
+            />
         </div>
     );
 }
