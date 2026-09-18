@@ -68,9 +68,23 @@ export default function ResourcesPage() {
 
     const normalizedSearch = search.trim().toLowerCase();
 
+    // Academic category slugs that can include Knowledge Bank materials
+    const ACADEMIC_CATEGORY_SLUGS = ['past-questions', 'lecture-notes', 'study-materials', 'academic', 'textbooks', 'exam-prep'];
+    const isAcademicCategorySelected = activeCategory ? ACADEMIC_CATEGORY_SLUGS.includes(activeCategory.toLowerCase()) : true;
+
     // Filter Knowledge Bank courses
     const filteredKnowledgeBank = useMemo(() => {
+        // If a non-academic category is selected (e.g. NYSC, housing tips), hide Knowledge Bank courses completely
+        if (activeCategory && !isAcademicCategorySelected) {
+            return [];
+        }
+
         return KNOWLEDGE_BANK_COURSES.filter(course => {
+            // If filtering specifically by past-questions category, only show courses with past questions
+            if (activeCategory?.toLowerCase() === 'past-questions' && !course.has_past_questions) {
+                return false;
+            }
+
             if (activeLevel !== 'All Levels' && course.level !== activeLevel) {
                 return false;
             }
@@ -87,7 +101,7 @@ export default function ResourcesPage() {
             ].join(' ').toLowerCase();
             return searchTargets.includes(normalizedSearch);
         });
-    }, [activeLevel, normalizedSearch]);
+    }, [activeCategory, isAcademicCategorySelected, activeLevel, normalizedSearch]);
 
     // Filter Supabase community resources
     const visibleResources = useMemo(() => {
@@ -139,7 +153,8 @@ export default function ResourcesPage() {
                 </p>
             </div>
 
-            {/* Knowledge Bank Spotlight Hero Banner */}
+            {/* Knowledge Bank Spotlight Hero Banner - only on All Categories, or when Knowledge Bank is active, or for academic categories */}
+            {(!activeCategory || isAcademicCategorySelected || activeSource === 'knowledge_bank') && activeSource !== 'uploads' && (
             <div style={{
                 background: 'linear-gradient(135deg, #15161A 0%, #101114 100%)',
                 border: '1px solid rgba(201, 150, 62, 0.3)',
@@ -218,6 +233,7 @@ export default function ResourcesPage() {
                     </div>
                 </div>
             </div>
+            )}
 
             {/* Search & Source Tabs */}
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem', alignItems: 'center' }}>
@@ -243,10 +259,15 @@ export default function ResourcesPage() {
                             border: 'none', padding: '0.5rem 1.1rem', borderRadius: '100px',
                             cursor: 'pointer', fontWeight: 800, fontSize: '0.82rem', transition: 'all 0.2s'
                         }}>
-                        All ({KNOWLEDGE_BANK_COURSES.length + resources.length})
+                        All ({filteredKnowledgeBank.length + visibleResources.length})
                     </button>
                     <button
-                        onClick={() => setActiveSource('knowledge_bank')}
+                        onClick={() => {
+                            setActiveSource('knowledge_bank');
+                            if (activeCategory && !isAcademicCategorySelected) {
+                                updateFilters(null, search);
+                            }
+                        }}
                         style={{
                             background: activeSource === 'knowledge_bank' ? '#C9963E' : 'transparent',
                             color: activeSource === 'knowledge_bank' ? '#000000' : '#CCCCCC',
@@ -282,7 +303,13 @@ export default function ResourcesPage() {
                         }}>All Categories</button>
                     {categories.map(cat => (
                         <button key={cat.id}
-                            onClick={() => updateFilters(cat.slug, search)}
+                            onClick={() => {
+                                const isAcademic = ACADEMIC_CATEGORY_SLUGS.includes(cat.slug.toLowerCase());
+                                if (!isAcademic && activeSource === 'knowledge_bank') {
+                                    setActiveSource('uploads');
+                                }
+                                updateFilters(cat.slug, search);
+                            }}
                             style={{
                                 background: activeCategory === cat.slug ? 'var(--on-surface)' : 'var(--surface-variant)',
                                 color: activeCategory === cat.slug ? 'var(--surface)' : 'var(--on-surface-variant)',
