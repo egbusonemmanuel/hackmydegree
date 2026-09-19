@@ -461,7 +461,7 @@ export default function KnowledgeReaderModal({ course, isOpen, onClose, user, pr
                   }}>
                     <span style={{ fontSize: '1.2rem' }}>🔒</span>
                     <span style={{ fontSize: '0.78rem', color: '#999999' }}>
-                      This resource is proprietary ChongPQ Pro material provided exclusively for on-site studying on HackMyDegree.
+                      This resource is proprietary HackMyDegree Pro material provided exclusively for on-site studying.
                     </span>
                   </div>
 

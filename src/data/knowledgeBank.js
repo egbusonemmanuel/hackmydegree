@@ -1,13 +1,13 @@
 // src/data/knowledgeBank.js
 /**
- * ChongPQ Master Knowledge Bank
+ * HackMyDegree Master Knowledge Bank
  * Curated academic study materials, lecture notes, and past questions
  * spanning 100L to 500L across Nigerian University curricula.
  * Exclusively accessible to HackMyDegree Pro members on-site.
  */
 
 export const KNOWLEDGE_BANK_METADATA = {
-  title: "ChongPQ Academic Knowledge Bank",
+  title: "HackMyDegree Academic Knowledge Bank",
   description: "Official 100L–500L university lecture notes, summaries, and verified past questions across First & Second Semesters.",
   levels: ["100 Level", "200 Level", "300 Level", "400 Level", "500 Level"],
   access_level: "pro_exclusive",

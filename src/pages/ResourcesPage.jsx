@@ -173,7 +173,7 @@ export default function ResourcesPage() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
                             <span style={{ fontSize: '1.4rem' }}>🏛️</span>
                             <span style={{ color: '#C9963E', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                ChongPQ Verified Knowledge Bank
+                                HackMyDegree Official Knowledge Bank
                             </span>
                             {isPro ? (
                                 <span style={{
