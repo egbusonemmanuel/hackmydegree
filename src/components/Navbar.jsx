@@ -89,7 +89,7 @@ const Navbar = ({ onOpenSearch }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '0 1.5rem',
+                padding: '0 clamp(0.75rem, 3vw, 1.5rem)',
                 height: '60px',
                 background: theme === 'dark'
                     ? 'rgba(14, 16, 21, 0.92)'
@@ -98,7 +98,7 @@ const Navbar = ({ onOpenSearch }) => {
                 WebkitBackdropFilter: 'blur(16px)',
                 borderBottom: '1px solid var(--outline-variant)',
                 fontFamily: 'var(--font-header)',
-                gap: '1rem',
+                gap: '0.75rem',
             }}>
 
                 {/* ── LEFT: Logo ── */}
@@ -498,7 +498,7 @@ const Navbar = ({ onOpenSearch }) => {
                 </div>
 
                 {/* ── MOBILE: Right side actions ── */}
-                <div className="mobile-only" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <div className="mobile-only mobile-nav-actions" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <button
                         onClick={onOpenSearch}
                         aria-label="Search"

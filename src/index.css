@@ -230,11 +230,11 @@ button {
 }
 
 .mobile-nav-link {
-  font-size: 1.5rem;
+  font-size: clamp(1.05rem, 4vw, 1.5rem);
   font-weight: 800;
   color: var(--on-surface);
   text-decoration: none;
-  padding: 1.5rem 0;
+  padding: 0.9rem 0;
   border-bottom: 1px solid var(--outline-variant);
   font-family: var(--font-header);
 }
@@ -349,5 +349,14 @@ button {
   .modal-dialog {
     width: 95% !important;
     margin: 0.5rem !important;
+  }
+
+  .mobile-nav-actions {
+    gap: 0.3rem !important;
+  }
+
+  .mobile-nav-actions > button,
+  .mobile-nav-actions > a {
+    flex-shrink: 0;
   }
 }

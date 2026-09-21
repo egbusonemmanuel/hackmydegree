@@ -167,37 +167,6 @@ export default function HomePage() {
               </button>
             </Link>
 
-            <Link to="/dashboard">
-              <button style={{
-                background: 'var(--surface-variant)',
-                color: 'var(--on-surface)',
-                border: '1px solid var(--outline-variant)',
-                borderRadius: '100px',
-                padding: '0.85rem 1.75rem',
-                fontSize: '0.95rem',
-                fontFamily: 'var(--font-header)',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                transition: 'all 0.25s ease'
-              }}
-                onMouseOver={e => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.borderColor = 'var(--primary)';
-                  e.currentTarget.style.color = 'var(--primary)';
-                }}
-                onMouseOut={e => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'var(--outline-variant)';
-                  e.currentTarget.style.color = 'var(--on-surface)';
-                }}
-              >
-                <span>📊 Student Dashboard</span>
-              </button>
-            </Link>
-
             <button
               onClick={() => setIsClarityModalOpen(true)}
               style={{

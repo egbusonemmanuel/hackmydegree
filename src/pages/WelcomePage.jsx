@@ -76,15 +76,15 @@ export default function WelcomePage() {
   return (
     <div style={{ minHeight:'100vh', background:'var(--surface)', fontFamily:'var(--font-body)', opacity:vis?1:0, transition:'opacity 0.5s ease', overflowX:'hidden', position:'relative' }}>
 
-      {/* ═══ TOP BAR / HEADER WITH DASHBOARD ACCESS ═══ */}
-      <nav style={{ position:'absolute', top:0, left:0, right:0, zIndex:10, display:'flex', justifyContent:'space-between', alignItems:'center', padding:'1.25rem 2rem' }}>
+      {/* ═══ TOP BAR / HEADER ═══ */}
+      <nav style={{ position:'absolute', top:0, left:0, right:0, zIndex:10, display:'flex', justifyContent:'space-between', alignItems:'center', padding:'clamp(1rem, 3vw, 1.25rem) clamp(1rem, 4vw, 2rem)' }}>
         <div style={{ fontWeight:700, fontSize:'1.15rem', fontFamily:'var(--font-header)', letterSpacing:'-0.02em' }}>
           <span style={{ color:'var(--primary)' }}>Hack</span><span style={{ color:'var(--on-surface)' }}>MyDegree</span>
         </div>
-        <button onClick={() => navigate('/dashboard')} style={{ ...BG, padding:'0.45rem 1.1rem', fontSize:'0.875rem' }}
+        <button onClick={() => navigate('/login')} style={{ ...BG, padding:'0.45rem 1.1rem', fontSize:'0.875rem' }}
           onMouseEnter={e => { e.currentTarget.style.borderColor='var(--primary)'; e.currentTarget.style.color='var(--primary)'; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor='var(--outline-variant)'; e.currentTarget.style.color='var(--on-surface-variant)'; }}>
-          Go to Dashboard →
+          Log in →
         </button>
       </nav>
 
@@ -121,17 +121,12 @@ export default function WelcomePage() {
             </span>
           </div>
 
-          {/* Action CTAs with Dashboard option */}
+          {/* Action CTAs */}
           <div style={{ display:'flex', gap:'0.75rem', justifyContent:'center', flexWrap:'wrap' }}>
             <button style={BP} onClick={enter}
               onMouseEnter={e => e.currentTarget.style.boxShadow='0 6px 22px rgba(201,150,62,0.4)'}
               onMouseLeave={e => e.currentTarget.style.boxShadow='0 4px 14px rgba(201,150,62,0.25)'}>
               Enter HackMyDegree →
-            </button>
-            <button style={BG} onClick={() => navigate('/dashboard')}
-              onMouseEnter={e => { e.currentTarget.style.borderColor='var(--primary)'; e.currentTarget.style.color='var(--primary)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor='var(--outline-variant)'; e.currentTarget.style.color='var(--on-surface-variant)'; }}>
-              Dashboard ↗
             </button>
             <button style={BG} onClick={() => scrollTo('hmd-about')}
               onMouseEnter={e => { e.currentTarget.style.borderColor='var(--primary)'; e.currentTarget.style.color='var(--on-surface)'; }}
@@ -313,11 +308,6 @@ export default function WelcomePage() {
               onMouseEnter={e => e.currentTarget.style.boxShadow='0 6px 22px rgba(201,150,62,0.4)'}
               onMouseLeave={e => e.currentTarget.style.boxShadow='0 4px 14px rgba(201,150,62,0.25)'}>
               Enter the Platform →
-            </button>
-            <button style={BG} onClick={() => navigate('/dashboard')}
-              onMouseEnter={e => { e.currentTarget.style.borderColor='var(--primary)'; e.currentTarget.style.color='var(--primary)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor='var(--outline-variant)'; e.currentTarget.style.color='var(--on-surface-variant)'; }}>
-              Dashboard ↗
             </button>
             <button style={BG} onClick={() => window.scrollTo({top:0,behavior:'smooth'})}
               onMouseEnter={e => { e.currentTarget.style.borderColor='var(--primary)'; e.currentTarget.style.color='var(--on-surface)'; }}
