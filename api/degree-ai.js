@@ -1,16 +1,12 @@
 const MODELS_TO_TRY = Array.from(new Set([
-  process.env.GEMINI_MODEL,
-  'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
-  'gemini-2.5-flash-lite',
-  'gemini-2.0-flash-lite',
-  'gemini-3.7-flash',
-  'gemini-3.6-flash',
-  'gemini-3.5-flash',
-  'gemini-3.5-flash-lite',
+  'gemini-3.1-flash-lite',
+  'gemini-3-flash-preview',
+  'gemma-4-26b-a4b-it',
   'gemini-flash-latest',
-  'gemini-3.1-flash-lite'
+  'gemini-flash-lite-latest',
+  process.env.GEMINI_MODEL,
+  'gemini-3.6-flash',
+  'gemini-3.5-flash'
 ].filter(Boolean).map((m) => String(m).replace(/['"\r\n\s]/g, '').trim()).filter(Boolean)));
 
 const RATE_LIMIT_WINDOW_MS = 60_000;

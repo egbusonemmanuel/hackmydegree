@@ -59,25 +59,27 @@ export default function AICopilotWidget() {
             bottom: '24px',
             right: '24px',
             zIndex: 999,
-            fontFamily: 'var(--font-body)'
+            fontFamily: 'var(--font-body)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            gap: '12px',
         }}>
             {/* Pop-up Quick AI Assistant Box */}
             {isOpen && (
                 <div className="copilot-widget-box" style={{
-                    position: 'absolute',
-                    bottom: '68px',
-                    right: 0,
-                    width: '380px',
-                    maxHeight: '520px',
+                    width: '360px',
+                    maxHeight: '500px',
                     background: 'var(--surface)',
                     border: '1px solid var(--outline-variant)',
                     borderRadius: '20px',
-                    boxShadow: '0 16px 48px rgba(0, 0, 0, 0.35)',
+                    boxShadow: '0 16px 48px rgba(0, 0, 0, 0.45)',
                     backdropFilter: 'blur(16px)',
                     display: 'flex',
                     flexDirection: 'column',
                     overflow: 'hidden',
-                    animation: 'fadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
+                    animation: 'fadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                    order: -1,
                 }}>
                     {/* Header */}
                     <div style={{
@@ -253,31 +255,50 @@ export default function AICopilotWidget() {
                 </div>
             )}
 
-            {/* Floating Trigger Button */}
+            {/* Circular FAB Trigger Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
+                aria-label="DegreeAI Copilot"
+                title="DegreeAI Copilot"
                 style={{
-                    background: 'var(--primary)',
-                    color: '#000',
-                    border: 'none',
-                    borderRadius: '100px',
-                    padding: '0.75rem 1.35rem',
-                    fontWeight: 800,
-                    fontSize: '0.9rem',
-                    fontFamily: 'var(--font-header)',
+                    width: '52px',
+                    height: '52px',
+                    borderRadius: '50%',
+                    background: isOpen
+                        ? 'var(--surface-variant)'
+                        : 'linear-gradient(135deg, #C9963E 0%, #A67628 100%)',
+                    color: isOpen ? 'var(--on-surface-variant)' : '#000',
+                    border: isOpen
+                        ? '1px solid var(--outline-variant)'
+                        : '2px solid rgba(201,150,62,0.4)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
-                    boxShadow: '0 6px 20px rgba(188, 149, 92, 0.35)',
-                    transition: 'all 0.25s ease',
-                    transform: isOpen ? 'scale(0.96)' : 'scale(1)'
+                    justifyContent: 'center',
+                    boxShadow: isOpen
+                        ? 'none'
+                        : '0 4px 18px rgba(188, 149, 92, 0.45), 0 0 0 4px rgba(201,150,62,0.12)',
+                    transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+                    transform: isOpen ? 'rotate(45deg) scale(0.95)' : 'rotate(0deg) scale(1)',
+                    flexShrink: 0,
                 }}
-                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseOut={(e) => e.currentTarget.style.transform = isOpen ? 'scale(0.96)' : 'translateY(0)'}
+                onMouseEnter={(e) => {
+                    if (!isOpen) {
+                        e.currentTarget.style.transform = 'scale(1.08)';
+                        e.currentTarget.style.boxShadow = '0 6px 24px rgba(188,149,92,0.55), 0 0 0 6px rgba(201,150,62,0.15)';
+                    }
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = isOpen ? 'rotate(45deg) scale(0.95)' : 'rotate(0deg) scale(1)';
+                    e.currentTarget.style.boxShadow = isOpen
+                        ? 'none'
+                        : '0 4px 18px rgba(188,149,92,0.45), 0 0 0 4px rgba(201,150,62,0.12)';
+                }}
             >
-                <SparklesIcon size={16} color="#000" />
-                <span>DegreeAI Copilot</span>
+                {isOpen
+                    ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                    : <SparklesIcon size={20} color="#000" />
+                }
             </button>
         </div>
     );

@@ -93,6 +93,18 @@ I am specially trained to assist students across Nigerian universities with:
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.state]);
 
+    // Support ?q= query param (from KnowledgeReaderModal "Ask DegreeAI" shortcut)
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const q = params.get('q');
+        if (q) {
+            setInputPrompt(q);
+            // Clear the query param so refreshing doesn't re-trigger
+            navigate('/ai-assistant', { replace: true });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.search]);
+
     const handleSend = async (customText = null, modeOverride = null, courseOverride = null) => {
         const textToSend = customText || inputPrompt;
         if (!textToSend.trim() || isLoading) return;

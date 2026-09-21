@@ -21,13 +21,16 @@ import TutorRegistrationPage from './pages/TutorRegistrationPage';
 import ChatPage from './pages/ChatPage';
 import AIAssistantPage from './pages/AIAssistantPage';
 import DigitalSkillsPage from './pages/DigitalSkillsPage';
+import WelcomePage from './pages/WelcomePage';
 import { ToastProvider } from './contexts/ToastContext';
+import { UserPreferencesProvider } from './contexts/UserPreferencesContext';
 
 // Component imports
 import Navbar from './components/Navbar';
 import PageLoader from './components/PageLoader';
 import AICopilotWidget from './components/AICopilotWidget';
 import OnboardingModal from './components/OnboardingModal';
+import GlobalCommandPalette from './components/GlobalCommandPalette';
 
 // ─── THEME CONTEXT ─────────────────────────────────────
 const ThemeContext = React.createContext();
@@ -150,13 +153,15 @@ export const ThemeProvider = ({ children }) => {
 export default function App() {
   return (
     <ThemeProvider>
-      <ToastProvider>
-        <BrowserRouter>
-          <AuthProvider>
-            <AppInner />
-          </AuthProvider>
-        </BrowserRouter>
-      </ToastProvider>
+      <UserPreferencesProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <AppInner />
+            </AuthProvider>
+          </BrowserRouter>
+        </ToastProvider>
+      </UserPreferencesProvider>
     </ThemeProvider>
   );
 }
@@ -164,6 +169,13 @@ export default function App() {
 const AppInner = () => {
   const { session, loading } = useAuth();
   const location = useLocation();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => setPaletteOpen(prev => !prev);
+    window.addEventListener('toggle-command-palette', handleToggle);
+    return () => window.removeEventListener('toggle-command-palette', handleToggle);
+  }, []);
 
   useEffect(() => {
     const path = location.pathname.split('/')[1];
@@ -177,19 +189,25 @@ const AppInner = () => {
   }, [location]);
 
   if (loading) return <PageLoader />;
+
+  const isWelcome = location.pathname === '/welcome';
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar />
+      {!isWelcome && <Navbar onOpenSearch={() => setPaletteOpen(true)} />}
       <main key={location.pathname} className="animate-fade-in" style={{ flex: 1 }}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/welcome" element={<WelcomePage />} />
+          <Route path="/" element={localStorage.getItem('hmd_welcomed') ? <HomePage /> : <Navigate to="/welcome" />} />
           <Route path="/login" element={!session ? <AuthPage mode="login" /> : <Navigate to="/dashboard" />} />
           <Route path="/signup" element={!session ? <AuthPage mode="signup" /> : <Navigate to="/dashboard" />} />
+          <Route path="/forgot-password" element={<AuthPage mode="forgot" />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/resources/:id" element={<ResourceDetailPage />} />
           <Route path="/skills" element={<DigitalSkillsPage />} />
           <Route path="/digital-skills" element={<DigitalSkillsPage />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
+          <Route path="/ai" element={<AIAssistantPage />} />
           <Route path="/tutors" element={<TutorsPage />} />
           <Route path="/legal" element={<LegalPage />} />
           <Route path="/upload" element={session ? <UploadPage /> : <Navigate to="/login" />} />
@@ -200,8 +218,9 @@ const AppInner = () => {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
-      <AICopilotWidget />
-      <OnboardingModal />
+      {!isWelcome && <AICopilotWidget />}
+      {!isWelcome && <OnboardingModal />}
+      <GlobalCommandPalette isOpen={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   );
 };

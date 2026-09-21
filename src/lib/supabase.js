@@ -58,6 +58,12 @@ export const signInWithGoogle = async () => {
   });
 };
 
+export const resetPasswordForEmail = async (email) => {
+  const siteUrl = process.env.REACT_APP_SITE_URL || window.location.origin;
+  return supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${siteUrl}/login`
+  });
+};
 
 export const signOut = async () => {
   console.log('[Supabase] signOut() called');

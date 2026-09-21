@@ -6,11 +6,13 @@ import PageLoader from '../components/PageLoader';
 import { Input } from '../components/SharedUI';
 import { KNOWLEDGE_BANK_COURSES } from '../data/knowledgeBank';
 import KnowledgeReaderModal from '../components/KnowledgeReaderModal';
+import { useUserPreferences } from '../contexts/UserPreferencesContext';
 
 const LEVEL_OPTIONS = ['All Levels', '100 Level', '200 Level', '300 Level', '400 Level', '500 Level'];
 
 export default function ResourcesPage() {
     const { user, profile, refreshProfile } = useAuth();
+    const { selectedUniversity, selectedLevel, setSelectedLevel } = useUserPreferences();
     const [searchParams, setSearchParams] = useSearchParams();
     const [resources, setResources] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -19,8 +21,15 @@ export default function ResourcesPage() {
     // Filters
     const [activeCategory, setActiveCategory] = useState(() => searchParams.get('category') || null);
     const [search, setSearch] = useState(() => searchParams.get('q') || '');
-    const [activeLevel, setActiveLevel] = useState('All Levels');
+    const [activeLevel, setActiveLevel] = useState(() => selectedLevel || 'All Levels');
     const [activeSource, setActiveSource] = useState('all'); // 'all', 'knowledge_bank', 'uploads'
+
+    // Synchronize local activeLevel when global selectedLevel updates
+    useEffect(() => {
+        if (selectedLevel) {
+            setActiveLevel(selectedLevel);
+        }
+    }, [selectedLevel]);
 
     // Reader Modal
     const [selectedCourse, setSelectedCourse] = useState(null);
@@ -29,6 +38,16 @@ export default function ResourcesPage() {
         setActiveCategory(searchParams.get('category') || null);
         setSearch(searchParams.get('q') || '');
     }, [searchParams]);
+
+    useEffect(() => {
+        const handleOpenCourse = (e) => {
+            if (e.detail) {
+                setSelectedCourse(e.detail);
+            }
+        };
+        window.addEventListener('open-knowledge-course', handleOpenCourse);
+        return () => window.removeEventListener('open-knowledge-course', handleOpenCourse);
+    }, []);
 
     const updateFilters = (category, query) => {
         const next = {};
@@ -119,7 +138,7 @@ export default function ResourcesPage() {
 
     const isPro = Boolean(profile?.is_pro);
     const totalFound = (activeSource !== 'uploads' ? filteredKnowledgeBank.length : 0) +
-                       (activeSource !== 'knowledge_bank' ? visibleResources.length : 0);
+        (activeSource !== 'knowledge_bank' ? visibleResources.length : 0);
 
     return (
         <div style={{
@@ -155,84 +174,94 @@ export default function ResourcesPage() {
 
             {/* Knowledge Bank Spotlight Hero Banner - only on All Categories, or when Knowledge Bank is active, or for academic categories */}
             {(!activeCategory || isAcademicCategorySelected || activeSource === 'knowledge_bank') && activeSource !== 'uploads' && (
-            <div style={{
-                background: 'linear-gradient(135deg, #15161A 0%, #101114 100%)',
-                border: '1px solid rgba(201, 150, 62, 0.3)',
-                borderRadius: '20px', padding: 'clamp(1.5rem, 3vw, 2.25rem)',
-                marginBottom: '2.5rem', position: 'relative', overflow: 'hidden',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.4)'
-            }}>
                 <div style={{
-                    position: 'absolute', top: '-50px', right: '-50px', width: '220px', height: '220px',
-                    background: 'radial-gradient(circle, rgba(201,150,62,0.15) 0%, rgba(0,0,0,0) 70%)',
-                    borderRadius: '50%', pointerEvents: 'none'
-                }}></div>
+                    background: 'linear-gradient(135deg, #15161A 0%, #101114 100%)',
+                    border: '1px solid rgba(201, 150, 62, 0.3)',
+                    borderRadius: '20px', padding: 'clamp(1.5rem, 3vw, 2.25rem)',
+                    marginBottom: '2.5rem', position: 'relative', overflow: 'hidden',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.4)'
+                }}>
+                    <div style={{
+                        position: 'absolute', top: '-50px', right: '-50px', width: '220px', height: '220px',
+                        background: 'radial-gradient(circle, rgba(201,150,62,0.15) 0%, rgba(0,0,0,0) 70%)',
+                        borderRadius: '50%', pointerEvents: 'none'
+                    }}></div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
-                    <div style={{ maxWidth: '720px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
-                            <span style={{ fontSize: '1.4rem' }}>🏛️</span>
-                            <span style={{ color: '#C9963E', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                HackMyDegree Official Knowledge Bank
-                            </span>
-                            {isPro ? (
-                                <span style={{
-                                    background: 'rgba(0, 200, 83, 0.15)', color: '#00E676',
-                                    padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.72rem',
-                                    fontWeight: 800, border: '1px solid rgba(0, 230, 118, 0.3)'
-                                }}>
-                                    ✓ PRO ACTIVE
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
+                        <div style={{ maxWidth: '720px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
+                                <span style={{ fontSize: '1.4rem' }}>🏛️</span>
+                                <span style={{ color: '#C9963E', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    HackMyDegree Official Knowledge Bank
                                 </span>
-                            ) : (
-                                <span style={{
-                                    background: 'rgba(201, 150, 62, 0.15)', color: '#E5B158',
-                                    padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.72rem',
-                                    fontWeight: 800, border: '1px solid rgba(201, 150, 62, 0.3)'
-                                }}>
-                                    🔒 PRO EXCLUSIVE
-                                </span>
-                            )}
-                        </div>
-                        <h2 style={{
-                            margin: '0 0 0.6rem 0', fontSize: 'clamp(1.25rem, 2.5vw, 1.7rem)',
-                            fontWeight: 800, letterSpacing: '-0.03em', color: '#FFFFFF'
-                        }}>
-                            Complete 100L – 500L University Study Bank
-                        </h2>
-                        <p style={{
-                            color: '#A8A8A8', margin: 0, fontSize: '0.92rem', lineHeight: 1.55
-                        }}>
-                            Access comprehensive notes in Pharmacy, Nursing, Basic Medical, Engineering & General Studies. Protected for exclusive on-site study on HackMyDegree.
-                        </p>
-                    </div>
-
-                    {/* Level Quick Filter Tabs inside Hero */}
-                    <div>
-                        <span style={{ display: 'block', fontSize: '0.75rem', color: '#888888', fontWeight: 700, marginBottom: '0.5rem', textTransform: 'uppercase' }}>
-                            Browse By Academic Level:
-                        </span>
-                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                            {LEVEL_OPTIONS.map(lvl => (
-                                <button
-                                    key={lvl}
-                                    onClick={() => {
-                                        setActiveLevel(lvl);
-                                        setActiveSource('knowledge_bank');
-                                    }}
-                                    style={{
-                                        background: activeLevel === lvl ? '#C9963E' : 'rgba(255,255,255,0.06)',
-                                        color: activeLevel === lvl ? '#000000' : '#CCCCCC',
-                                        border: activeLevel === lvl ? '1px solid #C9963E' : '1px solid rgba(255,255,255,0.08)',
-                                        padding: '0.45rem 0.9rem', borderRadius: '8px', cursor: 'pointer',
-                                        fontSize: '0.8rem', fontWeight: 700, transition: 'all 0.2s', whiteSpace: 'nowrap'
+                                {isPro ? (
+                                    <span style={{
+                                        background: 'rgba(0, 200, 83, 0.15)', color: '#00E676',
+                                        padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.72rem',
+                                        fontWeight: 800, border: '1px solid rgba(0, 230, 118, 0.3)'
                                     }}>
-                                    {lvl.replace(' Level', 'L')}
-                                </button>
-                            ))}
+                                        ✓ PRO ACTIVE
+                                    </span>
+                                ) : (
+                                    <span style={{
+                                        background: 'rgba(201, 150, 62, 0.15)', color: '#E5B158',
+                                        padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.72rem',
+                                        fontWeight: 800, border: '1px solid rgba(201, 150, 62, 0.3)'
+                                    }}>
+                                        🔒 PRO EXCLUSIVE
+                                    </span>
+                                )}
+                                {selectedUniversity && (
+                                    <span style={{
+                                        background: 'rgba(59, 130, 246, 0.15)', color: '#60A5FA',
+                                        padding: '0.15rem 0.55rem', borderRadius: '100px', fontSize: '0.72rem',
+                                        fontWeight: 700, border: '1px solid rgba(59, 130, 246, 0.3)'
+                                    }}>
+                                        🎓 {selectedUniversity.short_name || selectedUniversity.name} Curriculum
+                                    </span>
+                                )}
+                            </div>
+                            <h2 style={{
+                                margin: '0 0 0.6rem 0', fontSize: 'clamp(1.25rem, 2.5vw, 1.7rem)',
+                                fontWeight: 800, letterSpacing: '-0.03em', color: '#FFFFFF'
+                            }}>
+                                Complete 100L – 500L University Study Bank
+                            </h2>
+                            <p style={{
+                                color: '#A8A8A8', margin: 0, fontSize: '0.92rem', lineHeight: 1.55
+                            }}>
+                                Access comprehensive notes in Pharmacy, Nursing, Basic Medical, Engineering & General Studies. Protected for exclusive on-site study on HackMyDegree.
+                            </p>
+                        </div>
+
+                        {/* Level Quick Filter Tabs inside Hero */}
+                        <div>
+                            <span style={{ display: 'block', fontSize: '0.75rem', color: '#888888', fontWeight: 700, marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                                Browse By Academic Level:
+                            </span>
+                            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                                {LEVEL_OPTIONS.map(lvl => (
+                                    <button
+                                        key={lvl}
+                                        onClick={() => {
+                                            setActiveLevel(lvl);
+                                            setSelectedLevel(lvl);
+                                            setActiveSource('knowledge_bank');
+                                        }}
+                                        style={{
+                                            background: activeLevel === lvl ? '#C9963E' : 'rgba(255,255,255,0.06)',
+                                            color: activeLevel === lvl ? '#000000' : '#CCCCCC',
+                                            border: activeLevel === lvl ? '1px solid #C9963E' : '1px solid rgba(255,255,255,0.08)',
+                                            padding: '0.45rem 0.9rem', borderRadius: '8px', cursor: 'pointer',
+                                            fontSize: '0.8rem', fontWeight: 700, transition: 'all 0.2s', whiteSpace: 'nowrap'
+                                        }}>
+                                        {lvl.replace(' Level', 'L')}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             )}
 
             {/* Search & Source Tabs */}
@@ -365,7 +394,7 @@ export default function ResourcesPage() {
                                 </span>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
                                 {filteredKnowledgeBank.map(course => (
                                     <div
                                         key={course.id}
@@ -405,15 +434,16 @@ export default function ResourcesPage() {
                                                     </span>
                                                 </div>
 
-                                                {isPro ? (
-                                                    <span style={{ fontSize: '0.72rem', color: '#00E676', fontWeight: 800 }}>
-                                                        ✓ UNLOCKED
-                                                    </span>
-                                                ) : (
-                                                    <span style={{ fontSize: '0.72rem', color: '#C9963E', fontWeight: 800 }}>
-                                                        🔒 PRO
-                                                    </span>
-                                                )}
+                                                <span style={{
+                                                    fontSize: '0.72rem',
+                                                    color: isPro ? '#00E676' : '#C9963E',
+                                                    fontWeight: 800,
+                                                    background: isPro ? 'rgba(0, 230, 118, 0.1)' : 'rgba(201, 150, 62, 0.1)',
+                                                    padding: '0.15rem 0.5rem',
+                                                    borderRadius: '4px'
+                                                }}>
+                                                    {isPro ? '✓ UNLOCKED' : '📖 READ NOTE'}
+                                                </span>
                                             </div>
 
                                             <h4 style={{
@@ -453,13 +483,13 @@ export default function ResourcesPage() {
                                             </span>
 
                                             <button style={{
-                                                background: isPro ? 'rgba(201,150,62,0.15)' : 'rgba(255,255,255,0.06)',
-                                                color: isPro ? '#C9963E' : '#FFFFFF',
-                                                border: isPro ? '1px solid rgba(201,150,62,0.35)' : '1px solid rgba(255,255,255,0.1)',
+                                                background: 'rgba(201,150,62,0.15)',
+                                                color: '#C9963E',
+                                                border: '1px solid rgba(201,150,62,0.35)',
                                                 padding: '0.4rem 0.85rem', borderRadius: '8px', cursor: 'pointer',
                                                 fontSize: '0.78rem', fontWeight: 800, transition: 'all 0.2s'
                                             }}>
-                                                {isPro ? 'Read On-Site 📖' : '🔒 Read Notes'}
+                                                Read Full Note 📖
                                             </button>
                                         </div>
                                     </div>

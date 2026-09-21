@@ -1,7 +1,7 @@
 // src/pages/AuthPage.jsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { signIn, signUp, signInWithGoogle } from '../lib/supabase';
+import { signIn, signUp, signInWithGoogle, resetPasswordForEmail } from '../lib/supabase';
 
 
 // Shared UI components
@@ -227,6 +227,7 @@ function LightBeam({ lit }) {
 export default function AuthPage({ mode = 'login' }) {
   const navigate = useNavigate();
   const isLogin = mode === 'login';
+  const isForgot = mode === 'forgot';
 
   const [lit, setLit] = useState(true);
   const [form, setForm] = useState({ email: '', password: '', fullName: '', username: '', university: '' });
@@ -252,7 +253,11 @@ export default function AuthPage({ mode = 'login' }) {
     setError(null);
     setLoading(true);
     try {
-      if (isLogin) {
+      if (isForgot) {
+        const { error: resetErr } = await resetPasswordForEmail(form.email);
+        if (resetErr) throw resetErr;
+        setSuccess('Password reset link sent! Check your email inbox.');
+      } else if (isLogin) {
         const { error: signInError } = await signIn({ email: form.email, password: form.password });
         if (signInError) throw signInError;
         navigate('/dashboard');
@@ -362,7 +367,7 @@ export default function AuthPage({ mode = 'login' }) {
                 fontWeight: 500,
                 transition: 'color 1s ease'
               }}>
-                {isLogin ? 'Welcome back! Sign in to continue.' : 'Create your free account today.'}
+                {isForgot ? 'Enter your email to receive a reset link.' : isLogin ? 'Welcome back! Sign in to continue.' : 'Create your free account today.'}
               </p>
 
               {/* ── Error / Success banners ── */}
@@ -409,69 +414,88 @@ export default function AuthPage({ mode = 'login' }) {
 
               {/* ── Form ── */}
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {!isLogin && (
-                  <div className="auth-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-                    <Field label="Full Name" lit={lit}>
-                      <Input type="text" placeholder="e.g. Ebuka Ibe" value={form.fullName} onChange={set('fullName')} required />
+                {/* ── Forgot Password mode ── */}
+                {isForgot ? (
+                  <>
+                    <Field label="Email Address" lit={lit}>
+                      <Input type="email" placeholder="you@school.edu.ng" value={form.email} onChange={set('email')} required />
                     </Field>
-                    <Field label="Username" lit={lit}>
-                      <Input type="text" placeholder="ebuka_ibe" value={form.username} onChange={set('username')} required />
+                    <Button type="submit" loading={loading}>
+                      Send Reset Link
+                    </Button>
+                    <p style={{ textAlign: 'center', marginTop: '1.5rem', fontFamily: 'var(--font-body)', color: textSecondary, fontSize: '0.95rem' }}>
+                      <Link to="/login" style={{ color: accent, fontWeight: 700, textDecoration: 'none' }}>← Back to Sign In</Link>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    {!isLogin && (
+                      <div className="auth-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+                        <Field label="Full Name" lit={lit}>
+                          <Input type="text" placeholder="e.g. Ebuka Ibe" value={form.fullName} onChange={set('fullName')} required />
+                        </Field>
+                        <Field label="Username" lit={lit}>
+                          <Input type="text" placeholder="ebuka_ibe" value={form.username} onChange={set('username')} required />
+                        </Field>
+                      </div>
+                    )}
+
+                    <Field label="Email Address" lit={lit}>
+                      <Input type="email" placeholder="you@school.edu.ng" value={form.email} onChange={set('email')} required />
                     </Field>
-                  </div>
+
+                    <Field label="Password" lit={lit}>
+                      <Input
+                        type={showPass ? 'text' : 'password'}
+                        placeholder={isLogin ? '••••••••' : 'Min. 8 characters'}
+                        value={form.password} onChange={set('password')} required
+                        icon={
+                          <button
+                            type="button"
+                            onClick={() => setShowPass(s => !s)}
+                            style={{
+                              background: 'none', border: 'none', cursor: 'pointer', fontSize: 18,
+                              color: 'inherit', padding: '0'
+                            }}
+                          >
+                            {showPass ? '🙈' : '👁'}
+                          </button>
+                        }
+                      />
+                    </Field>
+
+                    {isLogin && (
+                      <div style={{ textAlign: 'right', marginTop: -8, marginBottom: '1.5rem' }}>
+                        <Link to="/forgot-password" style={{ color: accent, fontSize: '0.9rem', textDecoration: 'none', fontWeight: 700, transition: 'color 0.3s ease' }}>
+                          Forgot password?
+                        </Link>
+                      </div>
+                    )}
+
+                    {/* ── Submit button ── */}
+                    <Button type="submit" loading={loading}>
+                      {isLogin ? 'Sign In' : 'Create Account'}
+                    </Button>
+                  </>
                 )}
-
-                <Field label="Email Address" lit={lit}>
-                  <Input type="email" placeholder="you@school.edu.ng" value={form.email} onChange={set('email')} required />
-                </Field>
-
-                <Field label="Password" lit={lit}>
-                  <Input
-                    type={showPass ? 'text' : 'password'}
-                    placeholder={isLogin ? '••••••••' : 'Min. 8 characters'}
-                    value={form.password} onChange={set('password')} required
-                    icon={
-                      <button
-                        type="button"
-                        onClick={() => setShowPass(s => !s)}
-                        style={{
-                          background: 'none', border: 'none', cursor: 'pointer', fontSize: 18,
-                          color: 'inherit', padding: '0'
-                        }}
-                      >
-                        {showPass ? '🙈' : '👁'}
-                      </button>
-                    }
-                  />
-                </Field>
-
-                {isLogin && (
-                  <div style={{ textAlign: 'right', marginTop: -8, marginBottom: '1.5rem' }}>
-                    <Link to="/forgot-password" style={{ color: accent, fontSize: '0.9rem', textDecoration: 'none', fontWeight: 700, transition: 'color 0.3s ease' }}>
-                      Forgot password?
-                    </Link>
-                  </div>
-                )}
-
-                {/* ── Submit button ── */}
-                <Button type="submit" loading={loading}>
-                  {isLogin ? 'Sign In' : 'Create Account'}
-                </Button>
               </form>
 
               {/* ── Switch mode ── */}
-              <p style={{
-                fontFamily: 'var(--font-body)',
-                textAlign: 'center',
-                color: textSecondary,
-                fontSize: '1rem',
-                marginTop: '2.5rem',
-                fontWeight: 500
-              }}>
-                {isLogin ? "New to HackMyDegree? " : 'Already a member? '}
-                <Link to={isLogin ? '/signup' : '/login'} style={{ color: accent, fontWeight: 800, textDecoration: 'none' }}>
-                  {isLogin ? 'Sign up free →' : 'Log in here →'}
-                </Link>
-              </p>
+              {!isForgot && (
+                <p style={{
+                  fontFamily: 'var(--font-body)',
+                  textAlign: 'center',
+                  color: textSecondary,
+                  fontSize: '1rem',
+                  marginTop: '2.5rem',
+                  fontWeight: 500
+                }}>
+                  {isLogin ? "New to HackMyDegree? " : 'Already a member? '}
+                  <Link to={isLogin ? '/signup' : '/login'} style={{ color: accent, fontWeight: 800, textDecoration: 'none' }}>
+                    {isLogin ? 'Sign up free →' : 'Log in here →'}
+                  </Link>
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -485,6 +485,24 @@ export default function DigitalSkillsPage() {
 
                 {/* Video info */}
                 <div style={{ padding: '1.25rem 1.5rem 1.5rem' }}>
+                  {video.category && (
+                    <div style={{ marginBottom: '0.6rem' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        padding: '0.2rem 0.65rem',
+                        borderRadius: '100px',
+                        background: video.categoryColor ? `${video.categoryColor}18` : 'rgba(255,255,255,0.08)',
+                        color: video.categoryColor || 'var(--primary)',
+                        border: `1px solid ${video.categoryColor ? `${video.categoryColor}40` : 'var(--outline-variant)'}`
+                      }}>
+                        {video.category}
+                      </span>
+                    </div>
+                  )}
                   <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.4rem', lineHeight: 1.3 }}>
                     {video.title}
                   </h3>

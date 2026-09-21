@@ -199,10 +199,10 @@ export default function OnboardingModal() {
                         <h2 style={{
                             fontFamily: 'var(--font-header)',
                             fontSize: '1.4rem',
-                            fontWeight: 900,
+                            fontWeight: 700,
                             color: 'var(--on-surface)',
                             marginBottom: '0.5rem',
-                            letterSpacing: '-0.03em',
+                            letterSpacing: '-0.02em',
                         }}>
                             {slide.title}
                         </h2>
@@ -293,7 +293,7 @@ export default function OnboardingModal() {
                                     : 'linear-gradient(135deg, ' + slide.color + ' 0%, ' + slide.color + 'bb 100%)',
                                 color: isLast ? '#fff' : '#000',
                                 fontFamily: 'var(--font-header)',
-                                fontWeight: 800,
+                                fontWeight: 600,
                                 fontSize: '0.9rem',
                                 cursor: 'pointer',
                                 transition: 'all 0.25s ease',

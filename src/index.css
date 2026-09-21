@@ -2,22 +2,22 @@
 
 :root {
   /* Core Palette (Dark Mode - Default) */
-  --primary: #BC955C;
+  --primary: #C9963E;
   /* Commanding Gold */
-  --on-primary: #FFFFFF;
-  --primary-container: rgba(188, 149, 92, 0.1);
-  --on-primary-container: #BC955C;
+  --on-primary: #000000;
+  --primary-container: rgba(201, 150, 62, 0.14);
+  --on-primary-container: #F59E0B;
 
-  --surface: #121212;
-  --on-surface: #FFFFFF;
-  --surface-variant: #1A1A1A;
-  --on-surface-variant: #A0A0A0;
+  --surface: #0E1015;
+  --on-surface: #F8FAFC;
+  --surface-variant: #161922;
+  --on-surface-variant: #CBD5E1; /* High contrast, crisp readable slate instead of dim #A0A0A0 */
 
-  --outline: #444444;
-  --outline-variant: #2D2D2D;
+  --outline: #3B4252;
+  --outline-variant: #262B36;
 
-  --error: #FF5252;
-  --on-error: rgba(255, 82, 82, 0.1);
+  --error: #EF4444;
+  --on-error: rgba(239, 68, 68, 0.12);
 
   /* Typography */
   --font-header: 'Outfit', sans-serif;
@@ -31,14 +31,15 @@
 /* Light Mode Overrides */
 [data-theme='light'] {
   --surface: #FFFFFF;
-  --on-surface: #121212;
-  --surface-variant: #FAF9F6;
-  --on-surface-variant: #666666;
+  --on-surface: #0F172A;
+  --surface-variant: #F8FAFC;
+  --on-surface-variant: #334155; /* Sharp readable dark slate instead of washed out #666666 */
 
-  --outline: #E0E0E0;
-  --outline-variant: #F0F0F0;
+  --outline: #CBD5E1;
+  --outline-variant: #E2E8F0;
 
-  --primary-container: rgba(188, 149, 92, 0.08);
+  --primary-container: rgba(201, 150, 62, 0.1);
+  --on-primary-container: #B45309;
 }
 
 /* ── Global Reset & Base ── */
@@ -61,12 +62,13 @@ button {
 
 body {
   background-color: var(--surface);
-  background: radial-gradient(circle at 50% -20%, rgba(188, 149, 92, 0.08) 0%, var(--surface) 60%);
+  background: radial-gradient(circle at 50% -20%, rgba(201, 150, 62, 0.08) 0%, var(--surface) 60%);
   background-attachment: fixed;
   color: var(--on-surface);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   line-height: 1.6;
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -94,10 +96,11 @@ h6 {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--primary) 0%, #D4AF37 50%, var(--primary-container) 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #D97706 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 /* ── Scrollbar ── */
@@ -202,7 +205,7 @@ button {
   display: flex !important;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 960px) {
   .desktop-only {
     display: none !important;
   }
@@ -340,10 +343,6 @@ button {
   .responsive-stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.4rem !important;
-  }
-
-  h1 {
-    font-size: 2rem !important;
   }
 
   /* Make modal take full comfortable width */
