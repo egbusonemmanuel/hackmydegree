@@ -141,7 +141,7 @@ export default function ResourcesPage() {
         (activeSource !== 'knowledge_bank' ? visibleResources.length : 0);
 
     return (
-        <div style={{
+        <div className="resource-vault" style={{
             color: 'var(--on-surface)', fontFamily: 'var(--font-body)',
             maxWidth: '1240px', margin: '0 auto',
             padding: 'clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem)'
@@ -187,7 +187,7 @@ export default function ResourcesPage() {
                         borderRadius: '50%', pointerEvents: 'none'
                     }}></div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
+                    <div className="vault-spotlight-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
                         <div style={{ maxWidth: '720px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
                                 <span style={{ fontSize: '1.4rem' }}>🏛️</span>
@@ -276,7 +276,7 @@ export default function ResourcesPage() {
                 </div>
 
                 {/* Source Segmented Control */}
-                <div style={{
+                <div className="vault-source-tabs" style={{
                     display: 'flex', background: 'rgba(255,255,255,0.04)', padding: '0.3rem',
                     borderRadius: '100px', border: '1px solid rgba(255,255,255,0.08)'
                 }}>
@@ -381,7 +381,7 @@ export default function ResourcesPage() {
                     {/* ─── KNOWLEDGE BANK GRID ─── */}
                     {activeSource !== 'uploads' && filteredKnowledgeBank.length > 0 && (
                         <div>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                            <div className="vault-section-heading" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '1.2rem' }}>🏛️</span>
                                     <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#FFFFFF' }}>
@@ -394,7 +394,7 @@ export default function ResourcesPage() {
                                 </span>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                            <div className="vault-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
                                 {filteredKnowledgeBank.map(course => (
                                     <div
                                         key={course.id}
@@ -501,7 +501,7 @@ export default function ResourcesPage() {
                     {/* ─── COMMUNITY UPLOADS GRID ─── */}
                     {activeSource !== 'knowledge_bank' && visibleResources.length > 0 && (
                         <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
+                            <div className="vault-section-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
                                 <span style={{ fontSize: '1.2rem' }}>📂</span>
                                 <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
                                     Community Uploads & Past Questions
@@ -509,7 +509,7 @@ export default function ResourcesPage() {
                                 <span style={{ color: 'var(--on-surface-variant)', fontSize: '0.9rem' }}>({visibleResources.length})</span>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                            <div className="vault-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
                                 {visibleResources.map(res => (
                                     <Link to={`/resources/${res.id}`} key={res.id} style={{ textDecoration: 'none', color: 'inherit' }}>
                                         <div style={{
