@@ -283,6 +283,16 @@ button {
     width: 100%;
   }
 
+  .vault-spotlight-meta {
+    flex-wrap: wrap;
+    align-items: flex-start !important;
+  }
+
+  .vault-spotlight-meta > span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
   .vault-source-tabs {
     width: 100%;
     border-radius: 14px !important;
@@ -308,6 +318,28 @@ button {
   .vault-grid {
     grid-template-columns: minmax(0, 1fr) !important;
     gap: 1rem !important;
+  }
+
+  .vault-card-meta,
+  .vault-upload-meta {
+    align-items: flex-start !important;
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+  }
+
+  .vault-card-meta > span:last-child,
+  .vault-upload-meta > span:last-child {
+    margin-left: auto;
+  }
+
+  .vault-card-footer {
+    align-items: stretch !important;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .vault-card-footer button {
+    width: 100%;
   }
 
   /* Responsive code blocks and tables */

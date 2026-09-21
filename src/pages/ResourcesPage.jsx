@@ -189,7 +189,7 @@ export default function ResourcesPage() {
 
                     <div className="vault-spotlight-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
                         <div style={{ maxWidth: '720px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
+                            <div className="vault-spotlight-meta" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
                                 <span style={{ fontSize: '1.4rem' }}>🏛️</span>
                                 <span style={{ color: '#C9963E', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                     HackMyDegree Official Knowledge Bank
@@ -418,8 +418,8 @@ export default function ResourcesPage() {
                                             padding: '1.25rem 1.25rem 1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.04)',
                                             background: 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0) 100%)'
                                         }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                                                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                            <div className="vault-card-meta" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                                                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
                                                     <span style={{
                                                         background: '#C9963E', color: '#000000', fontWeight: 900,
                                                         fontSize: '0.72rem', padding: '0.2rem 0.55rem', borderRadius: '6px'
@@ -473,7 +473,7 @@ export default function ResourcesPage() {
                                         </div>
 
                                         {/* Card Action Footer */}
-                                        <div style={{
+                                        <div className="vault-card-footer" style={{
                                             padding: '0.9rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.04)',
                                             background: 'rgba(0,0,0,0.2)', display: 'flex', justifyContent: 'space-between',
                                             alignItems: 'center'
@@ -525,7 +525,7 @@ export default function ResourcesPage() {
                                                 </div>
                                             )}
                                             <div style={{ padding: '1.25rem' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                                <div className="vault-upload-meta" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                                                     <span style={{
                                                         background: 'var(--primary-container)', fontSize: '0.72rem', fontWeight: 800,
                                                         padding: '0.25rem 0.65rem', borderRadius: '100px', color: 'var(--primary)'
