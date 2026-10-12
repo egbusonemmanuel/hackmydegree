@@ -230,7 +230,7 @@ export default function ResourcesPage() {
                             <p style={{
                                 color: '#A8A8A8', margin: 0, fontSize: '0.92rem', lineHeight: 1.55
                             }}>
-                                Access comprehensive notes in Pharmacy, Nursing, Basic Medical, Engineering & General Studies. Protected for exclusive on-site study on HackMyDegree.
+                                Complete 100L–500L university notes, past questions, and CBT exams included with HackMyDegree PRO (₦500/month). Read securely on-site with free Unit 1 preview for all courses.
                             </p>
                         </div>
 
@@ -442,7 +442,7 @@ export default function ResourcesPage() {
                                                     padding: '0.15rem 0.5rem',
                                                     borderRadius: '4px'
                                                 }}>
-                                                    {isPro ? '✓ UNLOCKED' : '📖 READ NOTE'}
+                                                    {isPro ? '✓ PRO UNLOCKED' : '🔒 PRO VAULT'}
                                                 </span>
                                             </div>
 
@@ -483,13 +483,13 @@ export default function ResourcesPage() {
                                             </span>
 
                                             <button style={{
-                                                background: 'rgba(201,150,62,0.15)',
-                                                color: '#C9963E',
-                                                border: '1px solid rgba(201,150,62,0.35)',
+                                                background: isPro ? 'rgba(0, 230, 118, 0.15)' : 'rgba(201,150,62,0.15)',
+                                                color: isPro ? '#00E676' : '#C9963E',
+                                                border: isPro ? '1px solid rgba(0, 230, 118, 0.35)' : '1px solid rgba(201,150,62,0.35)',
                                                 padding: '0.4rem 0.85rem', borderRadius: '8px', cursor: 'pointer',
                                                 fontSize: '0.78rem', fontWeight: 800, transition: 'all 0.2s'
                                             }}>
-                                                Read Full Note 📖
+                                                {isPro ? 'Read Full Note 📖' : 'Preview Note 🔒'}
                                             </button>
                                         </div>
                                     </div>

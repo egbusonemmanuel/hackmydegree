@@ -354,9 +354,14 @@ button {
     width: 100%;
   }
 
-  /* Touch hit target improvements */
-  button, input, select, textarea {
-    font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
+  /* Touch hit target improvements - prevent auto-zoom on iOS Safari only for inputs */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Compact button styling preserved on mobile */
+  button {
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Mobile scrollbar hiding for horizontal chip bars */
@@ -441,4 +446,60 @@ button {
   .mobile-nav-actions > a {
     flex-shrink: 0;
   }
+}
+
+/* ─── DRM Content Protection & Anti-Theft Rules ─── */
+.reader-protected-content {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Prevent printing and PDF exporting of protected notes */
+@media print {
+  body * {
+    visibility: hidden !important;
+    display: none !important;
+  }
+  body::before {
+    content: "Printing, export, and digital capture of HackMyDegree study materials is prohibited by copyright policy.";
+    visibility: visible !important;
+    display: block !important;
+    position: fixed;
+    top: 35%;
+    left: 10%;
+    right: 10%;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-family: sans-serif;
+    color: #000000;
+  }
+}
+
+/* Subtle Anti-Piracy Watermark Pattern */
+.reader-watermark-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+  opacity: 0.045;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.reader-watermark-row {
+  white-space: nowrap;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  transform: rotate(-15deg);
+  line-height: 4rem;
 }

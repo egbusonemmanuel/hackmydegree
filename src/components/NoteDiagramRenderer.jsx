@@ -808,19 +808,25 @@ export default function NoteDiagramRenderer({ diagram, isLight = true }) {
       background: bg,
       border: `1px solid ${border}`,
       borderRadius: '8px',
-      padding: '1.25rem',
-      margin: '1.5rem 0',
+      padding: 'clamp(0.6rem, 2vw, 1.25rem)',
+      margin: '1.25rem 0',
       textAlign: 'center',
-      fontFamily: 'system-ui, -apple-system, sans-serif'
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      boxSizing: 'border-box',
+      maxWidth: '100%',
+      overflow: 'hidden'
     }}>
       {/* Diagram Canvas */}
       <div style={{
         background: isLight ? '#FFFFFF' : '#0B0F17',
         borderRadius: '6px',
-        padding: '1rem',
+        padding: 'clamp(0.4rem, 1.5vw, 1rem)',
         border: isLight ? '1px solid #E2E8F0' : '1px solid rgba(255,255,255,0.06)',
         marginBottom: '0.85rem',
-        overflowX: 'auto'
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        boxSizing: 'border-box',
+        maxWidth: '100%'
       }}>
         {selectDiagramRenderer()}
       </div>

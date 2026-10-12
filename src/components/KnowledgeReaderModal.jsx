@@ -49,7 +49,71 @@ export default function KnowledgeReaderModal({ course, isOpen, onClose, user, pr
   // Bookmarking state
   const [isBookmarked, setIsBookmarked] = useState(false);
 
+  // Content Protection & DRM Anti-Theft states
+  const [screenshotAlert, setScreenshotAlert] = useState(false);
+  const [isWindowFocused, setIsWindowFocused] = useState(true);
+
   const printRef = useRef(null);
+
+  // Content Protection & Keyboard Interception effect
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      // Intercept PrintScreen
+      if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
+        setScreenshotAlert(true);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText('').catch(() => {});
+        }
+        showToast('⚠️ Screenshots and screen capture are restricted on protected notes.', 'error');
+        setTimeout(() => setScreenshotAlert(false), 2600);
+      }
+
+      // Intercept Ctrl/Cmd + C, V, X, A, P, S, U
+      if (e.ctrlKey || e.metaKey) {
+        const k = (e.key || '').toLowerCase();
+        if (['c', 'v', 'x', 'a', 'p', 's', 'u'].includes(k)) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (k === 'c') showToast('⚠️ Copying text is disabled to protect academic notes.', 'error');
+          if (k === 'p') showToast('⚠️ Printing and exporting to PDF are disabled on protected notes.', 'error');
+          if (k === 's') showToast('⚠️ Saving pages is disabled on protected notes.', 'error');
+        }
+      }
+
+      // Intercept F12 / DevTools
+      if (e.key === 'F12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes((e.key || '').toLowerCase()))) {
+        e.preventDefault();
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
+        setScreenshotAlert(true);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText('').catch(() => {});
+        }
+        showToast('⚠️ Screenshots are disabled on protected notes.', 'error');
+        setTimeout(() => setScreenshotAlert(false), 2600);
+      }
+    };
+
+    const handleBlur = () => setIsWindowFocused(false);
+    const handleFocus = () => setIsWindowFocused(true);
+
+    window.addEventListener('keydown', handleKeyDown, true);
+    window.addEventListener('keyup', handleKeyUp, true);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+      window.removeEventListener('keyup', handleKeyUp, true);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [isOpen, showToast]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -179,79 +243,123 @@ export default function KnowledgeReaderModal({ course, isOpen, onClose, user, pr
     }
   ];
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   const handleSaveNotes = (val) => {
     setStickyNotes(val);
     localStorage.setItem(`hmd_notes_${course.id}_${activeDocIndex}`, val);
   };
 
-  const handleDownloadStudySheet = () => {
-    let sectionsText = '';
-    pdfData.pages.forEach(p => {
-      sectionsText += `\n\n-----------------------------------------------------\n${p.sectionTitle.toUpperCase()}\n-----------------------------------------------------\n\n`;
-      p.contentBlocks.forEach(b => {
-        if (b.type === 'metadata_box') {
-          Object.entries(b.data).forEach(([k, v]) => {
-            sectionsText += `${k}: ${v}\n`;
-          });
-        } else if (b.type === 'heading') {
-          sectionsText += `\n### ${b.text}\n`;
-        } else if (b.type === 'paragraph') {
-          sectionsText += `${b.text}\n\n`;
-        } else if (b.type === 'callout_box') {
-          sectionsText += `[${b.title}]\n${b.text}\n\n`;
-        } else if (b.type === 'list') {
-          b.items.forEach(it => { sectionsText += `• ${it}\n`; });
-          sectionsText += '\n';
-        } else if (b.type === 'numbered_list') {
-          b.items.forEach((it, idx) => { sectionsText += `${idx + 1}. ${it}\n`; });
-          sectionsText += '\n';
-        } else if (b.type === 'table') {
-          sectionsText += b.headers.join(' | ') + '\n';
-          sectionsText += b.headers.map(() => '---').join(' | ') + '\n';
-          b.rows.forEach(r => {
-            sectionsText += r.join(' | ') + '\n';
-          });
-          sectionsText += '\n';
-        } else if (b.type === 'pearls_list') {
-          b.items.forEach(it => { sectionsText += `★ ${it}\n`; });
-          sectionsText += '\n';
-        } else if (b.type === 'qa_box') {
-          sectionsText += `\n[${b.questionNumber}]\nQUESTION:\n${b.question}\n\n${b.modelAnswer}\n\n`;
-        }
-      });
-    });
+  // ─── PRO SUBSCRIPTION PAYWALL COMPONENT ────────────────────────
+  const renderProPaywallCard = (featureTitle = "Full Lecture Handout & Past Questions") => (
+    <div style={{
+      background: 'linear-gradient(135deg, rgba(20, 21, 26, 0.98) 0%, rgba(15, 16, 20, 0.98) 100%)',
+      border: '2px solid rgba(201, 150, 62, 0.45)',
+      borderRadius: '16px',
+      padding: isMobile ? '1.5rem 1rem' : '2.5rem 2rem',
+      margin: isMobile ? '1.5rem 0' : '2.5rem auto',
+      maxWidth: '740px',
+      width: '100%',
+      textAlign: 'center',
+      boxShadow: '0 20px 50px rgba(0,0,0,0.85), 0 0 40px rgba(201, 150, 62, 0.1)',
+      position: 'relative',
+      overflow: 'hidden',
+      boxSizing: 'border-box'
+    }}>
+      {/* Decorative glow */}
+      <div style={{
+        position: 'absolute', top: '-60px', left: '50%', transform: 'translateX(-50%)',
+        width: '320px', height: '140px', background: 'radial-gradient(ellipse, rgba(201,150,62,0.25) 0%, transparent 70%)',
+        pointerEvents: 'none'
+      }} />
 
-    const content = `=====================================================
-HACKMYDEGREE OFFICIAL ACADEMIC LECTURE HANDOUT
-Course Code: ${course.course_code}
-Course Title: ${course.title}
-Module ${activeDocIndex + 1}: ${activeDoc.title}
-Faculty: ${pdfData.faculty}
-Department: ${pdfData.department}
-Level / Semester: ${course.level} • ${course.semester}
-Accreditation: Accredited NUC / BMAS Benchmark Curriculum
-=====================================================
-${sectionsText}
-=====================================================
-Official Academic Study Pack • HackMyDegree Repository
-All Rights Reserved
-=====================================================`;
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(201,150,62,0.15)', border: '1px solid rgba(201,150,62,0.4)', padding: '0.35rem 0.85rem', borderRadius: '100px', marginBottom: '1rem' }}>
+        <span style={{ fontSize: '0.9rem' }}>🔒</span>
+        <span style={{ color: '#E5B158', fontSize: '0.76rem', fontWeight: 900, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+          PRO Subscription Exclusive
+        </span>
+      </div>
 
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${course.course_code}_Module_${activeDocIndex + 1}_${currentDocTopic.replace(/[^a-zA-Z0-9]/g, '_')}_Official_Notes.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    showToast('📥 Complete authentic lecture notes downloaded!', 'success');
-  };
+      <h2 style={{
+        fontSize: isMobile ? '1.35rem' : '1.85rem',
+        fontWeight: 900,
+        color: '#FFFFFF',
+        margin: '0 0 0.75rem 0',
+        letterSpacing: '-0.03em',
+        lineHeight: 1.25
+      }}>
+        Subscribe to Unlock {featureTitle}
+      </h2>
+
+      <p style={{
+        color: '#94A3B8',
+        fontSize: isMobile ? '0.84rem' : '0.94rem',
+        lineHeight: 1.6,
+        maxWidth: '560px',
+        margin: '0 auto 1.5rem auto'
+      }}>
+        You are viewing the authentic curriculum preview for <strong>{course.course_code}</strong>. Get full unlimited access to all 5 study units, exam pearls, past questions with model answers, flashcards, and CBT mock simulator across all faculties for just <strong>₦500/month</strong>.
+      </p>
+
+      {/* Benefits Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+        gap: '0.65rem',
+        maxWidth: '560px',
+        margin: '0 auto 1.75rem auto',
+        textAlign: 'left'
+      }}>
+        {[
+          '✓ Complete 100L–500L University Handouts',
+          '✓ High-Yield Exam Pearls & Formulations',
+          '✓ Authentic Past Questions & Model Answers',
+          '✓ Spaced-Repetition Interactive Flashcards',
+          '✓ Timed 10-Question CBT Mock Simulator',
+          '✓ 24/7 DegreeAI Tutor Course Explanations'
+        ].map((benefit, bIdx) => (
+          <div key={bIdx} style={{
+            fontSize: isMobile ? '0.78rem' : '0.82rem',
+            color: '#E2E8F0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            background: 'rgba(255,255,255,0.03)',
+            padding: '0.45rem 0.65rem',
+            borderRadius: '6px',
+            border: '1px solid rgba(255,255,255,0.06)'
+          }}>
+            <span>{benefit}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Upgrade CTA Button */}
+      <button
+        onClick={handleUpgrade}
+        disabled={upgrading}
+        style={{
+          background: 'linear-gradient(135deg, #00E676 0%, #00C853 100%)',
+          color: '#000000',
+          border: 'none',
+          borderRadius: '100px',
+          padding: isMobile ? '0.85rem 1.75rem' : '0.95rem 2.5rem',
+          fontSize: isMobile ? '0.9rem' : '1.02rem',
+          fontWeight: 900,
+          cursor: upgrading ? 'not-allowed' : 'pointer',
+          boxShadow: '0 8px 30px rgba(0, 230, 118, 0.4)',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          transition: 'transform 0.15s ease'
+        }}>
+        <span>{upgrading ? '⏳' : '⚡'}</span>
+        <span>{upgrading ? 'Opening Checkout...' : (!user ? 'Log In & Subscribe — ₦500 / Mo' : 'Subscribe to PRO — ₦500 / Month')}</span>
+      </button>
+
+      <div style={{ marginTop: '0.85rem', fontSize: '0.72rem', color: '#64748B' }}>
+        🔒 Secured by Paystack • Cancel anytime • Instant access across all courses
+      </div>
+    </div>
+  );
 
   const handleToggleAudio = () => {
     if (!('speechSynthesis' in window)) {
@@ -772,15 +880,15 @@ All Rights Reserved
           </div>
         </div>
 
-        {/* Sequential Sections */}
-        {data.pages.map((section, sIdx) => {
+        {/* Sequential Sections (Preview Unit 1 for free, All 5 Units for PRO) */}
+        {(isPro ? data.pages : data.pages.slice(0, 1)).map((section, sIdx) => {
           const anchorId = sectionNav[sIdx]?.id;
           return (
             <section
               key={section.pageNumber || sIdx}
               id={anchorId}
               style={{
-                marginBottom: sIdx === data.pages.length - 1 ? '1.5rem' : (isMobile ? '2rem' : '2.75rem'),
+                marginBottom: sIdx === (isPro ? data.pages.length - 1 : 0) ? '1.5rem' : (isMobile ? '2rem' : '2.75rem'),
                 scrollMarginTop: '1rem'
               }}>
               <div style={{
@@ -813,13 +921,13 @@ All Rights Reserved
                   border: `1px solid ${theme.sheetBorder}`,
                   flexShrink: 0
                 }}>
-                  Part {sIdx + 1} of {data.pages.length}
+                  Part {sIdx + 1} of {data.pages.length} {!isPro && '(Preview)'}
                 </span>
               </div>
 
               {section.contentBlocks.map((block, bIdx) => renderBlock(block, bIdx, theme))}
 
-              {sIdx < data.pages.length - 1 && (
+              {isPro && sIdx < data.pages.length - 1 && (
                 <div style={{
                   margin: isMobile ? '1.75rem auto 0 auto' : '2.5rem auto 0 auto',
                   height: '1px',
@@ -831,124 +939,111 @@ All Rights Reserved
           );
         })}
 
-        {/* Completion Footer & Study Actions */}
-        <div style={{
-          borderTop: isSepia ? '2px solid #8D6E63' : isLight ? '2px solid #1E293B' : '2px solid rgba(201,150,62,0.35)',
-          paddingTop: '1.5rem',
-          marginTop: '2rem',
-          fontFamily: 'system-ui, -apple-system, sans-serif'
-        }}>
+        {/* If user is NOT PRO: Display High-Yield PRO Subscription Paywall Card */}
+        {!isPro && renderProPaywallCard("Full Syllabus Handout, Theory, Protocols & Past Questions")}
+
+        {/* Completion Footer & Study Actions (Only displayed when full notes are unlocked) */}
+        {isPro && (
           <div style={{
-            background: theme.sheetBoxBg,
-            border: `1px solid ${theme.sheetBorder}`,
-            borderRadius: '10px',
-            padding: isMobile ? '1.15rem 0.85rem' : '1.5rem',
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.75rem'
+            borderTop: isSepia ? '2px solid #8D6E63' : isLight ? '2px solid #1E293B' : '2px solid rgba(201,150,62,0.35)',
+            paddingTop: '1.5rem',
+            marginTop: '2rem',
+            fontFamily: 'system-ui, -apple-system, sans-serif'
           }}>
-            <div style={{ fontSize: '1.6rem' }}>🎓</div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 800, color: theme.sheetHeaderColor }}>
-              End of {activeDoc.title}
-            </div>
-            <div style={{ fontSize: '0.8rem', color: theme.sheetTextMuted, maxWidth: '520px', lineHeight: 1.5 }}>
-              You have completed the full authentic syllabus module for {course.course_code}. Test your mastery with CBT mock questions or review flashcards.
+            <div style={{
+              background: theme.sheetBoxBg,
+              border: `1px solid ${theme.sheetBorder}`,
+              borderRadius: '10px',
+              padding: isMobile ? '1.15rem 0.85rem' : '1.5rem',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.75rem'
+            }}>
+              <div style={{ fontSize: '1.6rem' }}>🎓</div>
+              <div style={{ fontSize: '1.05rem', fontWeight: 800, color: theme.sheetHeaderColor }}>
+                End of {activeDoc.title}
+              </div>
+              <div style={{ fontSize: '0.8rem', color: theme.sheetTextMuted, maxWidth: '520px', lineHeight: 1.5 }}>
+                You have completed the full authentic syllabus module for {course.course_code}. Test your mastery with CBT mock questions or review flashcards.
+              </div>
+
+              <div style={{
+                display: 'flex',
+                gap: '0.5rem',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                marginTop: '0.5rem'
+              }}>
+                <button
+                  onClick={() => setActiveTab('quiz')}
+                  style={{
+                    background: '#00E676',
+                    color: '#000000',
+                    border: 'none',
+                    padding: '0.55rem 1rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}>
+                  <span>🧪</span> Practice CBT Quiz
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('flashcards')}
+                  style={{
+                    background: '#C9963E',
+                    color: '#000000',
+                    border: 'none',
+                    padding: '0.55rem 1rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}>
+                  <span>🃏</span> Study Flashcards
+                </button>
+
+                <button
+                  onClick={() => printRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+                  style={{
+                    background: 'transparent',
+                    color: theme.sheetTextMuted,
+                    border: `1px solid ${theme.sheetSubtleBorder}`,
+                    padding: '0.55rem 0.85rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}>
+                  ↑ Back to Top
+                </button>
+              </div>
             </div>
 
             <div style={{
               display: 'flex',
-              gap: '0.5rem',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: '1rem',
+              fontSize: '0.68rem',
+              color: theme.sheetTextMuted,
               flexWrap: 'wrap',
-              justifyContent: 'center',
-              marginTop: '0.5rem'
+              gap: '0.5rem'
             }}>
-              <button
-                onClick={() => setActiveTab('quiz')}
-                style={{
-                  background: '#00E676',
-                  color: '#000000',
-                  border: 'none',
-                  padding: '0.55rem 1rem',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem'
-                }}>
-                <span>🧪</span> Practice CBT Quiz
-              </button>
-
-              <button
-                onClick={() => setActiveTab('flashcards')}
-                style={{
-                  background: '#C9963E',
-                  color: '#000000',
-                  border: 'none',
-                  padding: '0.55rem 1rem',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem'
-                }}>
-                <span>🃏</span> Study Flashcards
-              </button>
-
-              <button
-                onClick={handleDownloadStudySheet}
-                style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  color: theme.sheetHeaderColor,
-                  border: `1px solid ${theme.sheetBorder}`,
-                  padding: '0.55rem 1rem',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem'
-                }}>
-                <span>📥</span> Download Notes (.txt)
-              </button>
-
-              <button
-                onClick={() => printRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
-                style={{
-                  background: 'transparent',
-                  color: theme.sheetTextMuted,
-                  border: `1px solid ${theme.sheetSubtleBorder}`,
-                  padding: '0.55rem 0.85rem',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}>
-                ↑ Back to Top
-              </button>
+              <div>HACKMYDEGREE • {course.course_code} ({course.level}) • OFFICIAL CURRICULUM REPOSITORY</div>
+              <div>PROTECTED STUDY MATERIAL</div>
             </div>
           </div>
-
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: '1rem',
-            fontSize: '0.68rem',
-            color: theme.sheetTextMuted,
-            flexWrap: 'wrap',
-            gap: '0.5rem'
-          }}>
-            <div>HACKMYDEGREE • {course.course_code} ({course.level}) • OFFICIAL CURRICULUM REPOSITORY</div>
-            <div>VERIFIED STUDY MATERIAL</div>
-          </div>
-        </div>
+        )}
       </div>
     );
   };
@@ -956,33 +1051,86 @@ All Rights Reserved
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(5, 5, 5, 0.94)', backdropFilter: 'blur(12px)',
+      background: 'rgba(5, 5, 5, 0.95)', backdropFilter: 'blur(12px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: isMobile ? 0 : 'clamp(0.25rem, 1.5vw, 1rem)'
-    }} onClick={onClose}>
+      padding: isMobile ? 0 : 'clamp(0.25rem, 1.5vw, 1rem)',
+      width: '100%', height: '100%',
+      userSelect: 'none', WebkitUserSelect: 'none'
+    }}
+    className="reader-protected-content"
+    onContextMenu={e => { e.preventDefault(); showToast('⚠️ Right-click context menu is disabled on protected notes.', 'info'); }}
+    onCopy={e => { e.preventDefault(); showToast('⚠️ Copying is disabled to protect academic notes.', 'error'); }}
+    onCut={e => { e.preventDefault(); }}
+    onPaste={e => { e.preventDefault(); }}
+    onClick={onClose}>
       <div style={{
         background: '#0F1013', color: '#FFFFFF',
         border: isMobile ? 'none' : '1px solid rgba(201, 150, 62, 0.35)',
         borderRadius: isMobile ? 0 : '16px',
         width: '100%', maxWidth: isMobile ? '100%' : '1240px',
-        height: isMobile ? '100dvh' : '94vh',
+        height: isMobile ? '100%' : '94vh',
         maxHeight: isMobile ? '100dvh' : '94vh',
         overflow: 'hidden', display: 'flex',
         flexDirection: 'column',
+        position: 'relative',
         boxShadow: isMobile ? 'none' : '0 25px 60px rgba(0,0,0,0.98)',
         animation: 'fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
       }} onClick={e => e.stopPropagation()}>
+
+        {/* ─── DRM SCREENSHOT ALERT OVERLAY ─── */}
+        {screenshotAlert && (
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 99999,
+            background: 'rgba(0, 0, 0, 0.94)', backdropFilter: 'blur(25px)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            textAlign: 'center', padding: '2rem'
+          }}>
+            <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🛡️</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#EF4444', marginBottom: '0.4rem' }}>
+              Screenshots & Screen Capture Restricted
+            </div>
+            <div style={{ fontSize: '0.86rem', color: '#CBD5E1', maxWidth: '420px', lineHeight: 1.5 }}>
+              To protect verified curriculum content and publisher copyrights, screen capturing is prohibited on HackMyDegree notes.
+            </div>
+          </div>
+        )}
+
+        {/* ─── WINDOW UNFOCUS PRIVACY SHIELD ─── */}
+        {!isWindowFocused && !screenshotAlert && (
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 9998,
+            background: 'rgba(15, 16, 20, 0.95)', backdropFilter: 'blur(25px)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            textAlign: 'center', padding: '1.5rem', cursor: 'pointer'
+          }} onClick={() => setIsWindowFocused(true)}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🛡️</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#E2E8F0', marginBottom: '0.35rem' }}>
+              Content Protected
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#94A3B8', maxWidth: '380px', marginBottom: '1.25rem', lineHeight: 1.45 }}>
+              Notes view obscured while window is out of focus. Tap anywhere to resume reading.
+            </div>
+            <button style={{
+              background: '#C9963E', color: '#000000', border: 'none',
+              padding: '0.45rem 1.25rem', borderRadius: '100px', fontSize: '0.8rem', fontWeight: 800, cursor: 'pointer'
+            }}>
+              Resume Reading 📖
+            </button>
+          </div>
+        )}
 
         {/* ─── MOBILE TOPBAR (2-ROW + TOOLS DRAWER) ─── */}
         {isMobile ? (
           <div style={{ flexShrink: 0, background: '#15161A', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             {/* Row 1: Header Bar */}
             <div style={{
-              padding: '0.6rem 0.85rem',
+              padding: '0.55rem 0.75rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              gap: '0.5rem'
+              gap: '0.4rem',
+              width: '100%',
+              boxSizing: 'border-box'
             }}>
               {/* Back / Close button */}
               <button
@@ -997,20 +1145,28 @@ All Rights Reserved
               </button>
 
               {/* Course badge & active document title */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <div style={{ flex: '1 1 auto', minWidth: 0, marginRight: '0.2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                   <span style={{
                     background: '#C9963E', color: '#000000', fontWeight: 900,
-                    fontSize: '0.68rem', padding: '0.1rem 0.4rem', borderRadius: '3px', flexShrink: 0
+                    fontSize: '0.66rem', padding: '0.1rem 0.35rem', borderRadius: '3px', flexShrink: 0
                   }}>
                     {course.course_code}
                   </span>
-                  <span style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: '0.68rem', color: '#94A3B8', fontWeight: 600, whiteSpace: 'nowrap' }}>
                     Mod {activeDocIndex + 1}/{course.documents?.length || 1}
                   </span>
+                  {!isPro && (
+                    <span style={{
+                      background: 'rgba(201,150,62,0.15)', color: '#E5B158',
+                      fontSize: '0.62rem', fontWeight: 800, padding: '0.05rem 0.35rem', borderRadius: '3px', flexShrink: 0
+                    }}>
+                      🔒 PREVIEW
+                    </span>
+                  )}
                 </div>
                 <div style={{
-                  fontSize: '0.82rem', fontWeight: 700, color: '#FFFFFF',
+                  fontSize: '0.78rem', fontWeight: 700, color: '#FFFFFF',
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
                 }}>
                   {activeDoc.title}
@@ -1018,7 +1174,7 @@ All Rights Reserved
               </div>
 
               {/* Right action icons */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', flexShrink: 0 }}>
                 {/* Modules button */}
                 <button
                   onClick={() => setMobileModulesOpen(true)}
@@ -1027,10 +1183,10 @@ All Rights Reserved
                     background: mobileModulesOpen ? '#C9963E' : 'rgba(255,255,255,0.08)',
                     color: mobileModulesOpen ? '#000000' : '#FFFFFF',
                     border: '1px solid rgba(255,255,255,0.12)',
-                    padding: '0.35rem 0.55rem', borderRadius: '6px', cursor: 'pointer',
-                    fontSize: '0.72rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.25rem'
+                    padding: '0.35rem 0.45rem', borderRadius: '6px', cursor: 'pointer',
+                    fontSize: '0.72rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.2rem'
                   }}>
-                  <span>📁</span> Modules
+                  <span>📁</span>
                 </button>
 
                 {/* Read aloud button */}
@@ -1042,7 +1198,7 @@ All Rights Reserved
                     color: isSpeaking ? '#000000' : '#FFFFFF',
                     border: '1px solid rgba(255,255,255,0.12)',
                     padding: '0.35rem 0.45rem', borderRadius: '6px', cursor: 'pointer',
-                    fontSize: '0.8rem', display: 'flex', alignItems: 'center'
+                    fontSize: '0.75rem', display: 'flex', alignItems: 'center'
                   }}>
                   {isSpeaking ? '⏸️' : '🔊'}
                 </button>
@@ -1055,10 +1211,10 @@ All Rights Reserved
                     background: mobileToolsOpen ? 'rgba(201,150,62,0.25)' : 'rgba(255,255,255,0.08)',
                     color: mobileToolsOpen ? '#C9963E' : '#FFFFFF',
                     border: mobileToolsOpen ? '1px solid #C9963E' : '1px solid rgba(255,255,255,0.12)',
-                    padding: '0.35rem 0.55rem', borderRadius: '6px', cursor: 'pointer',
+                    padding: '0.35rem 0.45rem', borderRadius: '6px', cursor: 'pointer',
                     fontSize: '0.74rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.2rem'
                   }}>
-                  ⚙️ Tools
+                  ⚙️
                 </button>
               </div>
             </div>
@@ -1067,9 +1223,9 @@ All Rights Reserved
             <div style={{
               display: 'flex',
               background: '#0E0F12',
-              padding: '0.3rem 0.6rem',
+              padding: '0.25rem 0.5rem',
               borderTop: '1px solid rgba(255,255,255,0.06)',
-              gap: '0.35rem'
+              gap: '0.3rem'
             }}>
               <button
                 onClick={() => { setActiveTab('pdf'); setMobileToolsOpen(false); }}
@@ -1077,8 +1233,8 @@ All Rights Reserved
                   flex: 1, padding: '0.45rem 0.2rem', borderRadius: '6px', border: 'none',
                   background: activeTab === 'pdf' ? '#C9963E' : 'rgba(255,255,255,0.04)',
                   color: activeTab === 'pdf' ? '#000000' : '#CCCCCC',
-                  fontSize: '0.78rem', fontWeight: 800, cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem'
+                  fontSize: '0.76rem', fontWeight: 800, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem'
                 }}>
                 <span>📄</span> Handout
               </button>
@@ -1088,10 +1244,10 @@ All Rights Reserved
                   flex: 1, padding: '0.45rem 0.2rem', borderRadius: '6px', border: 'none',
                   background: activeTab === 'flashcards' ? '#C9963E' : 'rgba(255,255,255,0.04)',
                   color: activeTab === 'flashcards' ? '#000000' : '#CCCCCC',
-                  fontSize: '0.78rem', fontWeight: 800, cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem'
+                  fontSize: '0.76rem', fontWeight: 800, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem'
                 }}>
-                <span>🃏</span> Flashcards
+                <span>🃏</span> Cards {!isPro && '🔒'}
               </button>
               <button
                 onClick={() => { setActiveTab('quiz'); setMobileToolsOpen(false); }}
@@ -1099,10 +1255,10 @@ All Rights Reserved
                   flex: 1, padding: '0.45rem 0.2rem', borderRadius: '6px', border: 'none',
                   background: activeTab === 'quiz' ? '#C9963E' : 'rgba(0, 230, 118, 0.15)',
                   color: activeTab === 'quiz' ? '#000000' : '#00E676',
-                  fontSize: '0.78rem', fontWeight: 800, cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem'
+                  fontSize: '0.76rem', fontWeight: 800, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem'
                 }}>
-                <span>🧪</span> CBT Quiz
+                <span>⏱️</span> CBT {!isPro && '🔒'}
               </button>
             </div>
 
@@ -1223,17 +1379,28 @@ All Rights Reserved
                     <span>{isBookmarked ? '★' : '☆'}</span> Bookmark
                   </button>
 
-                  {/* Download Study Pack */}
-                  <button
-                    onClick={() => { handleDownloadStudySheet(); setMobileToolsOpen(false); }}
-                    style={{
-                      background: 'rgba(255,255,255,0.08)', color: '#FFFFFF',
-                      border: '1px solid rgba(255,255,255,0.15)', padding: '0.45rem 0.6rem',
-                      borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem'
+                  {/* Subscription Status & Upgrade CTA */}
+                  {!isPro ? (
+                    <button
+                      onClick={() => { handleUpgrade(); setMobileToolsOpen(false); }}
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(201,150,62,0.3) 0%, rgba(201,150,62,0.1) 100%)',
+                        color: '#C9963E', border: '1px solid #C9963E', padding: '0.45rem 0.6rem',
+                        borderRadius: '6px', cursor: 'pointer', fontSize: '0.74rem', fontWeight: 800,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', flex: 1
+                      }}>
+                      <span>⚡</span> Subscribe PRO (₦500/mo)
+                    </button>
+                  ) : (
+                    <div style={{
+                      background: 'rgba(0, 230, 118, 0.12)', color: '#00E676',
+                      border: '1px solid rgba(0, 230, 118, 0.3)', padding: '0.45rem 0.6rem',
+                      borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', flex: 1
                     }}>
-                    <span>📥</span> Pack
-                  </button>
+                      <span>✓</span> PRO Active
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1375,31 +1542,31 @@ All Rights Reserved
                     <span>📝</span> Notes {stickyNotes.length > 0 && '●'}
                   </button>
 
-                  {/* Download / Export Study Pack */}
-                  <button
-                    onClick={handleDownloadStudySheet}
-                    title="Export High-Yield Study Summary for Offline Revision"
+                  {/* Protected DRM Badge */}
+                  <div
+                    title="Proprietary Academic Notes - Digital Rights Protected"
                     style={{
-                      background: 'rgba(255,255,255,0.06)', color: '#FFFFFF',
-                      border: '1px solid rgba(255,255,255,0.1)', padding: '0.35rem 0.6rem',
-                      borderRadius: '6px', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700,
-                      display: 'flex', alignItems: 'center', gap: '0.3rem'
+                      background: 'rgba(0, 230, 118, 0.1)', color: '#00E676',
+                      border: '1px solid rgba(0, 230, 118, 0.25)', padding: '0.35rem 0.65rem',
+                      borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800,
+                      display: 'flex', alignItems: 'center', gap: '0.35rem'
                     }}>
-                    <span>📥</span> Study Pack
-                  </button>
+                    <span>🛡️</span> Protected Note
+                  </div>
 
-                  {/* Print */}
-                  <button
-                    onClick={handlePrint}
-                    title="Print or Save as PDF"
-                    style={{
-                      background: 'rgba(255,255,255,0.06)', color: '#FFFFFF',
-                      border: '1px solid rgba(255,255,255,0.1)', padding: '0.35rem 0.6rem',
-                      borderRadius: '6px', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700,
-                      display: 'flex', alignItems: 'center', gap: '0.3rem'
-                    }}>
-                    <span>🖨️</span> Print
-                  </button>
+                  {!isPro && (
+                    <button
+                      onClick={handleUpgrade}
+                      disabled={upgrading}
+                      style={{
+                        background: 'linear-gradient(135deg, #C9963E 0%, #A67628 100%)',
+                        color: '#000000', border: 'none', padding: '0.35rem 0.75rem',
+                        borderRadius: '6px', cursor: 'pointer', fontSize: '0.76rem', fontWeight: 800,
+                        display: 'flex', alignItems: 'center', gap: '0.35rem'
+                      }}>
+                      <span>⚡</span> Subscribe PRO (₦500/mo)
+                    </button>
+                  )}
 
                   {/* Read Aloud + Speed Toggle */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
@@ -1792,25 +1959,42 @@ All Rights Reserved
             ref={printRef}
             style={{
               flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0,
-              background: '#0B0C0E', overflowY: 'auto',
-              padding: isMobile ? '0.75rem 0.4rem' : 'clamp(1rem, 3vw, 2.5rem) 1rem'
+              background: '#0B0C0E', overflowY: 'auto', overflowX: 'hidden',
+              WebkitOverflowScrolling: 'touch',
+              position: 'relative',
+              padding: isMobile ? '0.75rem 0.35rem' : 'clamp(1rem, 3vw, 2.5rem) 1rem',
+              boxSizing: 'border-box'
             }}>
+
+            {/* Dynamic Anti-Piracy Watermark across reading canvas */}
+            <div className="reader-watermark-overlay" aria-hidden="true">
+              {Array.from({ length: 14 }).map((_, rIdx) => (
+                <div key={rIdx} className="reader-watermark-row" style={{ color: paperTheme === 'dark' ? '#FFFFFF' : '#000000' }}>
+                  HACKMYDEGREE PROTECTED VAULT • {user?.email || (profile?.username ? `@${profile.username}` : 'VERIFIED STUDENT')} • NOT FOR REDISTRIBUTION • {course.course_code}
+                </div>
+              ))}
+            </div>
 
             {/* TAB: PDF HANDOUT SHEETS */}
             {activeTab === 'pdf' && (
-              <div style={{ width: '100%' }}>
+              <div style={{ width: '100%', boxSizing: 'border-box' }}>
                 {renderHandoutDocument(pdfData)}
               </div>
             )}
 
             {/* TAB: FLASHCARDS */}
             {activeTab === 'flashcards' && (
-              <div style={{
-                padding: isMobile ? '1rem 0.5rem' : '2rem',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                minHeight: isMobile ? 'auto' : '450px'
-              }}>
-                <div style={{ width: '100%', maxWidth: '620px', display: 'flex', flexDirection: 'column', gap: isMobile ? '0.85rem' : '1.25rem' }}>
+              !isPro ? (
+                <div style={{ padding: isMobile ? '1rem 0.5rem' : '2rem', width: '100%', boxSizing: 'border-box' }}>
+                  {renderProPaywallCard("Spaced-Repetition Active Recall Flashcards")}
+                </div>
+              ) : (
+                <div style={{
+                  padding: isMobile ? '1rem 0.5rem' : '2rem',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  minHeight: isMobile ? 'auto' : '450px'
+                }}>
+                  <div style={{ width: '100%', maxWidth: '620px', display: 'flex', flexDirection: 'column', gap: isMobile ? '0.85rem' : '1.25rem' }}>
                   
                   {/* Spaced Repetition Progress Header */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
@@ -1944,15 +2128,20 @@ All Rights Reserved
                   </div>
                 </div>
               </div>
-            )}
+            ))}
 
             {/* TAB: CBT QUIZ */}
             {activeTab === 'quiz' && (
-              <div style={{
-                padding: isMobile ? '0.75rem 0.25rem' : '2rem',
-                maxWidth: '820px', margin: '0 auto', width: '100%',
-                boxSizing: 'border-box'
-              }}>
+              !isPro ? (
+                <div style={{ padding: isMobile ? '1rem 0.5rem' : '2rem', width: '100%', boxSizing: 'border-box' }}>
+                  {renderProPaywallCard("DegreeAI Timed CBT Mock Exam Simulator")}
+                </div>
+              ) : (
+                <div style={{
+                  padding: isMobile ? '0.75rem 0.25rem' : '2rem',
+                  maxWidth: '820px', margin: '0 auto', width: '100%',
+                  boxSizing: 'border-box'
+                }}>
                 {/* Quiz Header & AI Generator Bar */}
                 <div style={{
                   background: 'linear-gradient(135deg, rgba(201,150,62,0.12) 0%, rgba(18,19,22,0.8) 100%)',
@@ -2201,7 +2390,7 @@ All Rights Reserved
                   </div>
                 )}
               </div>
-            )}
+            ))}
 
           </div>
         </div>
